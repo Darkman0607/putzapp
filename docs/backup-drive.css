@@ -1,0 +1,16 @@
+/* V1.4.0.6: Drive backup panels following the dark premium theme */
+.backup-panel{padding:24px;margin-top:24px;margin-bottom:24px;display:grid;gap:16px}
+.backup-panel h2{font-size:1.25rem}.backup-panel h3{font-size:1rem;margin:8px 0 0}
+.backup-panel p{margin:0;line-height:1.6;color:var(--muted,#a2c0c2)}
+.backup-connection{display:grid;gap:10px;padding:14px;background:rgba(9,42,43,.24);border:1px solid rgba(110,235,203,.23);border-radius:18px}
+.backup-connection input{min-width:0;width:100%;padding:13px;color:inherit;background:rgba(5,22,26,.5);border:1px solid rgba(111,223,200,.35);border-radius:12px;font-family:inherit;font-size:1rem;box-sizing:border-box}
+.backup-connection small,.backup-caution{line-height:1.5;color:var(--muted,#a2c0c2)}
+.backup-connection code{overflow-wrap:anywhere;font-size:.86em}
+.backup-actions{display:flex;flex-wrap:wrap;gap:10px}
+.backup-actions button{flex:1 1 150px;min-width:0;min-height:44px;padding:10px;font-family:inherit}
+.backup-actions button:disabled{opacity:.6}
+.backup-files{display:grid;gap:10px}
+.backup-file{border:1px solid rgba(111,223,200,.24);border-radius:13px;padding:13px;display:grid;gap:7px;overflow-wrap:anywhere}
+.backup-file small{color:var(--muted,#a2c0c2)}
+.backup-status{border-top:1px solid rgba(111,223,200,.22);padding-top:12px;overflow-wrap:anywhere;min-height:2em}
+@media(max-width:440px){.backup-panel{padding:16px}.backup-actions button{flex-basis:100%}}

@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.4.0.5';
+  const VERSION = '1.4.0.6';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
@@ -218,7 +218,7 @@
     const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
   });
   $('#setup-home').addEventListener('click',()=>window.PutzmanagerEditor?.open());
-  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.4.0 enthält das Putzlager U16 mit Kategorien, Suche, Ansichten und Favoriten. Erweiterte Lagerbuchungen und Backups folgen später.'));
+  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.4.0.6: Optionales Google-Drive-Backup mit Anmeldung, Speicherung und Wiederherstellung. Lokale Offline-Daten bleiben erhalten.'));
   $('#install-button').addEventListener('click',installApp);
   $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);

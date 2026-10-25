@@ -2,7 +2,7 @@
   "id": "/putzapp/",
   "name": "Mein Putzmanager",
   "short_name": "Putzmanager",
-  "description": "Private Putz-App für deinen Haushalt – Beta V1.4.0.5",
+  "description": "Private Putz-App für deinen Haushalt – Beta V1.4.0.6",
   "lang": "de-AT",
   "start_url": "/putzapp/",
   "scope": "/putzapp/",

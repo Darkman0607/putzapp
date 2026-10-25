@@ -1,0 +1,18 @@
+Mein Putzmanager – Version 1.4.0.6 – Google-Drive-Sicherung
+25. Oktober 2026
+
+Umgesetzt:
+- Mehr > Google Drive: Browser-Anmeldung per Google Identity Services, OAuth-Web-Client-ID wie MR-Hausservice; falls derselbe Origin bestehende Client-ID vorschlagen.
+- Google Drive: manueller Upload nach „Mein Putzmanager Backups“, Sicherungen anzeigen, vorhandene JSON-Sicherung laden und wiederherstellen.
+- Lokaler JSON-Export/Import ohne Internet sowie IndexedDB-Sicherheitskopie vor Restore.
+- 4 bestehende Putzmanager-Datenkennungen im Format 1; SHA-256-Integritätskontrolle; keine Passwörter/Google-Tokens, keine Fremd-App-Daten im Backup.
+- Restore mit explizitem Nutzer-OK, Datenvergleich und Rücksetzung bei Speicherfehlern; vorhandene App-Datenkennungen nicht verändert.
+
+Prüfungen im Entwicklungsstand:
+- 90/90 Node-Tests bestanden.
+- Simulierter Google OAuth/Drive-API-Mobilbrowser-Ablauf: Client-ID-Vorbelegung, Upload, Sicherungsliste erfolgreich. Keine echte Google-Anmeldung (simuliertes Netzwerk, keine Nutzerberechtigung).
+- Vorhandene mobile Chromium-Regression: Lager/Wäsche/Timer, Materialien, Kategorien, 3D, U05 Aufgaben und vier Displaybreiten bestanden.
+- DOCX-Mastercheckliste 6 Sonderpunkte markiert, U26-F01/F02 weiterhin offen bis echter Cloud- und Restore-Praxistest.
+- ZIP-Datei geprüft (CRC/Testzip); GitHub Root und docs Spiegeldateien identisch.
+
+Offen: tatsächlicher Google-Account/OAuth-Consent, echter Upload/Download in das Drive-Konto des Nutzers; umfangreicher Foto-Restore; physische Android-PWA und echter Gerätewechsel. JSON-Sicherung ist nicht Ende-zu-Ende verschlüsselt. Keine Hintergrund-Synchronisation.
