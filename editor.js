@@ -1,8 +1,9 @@
-/* U03 | V1.0.2 — gemeinsames Wandmodell, präzise Geometrie, echte Wandöffnungen. */
+/* U04 | V1.0.3 — interaktive, farbige Wohnungsübersicht mit Raumzuständen. */
 (() => {
   'use strict';
   const API = window.PutzmanagerBeta;
   const GEO = window.PutzmanagerGeometry;
+  const CLEAN = window.PutzmanagerClean;
   const svgNS = 'http://www.w3.org/2000/svg';
   const $ = (s) => document.querySelector(s);
   const el = (name, attrs = {}, text) => {
@@ -30,7 +31,8 @@
       openings:(Array.isArray(f.openings)?f.openings:[]).slice(0,160).filter(o=>o&&typeof o.wallId==='string'&&['door','window'].includes(o.kind)).map(o=>({id:typeof o.id==='string'?o.id:uid(),wallId:String(o.wallId).slice(0,100),kind:o.kind,type:String(o.type??'single').slice(0,30),width:within(Number(o.width)||80,8,10000),height:Number.isFinite(o.height)?within(o.height,0,10000):null,t:within(Number(o.t)||.5,0,1),swing:o.swing==='right'?'right':'left'})),
       rooms:(Array.isArray(f.rooms)?f.rooms:[]).slice(0,80).map(r=>({
         id:typeof r.id==='string'?r.id:uid(), name:String(r.name??'Raum').slice(0,55),
-        points:(Array.isArray(r.points)?r.points:[]).filter(validPoint).slice(0,80)
+        points:(Array.isArray(r.points)?r.points:[]).filter(validPoint).slice(0,80),
+        cleanliness:CLEAN.sanitize(r.cleanliness)
       })).filter(r=>r.points.length>=3)
     }));
     if(!floors.length) floors.push(fresh().floors[0]);
@@ -144,7 +146,7 @@
     const type=drawing.type;drawing=null;
     safeChange(()=>{if(type==='outline') currentFloor().outline=clone(points);else {
       const name=$('#editor-new-room').value.trim().slice(0,55)||`Raum ${currentFloor().rooms.length+1}`;
-      const placed=GEO.newRoomPosition(clone(points),currentFloor().rooms);if(!placed)return false;const room={id:uid(),name,points:placed};currentFloor().rooms.push(room);selected=room.id;selectedWall=null;
+      const placed=GEO.newRoomPosition(clone(points),currentFloor().rooms);if(!placed)return false;const room={id:uid(),name,points:placed,cleanliness:CLEAN.sanitize()};currentFloor().rooms.push(room);selected=room.id;selectedWall=null;
     }});
   }
   function center(){return [view.x+view.w/2,view.y+view.h/2];}
@@ -155,24 +157,130 @@
     if(type==='l')points=[[cx-125,cy-90],[cx+125,cy-90],[cx+125,cy-15],[cx+20,cy-15],[cx+20,cy+90],[cx-125,cy+90]];
     else points=[[cx-125,cy-85],[cx+125,cy-85],[cx+125,cy+85],[cx-125,cy+85]];
     const name=$('#editor-new-room').value.trim().slice(0,55)||`Raum ${currentFloor().rooms.length+1}`;
-    safeChange(()=>{const placed=GEO.newRoomPosition(points,currentFloor().rooms);if(!placed)return false;const r={id:uid(),name,points:placed};currentFloor().rooms.push(r);selected=r.id;selectedWall=null;});
+    safeChange(()=>{const placed=GEO.newRoomPosition(points,currentFloor().rooms);if(!placed)return false;const r={id:uid(),name,points:placed,cleanliness:CLEAN.sanitize()};currentFloor().rooms.push(r);selected=r.id;selectedWall=null;});
+  }
+  // U04 view is deliberately separate from the editor: no wall/vertex handlers in the dashboard.
+  let detailId=null, detailFloor=null, quickId=null, press=null, blockClickUntil=0;
+  const roomById=(floorId,id)=>home.floors.find(f=>f.id===floorId)?.rooms.find(r=>r.id===id);
+  const cleanOf=room=>CLEAN.sanitize(room.cleanliness);
+  const scoreOf=room=>CLEAN.roomScore(cleanOf(room));
+  function persistClean(floorId,roomId,fn){
+    const room=roomById(floorId,roomId);if(!room)return false;
+    const before=clone(home),clean=cleanOf(room);
+    if(fn(clean,room)===false)return false;
+    room.cleanliness=CLEAN.sanitize(clean);commit(before);return true;
+  }
+  function stateLabel(n){return n<35?'Stark verschmutzt':n<65?'Reinigung sinnvoll':n<85?'Ordentlich':'Sehr sauber';}
+  function closeClean(){detailId=null;detailFloor=null;$('#room-detail-overlay').hidden=true;$('#room-quick-overlay').hidden=true;quickId=null;}
+  function renderDetail(){
+    if(!detailId)return;
+    const room=roomById(detailFloor,detailId);if(!room){closeClean();return;}
+    const c=cleanOf(room),n=CLEAN.roomScore(c);
+    $('#room-detail-title').textContent=room.name;
+    $('#room-detail-state').textContent=`${n} % · ${stateLabel(n)} (Schätzwert)`;
+    $('#room-detail-state').style.color=CLEAN.stateColor(n);
+    $('#room-score-input').value=n;
+    $('#room-score-display').textContent=`${n} %`;
+    $('#room-score-note').textContent=c.override===null?'Berechnet aus nicht erfassten Flächen und Unterbereichen.':'Manuelle Raumkorrektur aktiv; die nächste Änderung eines Unterbereichs berechnet den Raum neu.';
+    $('#room-base-input').value=c.base;
+    $('#room-base-display').textContent=`${c.base} %`;
+    const list=$('#room-areas');list.replaceChildren();
+    if(!c.areas.length)list.append(el('p',{class:'room-areas-empty'},'Noch keine Unterbereiche. Du kannst z. B. Boden, WC oder Dusche anlegen.'));
+    for(const a of c.areas){
+      const line=el('div',{class:'area-line'}),row=el('div',{class:'area-line-head'});
+      const name=el('strong',{},a.name),num=el('output',{},`${a.score} %`);
+      row.append(name,num);
+      const slide=el('input',{type:'range',min:'0',max:'100',step:'1',value:a.score,'aria-label':`${a.name} Sauberkeitszustand`});
+      slide.addEventListener('input',()=>{num.textContent=slide.value+' %';});
+      slide.addEventListener('change',()=>{persistClean(detailFloor,detailId,(clean)=>{const target=clean.areas.find(x=>x.id===a.id);if(!target)return false;target.score=Number(slide.value);clean.override=null;});renderDetail();});
+      const actions=el('div',{class:'area-buttons'}),rename=el('button',{type:'button',class:'room-btn'},'✏️ Umbenennen'),del=el('button',{type:'button',class:'room-btn room-danger'},'Löschen');
+      rename.addEventListener('click',()=>{const value=prompt('Name des Unterbereichs',a.name);if(value===null)return;const trimmed=value.trim().slice(0,55);if(!trimmed){alert('Bitte einen Namen angeben.');return;}persistClean(detailFloor,detailId,clean=>{const target=clean.areas.find(x=>x.id===a.id);if(!target)return false;target.name=trimmed;clean.override=null;});renderDetail();});
+      del.addEventListener('click',()=>{if(!confirm(`Unterbereich „${a.name}“ entfernen?`))return;persistClean(detailFloor,detailId,clean=>{clean.areas=clean.areas.filter(x=>x.id!==a.id);clean.override=null;});renderDetail();});
+      actions.append(rename,del);line.append(row,slide,actions);list.append(line);
+    }
+  }
+  function showDetail(floorId,id){
+    const room=roomById(floorId,id);if(!room)return;
+    detailFloor=floorId;detailId=id;$('#room-quick-overlay').hidden=true;quickId=null;
+    $('#room-detail-overlay').hidden=false;renderDetail();$('#room-detail-close').focus();
+  }
+  function showQuick(floorId,id){
+    const room=roomById(floorId,id);if(!room)return;
+    quickId={floorId,id};$('#room-quick-title').textContent=room.name;
+    $('#room-quick-overlay').hidden=false;$('#room-quick-detail').focus();
+  }
+  function attachRoomEvents(node, floorId,roomId){
+    node.addEventListener('pointerdown',event=>{
+      if(event.pointerType==='mouse' && event.button!==0)return;
+      clearTimeout(press?.timer);
+      const data={floorId,roomId,startX:event.clientX,startY:event.clientY,long:false,timer:null,pointerId:event.pointerId};
+      data.timer=setTimeout(()=>{if(press===data){data.long=true;blockClickUntil=Date.now()+700;showQuick(floorId,roomId);}},550);
+      press=data;
+    });
+    node.addEventListener('pointermove',e=>{if(press && press.pointerId===e.pointerId && Math.hypot(e.clientX-press.startX,e.clientY-press.startY)>12){clearTimeout(press.timer);press=null;}});
+    const release=e=>{if(!press||press.pointerId!==e.pointerId)return;clearTimeout(press.timer);const long=press.long;press=null;if(!long && e.type==='pointerup'){blockClickUntil=Date.now()+500;showDetail(floorId,roomId);}};
+    node.addEventListener('pointerup',release);node.addEventListener('pointercancel',release);
+    node.addEventListener('contextmenu',e=>{e.preventDefault();clearTimeout(press?.timer);press=null;blockClickUntil=Date.now()+700;showQuick(floorId,roomId);});
+    node.addEventListener('click',e=>{if(Date.now()<blockClickUntil)return;if(e.detail===0)showDetail(floorId,roomId);});
+    node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showDetail(floorId,roomId);}else if(e.key==='F10'&&e.shiftKey){e.preventDefault();showQuick(floorId,roomId);}});
   }
   function renderHome(){
     const preview=$('#home-floorplan-preview'),empty=$('#floorplan-empty'),art=$('#floorplan-art');
     const hasData=home.floors.some(f=>f.rooms.length || f.outline.length>=3);
     empty.hidden=hasData;art.hidden=hasData;preview.hidden=!hasData;
-    if(!hasData)return;
-    const f=currentFloor();
-    preview.replaceChildren();
-    const tag=el('div',{class:'home-map-caption'},`${home.kind==='haus'?'Haus':'Wohnung'} · ${f.name} · ${f.rooms.length} Räume`);preview.append(tag);
-    const svg=svgEl('svg',{viewBox:'-70 -55 1140 830',role:'img','aria-label':`Grundriss ${f.name}; Raumzustände folgen in V1.0.3`});
-    if(f.outline.length>=3)svg.append(svgEl('path',{d:path(f.outline),fill:'#193138',stroke:'#c1e7de','stroke-width':9}));
-    for(const r of f.rooms){svg.append(svgEl('path',{d:path(r.points),fill:'#17645b','fill-opacity':.7,stroke:'none'}));const [x,y]=roomLabel(r);const txt=svgEl('text',{x,y,fill:'#fff','font-size':28,'font-weight':700,'text-anchor':'middle','dominant-baseline':'middle'});txt.textContent=r.name;svg.append(txt);}
-    for(const w of GEO.walls(f.rooms)){const parts=(f.openings?.filter(o=>o.wallId===w.id)??[]).sort((a,b)=>a.t-b.t);const spans=parts.map(o=>GEO.openingSpan(o,w));const dir=[(w.b[0]-w.a[0])/w.length,(w.b[1]-w.a[1])/w.length],segments=[0,...spans.flatMap(span=>[GEO.length(w.a,span.a),GEO.length(w.a,span.b)]),w.length];for(let i=0;i<segments.length-1;i+=2){const pa=segments[i],pb=segments[i+1];if(pb<=pa)continue;svg.append(svgEl('line',{x1:w.a[0]+dir[0]*pa,y1:w.a[1]+dir[1]*pa,x2:w.a[0]+dir[0]*pb,y2:w.a[1]+dir[1]*pb,stroke:'#50d1bd','stroke-width':7}));}for(const o of parts){const span=GEO.openingSpan(o,w);svg.append(svgEl('line',{x1:span.a[0],y1:span.a[1],x2:span.b[0],y2:span.b[1],stroke:o.kind==='window'?'#7bddff':'#ffc785','stroke-width':3}));}}
+    const all=home.floors.flatMap(f=>f.rooms);
+    const overall=$('#home-overall-value'),subtitle=$('#home-overall-caption');
+    if(all.length){overall.textContent=Math.round(all.reduce((total,r)=>total+scoreOf(r),0)/all.length)+' %';subtitle.textContent=`Geschätzt aus ${all.length} Räumen`;}else{overall.textContent='– %';subtitle.textContent='Noch keine Raumdaten';}
+    if(!hasData){preview.replaceChildren();return;}
+    const f=currentFloor();preview.replaceChildren();
+    const top=el('div',{class:'home-floor-switch'});
+    const tag=el('div',{class:'home-map-caption'},`${home.kind==='haus'?'Haus':'Wohnung'} · ${f.name}`);top.append(tag);
+    if(home.floors.length>1){
+      const level=el('select',{id:'home-floor-select',class:'home-floor-select','aria-label':'Etage auswählen'});
+      home.floors.forEach(floor=>{const opt=el('option',{value:floor.id},floor.name);if(floor.id===home.activeFloor)opt.selected=true;level.append(opt);});
+      level.addEventListener('change',()=>{home.activeFloor=level.value;API.saveHome(clone(home));renderHome();});top.append(level);
+    }
+    preview.append(top);
+    const allPts=[...f.rooms.flatMap(r=>r.points),...f.outline],xs=allPts.map(p=>p[0]),ys=allPts.map(p=>p[1]);
+    const minX=xs.length?Math.min(...xs):0,minY=ys.length?Math.min(...ys):0,maxX=xs.length?Math.max(...xs):1000,maxY=ys.length?Math.max(...ys):720;
+    const pad=68,w=Math.max(180,maxX-minX+pad*2),h=Math.max(160,maxY-minY+pad*2);
+    const svg=svgEl('svg',{viewBox:`${minX-pad} ${minY-pad} ${w} ${h}`,role:'group','aria-label':`Interaktiver Grundriss ${f.name}: Räume antippen; länger drücken für Schnellaktionen`});
+    if(f.outline.length>=3)svg.append(svgEl('path',{d:path(f.outline),fill:'#162b35',stroke:'#c1e7de','stroke-width':9,'pointer-events':'none'}));
+    for(const r of f.rooms){
+      const n=scoreOf(r),g=svgEl('g',{'data-home-room':r.id,role:'button',tabindex:'0','aria-label':`${r.name}: geschätzte Sauberkeit ${n} Prozent. Details öffnen.`});
+      const poly=svgEl('path',{d:path(r.points),fill:CLEAN.stateColor(n),stroke:'#f1fff7','stroke-width':1.7,'fill-opacity':.84});g.append(poly);
+      const [x,y]=roomLabel(r),name=svgEl('text',{x,y:y-13,fill:'#ffffff','font-size':25,'font-weight':750,'text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none','paint-order':'stroke',stroke:'#0a1a1e','stroke-width':3});name.textContent=r.name.length>17?r.name.slice(0,16)+'…':r.name;
+      const num=svgEl('text',{x,y:y+22,fill:'#ffffff','font-size':32,'font-weight':850,'text-anchor':'middle','dominant-baseline':'middle','pointer-events':'none','paint-order':'stroke',stroke:'#0a1a1e','stroke-width':4});num.textContent=n+' %';g.append(name,num);
+      attachRoomEvents(g,f.id,r.id);svg.append(g);
+    }
+    for(const wall of GEO.walls(f.rooms)){
+      const op=(f.openings||[]).filter(o=>o.wallId===wall.id).sort((a,b)=>a.t-b.t),spans=op.map(o=>GEO.openingSpan(o,wall));const dir=[(wall.b[0]-wall.a[0])/wall.length,(wall.b[1]-wall.a[1])/wall.length],segments=[0,...spans.flatMap(span=>[GEO.length(wall.a,span.a),GEO.length(wall.a,span.b)]),wall.length];
+      for(let i=0;i<segments.length-1;i+=2){const pa=segments[i],pb=segments[i+1];if(pb<=pa)continue;svg.append(svgEl('line',{x1:wall.a[0]+dir[0]*pa,y1:wall.a[1]+dir[1]*pa,x2:wall.a[0]+dir[0]*pb,y2:wall.a[1]+dir[1]*pb,stroke:'#d4e8e2','stroke-width':7,'pointer-events':'none'}));}
+      for(const o of op){const span=GEO.openingSpan(o,wall);svg.append(svgEl('line',{x1:span.a[0],y1:span.a[1],x2:span.b[0],y2:span.b[1],stroke:o.kind==='window'?'#7bddff':'#ffc785','stroke-width':4,'pointer-events':'none'}));}
+    }
     preview.append(svg);
+    const bottom=el('p',{class:'home-map-foot'},'Tippen: Raumdetails · Lange drücken: Schnellaktionen · Werte sind Schätzungen');preview.append(bottom);
+    const legend=el('div',{class:'home-map-legend'});
+    for(const [value,text] of [[20,'0–34 %'],[50,'35–64 %'],[75,'65–84 %'],[95,'85–100 %']]){const chip=el('span',{},text),dot=el('i',{'aria-hidden':'true'});dot.style.background=CLEAN.stateColor(value);chip.prepend(dot);legend.append(chip);}preview.append(legend);
     const editButton=el('button',{id:'home-edit-plan',type:'button',class:'outline-button'},'✏️ Grundriss bearbeiten');editButton.addEventListener('click',open);preview.append(editButton);
-    preview.append(el('p',{class:'home-map-foot'},'Grundriss gespeichert · Sauberkeitsanzeige folgt in V1.0.3'));
   }
+  $('#room-detail-close').addEventListener('click',closeClean);
+  $('#room-quick-close').addEventListener('click',closeClean);
+  $('#room-detail-overlay').addEventListener('click',e=>{if(e.target===$('#room-detail-overlay'))closeClean();});
+  $('#room-quick-overlay').addEventListener('click',e=>{if(e.target===$('#room-quick-overlay'))closeClean();});
+  $('#room-score-input').addEventListener('input',e=>{$('#room-score-display').textContent=e.target.value+' %';});
+  $('#room-base-input').addEventListener('input',e=>{$('#room-base-display').textContent=e.target.value+' %';});
+  $('#room-score-save').addEventListener('click',()=>{persistClean(detailFloor,detailId,clean=>{clean.override=Number($('#room-score-input').value);});renderDetail();});
+  $('#room-base-save').addEventListener('click',()=>{persistClean(detailFloor,detailId,clean=>{clean.base=Number($('#room-base-input').value);clean.override=null;});renderDetail();});
+  $('#room-area-add').addEventListener('click',()=>{
+    const field=$('#room-area-name'),name=field.value.trim().slice(0,55);if(!name){field.focus();return;}
+    persistClean(detailFloor,detailId,clean=>{if(clean.areas.length>=50){alert('Maximal 50 Unterbereiche je Raum.');return false;}clean.areas.push({id:uid(),name,score:clean.base});clean.override=null;});
+    field.value='';renderDetail();
+  });
+  $('#room-area-name').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#room-area-add').click();}});
+  $('#room-quick-detail').addEventListener('click',()=>{if(quickId)showDetail(quickId.floorId,quickId.id);});
+  document.querySelectorAll('[data-quick-score]').forEach(btn=>btn.addEventListener('click',()=>{if(!quickId)return;const {floorId,id}=quickId,n=Number(btn.dataset.quickScore);persistClean(floorId,id,clean=>{clean.override=n;});closeClean();}));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape' && (!$('#room-detail-overlay').hidden||!$('#room-quick-overlay').hidden)){e.preventDefault();closeClean();}});
   function open(){
     home=sanitize(API.getHome());selected=null;selectedWall=null;selectedOpening=null;drawing=null;past=[];future=[];notice('');fit();
     $('#editor-overlay').hidden=false;document.body.classList.add('editing-plan');draw();

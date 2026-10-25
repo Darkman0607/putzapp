@@ -12,7 +12,7 @@ with sync_playwright() as pw:
   page.set_content(read('index.html'),wait_until='domcontentloaded')
   page.add_style_tag(content=read('style.css'));page.add_style_tag(content=read('editor.css'))
   page.evaluate('''(saved)=>{const store=saved??{};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>Object.prototype.hasOwnProperty.call(store,k)?store[k]:null,setItem:(k,v)=>store[k]=String(v),removeItem:k=>delete store[k]}});window._testStorage=store;}''',saved)
-  for file in ['app.js','geometry.js','editor.js']:page.add_script_tag(content=read(file))
+  for file in ['app.js','geometry.js','clean-model.js','editor.js']:page.add_script_tag(content=read(file))
   page.on('dialog',lambda d:d.accept())
   return page
  page=launch();page.locator('#setup-home').click()

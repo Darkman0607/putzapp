@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.0.2';
+  const VERSION = '1.0.3';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
@@ -216,7 +216,7 @@
     const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
   });
   $('#setup-home').addEventListener('click',()=>window.PutzmanagerEditor?.open());
-  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.1 enthält den Grundriss-Editor (U02). Die echte Wand-an-Wand-Geometrie, Sauberkeitsanzeige und das Lager folgen in späteren Updates.'));
+  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.3 enthält die interaktive Wohnungskarte (U04). Aufgaben je Unterbereich und das Putzlager folgen in späteren Updates.'));
   $('#install-button').addEventListener('click',installApp);
   $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);
