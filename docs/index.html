@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.11 mit optionaler Google-Drive-Sicherung.">
+  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.12 mit optionaler Google-Drive-Sicherung.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -14,12 +14,13 @@
   <link rel="stylesheet" href="./editor.css">
   <link rel="stylesheet" href="./clean.css">
   <link rel="stylesheet" href="./floorplan-premium.css">
+  <link rel="stylesheet" href="./home-reference.css">
 <link rel="stylesheet" href="./cleaning.css">
   <link rel="stylesheet" href="./inventory.css">
   <link rel="stylesheet" href="./cleaning-materials.css">
   <link rel="stylesheet" href="./room-timer.css">
   <link rel="stylesheet" href="./backup-drive.css">
-  <title>Mein Putzmanager · Beta 1.4.0.11</title>
+  <title>Mein Putzmanager · Beta 1.4.0.12</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -59,7 +60,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.11</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.12</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -106,7 +107,7 @@
         <p id="backup-status" class="backup-status" role="status" aria-live="polite">Bereit. Drive-Anmeldung nur mit Internet; die App selbst bleibt offline nutzbar.</p>
         <small class="backup-caution">⚠ Wiederherstellen ersetzt die Putzmanager-Daten auf diesem Gerät, nicht die Daten anderer Apps. Zuvor wird automatisch ein lokaler Wiederherstellungspunkt angelegt. Für einen Gerätewechsel auf beiden Geräten mit demselben Google-Konto anmelden. Passwörter oder Google-Tokens werden nicht in die Sicherung geschrieben.</small>
       </section>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.11 · Google Drive Sicherung (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.12 · Google Drive Sicherung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><div class="inventory-toolbar-actions"><button id="inventory-manage-categories" class="inventory-add" type="button" aria-expanded="false" aria-controls="inventory-category-manager">⚙ Kategorien</button><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>

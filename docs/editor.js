@@ -298,7 +298,7 @@
     empty.hidden=hasData;art.hidden=hasData;preview.hidden=!hasData;
     const all=home.floors.flatMap(f=>f.rooms);
     const overall=$('#home-overall-value'),subtitle=$('#home-overall-caption');
-    if(all.length){overall.textContent=Math.round(all.reduce((total,r)=>total+scoreOf(r),0)/all.length)+' %';subtitle.textContent=`Geschätzt aus ${all.length} Räumen`;}else{overall.textContent='– %';subtitle.textContent='Noch keine Raumdaten';}
+    if(all.length){overall.textContent=Math.round(all.reduce((total,r)=>total+scoreOf(r),0)/all.length)+' %';subtitle.textContent=`Geschätzt aus ${all.length} Räumen`;subtitle.style.setProperty('--home-score',overall.textContent);}else{overall.textContent='– %';subtitle.textContent='Noch keine Raumdaten';subtitle.style.setProperty('--home-score','0%');}
     if(!hasData){preview.replaceChildren();return;}
     const f=currentFloor();preview.replaceChildren();
     const top=el('div',{class:'home-floor-switch'});

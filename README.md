@@ -1,3 +1,11 @@
+## V1.4.0.12 – Wohnungszentrale nach Referenzbild (25.10.2026)
+
+Die Startseite wurde referenznah im dunklen Smaragd-Design überarbeitet: prominente Tageskarte, Haus-Karte, kompakte Kennzahlen und Grundriss in materialbetonter Draufsicht. Die 2D-Geometrie bleibt echt und editierbar; Möblierung, Holz/Fliesen, Fensterrahmen, Türschwenkbögen und Status-Badges werden aus den gespeicherten Polygonen dynamisch erzeugt. Möbel sind **Beispielillustrationen**, keine echte Einrichtung und keine fotografische 1:1-Darstellung. Raumtippen, Lange-Drücken, 360°-Drehung und bestehende Reinigungs-/Backup-Logik bleiben erhalten.
+
+Wichtig: Diese Version richtet die Darstellung an der Referenz aus; sie enthält keine fotorealistische 3D-Simulation und keinen automatischen Import eines Wohnungsfotos. Android-Praxistest und echte Geräte-Installation müssen weiterhin am Gerät geprüft werden.
+
+---
+
 ## V1.4.0.11 – Illustrierter Premium-2D-Grundriss (25.10.2026)
 
 Die Wohnungszentrale folgt jetzt dem gewählten Designbild 1: schematisch möblierte Räume in echter Draufsicht, unterschiedliche Holz-/Fliesenmuster, dekorative Pflanzen, plastisch betonte Wände und farbige Sauberkeits-Karten mit besser lesbaren Raumnamen. Alles entsteht **dynamisch aus vorhandenen Polygonen und gespeicherten Raumzuständen**. Türen/Fenster, Drehung, Reinigungsaktionen, lange Berührung, Daten-Schlüssel und Bearbeitungsmodus bleiben erhalten; keine Möbelpositionen werden als reale Wohnungseinrichtung behauptet. Ein Raum kann individuell geformt oder rotiert sein; die Möbelskizzen werden in dessen Form ausgeschnitten. Neue CSS-/JS-Dateien sind auch offline im Service Worker und in `docs/` eingebunden. Android-Geräteprüfung bleibt separat nötig.

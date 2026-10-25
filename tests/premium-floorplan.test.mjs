@@ -7,7 +7,7 @@ test('premium apartment is wired into root and docs, including offline cache',()
  const html=read('index.html'),sw=read('sw.js');
  for(const asset of ['floorplan-premium.css','floorplan-premium.js']){assert(html.includes('./'+asset));assert(sw.includes("APP_PATH+'"+asset+"'"));}
  assert(html.indexOf('editor.js')<html.indexOf('floorplan-premium.js'),'renderer must execute after room editor');
- assert(sw.includes('mein-putzmanager-v1.4.0.11'));
+ assert(sw.includes('mein-putzmanager-v1.4.0.12'));
 });
 test('2D preview decorates real polygon groups rather than a static background',()=>{
  const js=read('floorplan-premium.js');

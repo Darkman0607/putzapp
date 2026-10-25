@@ -1,0 +1,48 @@
+/* Referenznahe Wohnungszentrale V1.4.0.12 – andere Menüs bleiben unverändert. */
+body:has(#view-home.active) .app-header{display:none}
+body:has(#view-home.active) .app-shell{padding-top:max(12px,env(safe-area-inset-top))}
+#view-home .overview-strip{min-height:94px;padding:13px;gap:10px;margin-bottom:12px;border-radius:21px;background:linear-gradient(110deg,#0c3b3f 0%,#0a272d 75%);border:1px solid #33ac9e56;box-shadow:inset 0 1px #b7fff71b,0 6px 20px #0004}
+#view-home .date-icon{width:57px;height:63px;border-radius:17px;flex-shrink:0;color:#42efce;background:linear-gradient(145deg,#008e8180,#064b4f55);border:1px solid #17ccbb6c;box-shadow:inset 0 1px #eaffff24,0 7px 14px #0006}
+#view-home .date-icon svg{width:30px;height:30px}
+#view-home .date-copy{min-width:65px;gap:6px}
+#view-home .date-copy strong{font-size:20px;font-weight:800;color:#f5fffc}
+#view-home .date-copy small{font-size:12px;color:#b4d0d3}
+#view-home .overview-count{padding-left:12px;min-width:69px;align-items:center}
+#view-home .overview-count strong{font-size:29px;line-height:1.15;color:#f5ba5c}
+#view-home .overview-count small{font-size:10px;line-height:1.3;text-align:center}
+#view-home .primary-button.compact{min-width:93px;min-height:60px;padding:7px 9px;border-radius:16px;font-size:12px;line-height:1.3;display:flex;gap:8px;justify-content:center;align-items:center;box-shadow:inset 0 1px 0 #ffffff70,0 8px 16px #0005}
+#view-home .primary-button.compact svg{width:19px;height:19px}
+#view-home #install-panel[hidden]{display:none!important}
+#view-home .floorplan{padding:17px 14px 16px;min-height:0}
+#view-home .floorplan .section-overline{margin-bottom:7px}
+#view-home .dashboard-grid{gap:9px;margin-top:10px}
+#view-home .metric-card{border-radius:18px;min-height:79px;background:linear-gradient(125deg,#0a3c3d,#061e28);border-color:#23978463}
+#view-home .metric-icon{width:42px;height:44px;border-radius:13px}
+#view-home .metric-card strong{font-size:18px}
+#view-home .metric-card small{font-size:11px;color:#9dbcbf}
+#view-home .metric-card span[id=home-overall-caption]{font-size:10px}
+#view-home .metric-card #home-overall-caption{display:block;background:#1e5557;color:#bce9d5;border-radius:20px;height:6px;overflow:hidden;position:relative;font-size:0;max-width:140px;margin-top:7px}
+#view-home .metric-card #home-overall-caption::before{content:"";display:block;height:100%;background:#f3c472;width:var(--home-score,0%);border-radius:20px}
+#view-home .section-footer{opacity:.76}
+body:has(#view-home.active) .bottom-nav{border-radius:23px;height:77px;box-shadow:0 7px 24px #000b}
+@media(max-width:365px){#view-home .overview-strip{padding:9px;gap:6px}#view-home .date-icon{width:43px;height:53px}#view-home .date-copy strong{font-size:16px}#view-home .date-copy small{font-size:10px}#view-home .overview-count{min-width:48px;padding-left:6px}#view-home .overview-count strong{font-size:23px}#view-home .primary-button.compact{min-width:78px;min-height:54px;padding:6px;font-size:10px;gap:4px}#view-home .floorplan{padding:12px 10px}}
+/* Kleiner Mobilbildschirm: Referenzaufbau ohne Zeilenbruch in der Tageskarte. */
+#view-home .date-icon{width:49px;height:57px}
+#view-home .overview-strip{gap:7px;padding:10px}
+#view-home .date-copy{min-width:0;flex:1 1 auto;gap:4px}
+#view-home .date-copy strong{font-size:17px}
+#view-home .date-copy small{font-size:10px;white-space:nowrap;letter-spacing:-.24px}
+#view-home .overview-count{min-width:50px;padding-left:7px;flex-shrink:0}
+#view-home .overview-count strong{font-size:25px}
+#view-home .primary-button.compact{min-width:91px;min-height:56px;padding:7px;flex-shrink:0}
+#view-home:has(#home-floorplan-preview:not([hidden])) #install-panel{display:none}
+#view-home .metric-card{padding:9px;gap:7px;min-width:0}
+#view-home .metric-card>div{min-width:0}
+#view-home .metric-card strong{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+#view-home .metric-card small{font-size:10px;line-height:1.25}
+#view-home .metric-card .metric-icon{width:36px;height:40px;flex-shrink:0}
+#view-home .metric-card .muted-chevron{width:13px;flex-shrink:0}
+#view-home .metric-card #home-overall-caption{margin-top:6px}
+#view-home .floorplan{margin-top:2px}
+#home-floorplan-preview.home-floorplan-preview{margin-top:-28px;gap:8px}
+@media(max-width:360px){#view-home .overview-strip{gap:5px}#view-home .date-icon{width:38px;height:49px}#view-home .primary-button.compact{min-width:76px;font-size:10px}#view-home .date-copy small{font-size:9px}#view-home .overview-count{min-width:45px}#view-home .metric-card .metric-icon{width:31px}#view-home .metric-card strong{font-size:12px}}

@@ -1,0 +1,15 @@
+Mein Putzmanager V1.4.0.12 – Referenzdesign / Wohnungsübersicht (25.10.2026)
+
+Basis: vom Nutzer hochgeladenes putzapp-Root ZIP V1.4.0.11.
+Neue Module: home-reference.css und Materialbilder floor-wood/tile/stone/slate.png.
+Geändert: floorplan-premium.js/.css, index.html, app.js, editor.js, manifest.webmanifest, sw.js, README.md; root/docs synchronisiert.
+
+Referenz-Bild: luxuriöse Wohnung in 2D-Draufsicht. Auf Basis echter Raum-Polygone entsteht eine eigene stilisierte Illustration, NICHT die identische hochauflösende Grafik. Möbel sind Beispiele, vorhandene Benutzerdaten bleiben erhalten.
+Daten: localStorage-Key mein-putzmanager-beta-v1 identisch; keine Migration und keine Datenlöschung.
+Funktion: Raumklick, Longpress-Schnellmenü, Editor inklusive 360° Rotation, Tür-/Fensterdaten und Reinigungsfunktionen unverändert erreichbar.
+
+Lokal: 105/105 node --test Tests bestanden; node --check premium/editor bestanden.
+Playwright: 320, 390, 430 px: sieben unterschiedliche Test-Räume mit ihren geometrischen Badges, keine Seitenfehler, kein horizontaler Überlauf; Raumdetail-Overlay und Editor interaktiv erreichbar.
+ZIP: CRC nach Erstellung prüfen.
+Offen: echtes Android PWA-Update, Offline-Test, visuelle Nutzer-Abnahme und Backup/Restore auf dem realen Gerät.
+GitHub: Veröffentlichung erst dann behaupten, wenn ein GitHub-Commit und CI-Nachweis vorliegen.
