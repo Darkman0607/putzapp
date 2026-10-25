@@ -19,5 +19,5 @@ test('reference design: version and home CSS installed into both publishing dire
  for(const file of ['home-reference.css','index.html','manifest.webmanifest','sw.js'])assert(f(file).equals(f('docs/'+file)),file);
  const html=f('index.html').toString(),sw=f('sw.js').toString();
  assert(html.includes('home-reference.css')&&sw.includes("APP_PATH+'home-reference.css'"));
- assert(sw.includes('mein-putzmanager-v1.4.0.13'));
+ assert(sw.includes('mein-putzmanager-v1.4.0.14'));
 });

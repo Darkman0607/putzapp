@@ -1,4 +1,4 @@
-## V1.4.0.13 – Wohnungszentrale nach Referenzbild (25.10.2026)
+## V1.4.0.14 – Wohnungszentrale nach Referenzbild (25.10.2026)
 
 Die Startseite wurde referenznah im dunklen Smaragd-Design überarbeitet: prominente Tageskarte, Haus-Karte, kompakte Kennzahlen und Grundriss in materialbetonter Draufsicht. Die 2D-Geometrie bleibt echt und editierbar; Möblierung, Holz/Fliesen, Fensterrahmen, Türschwenkbögen und Status-Badges werden aus den gespeicherten Polygonen dynamisch erzeugt. Möbel sind **Beispielillustrationen**, keine echte Einrichtung und keine fotografische 1:1-Darstellung. Raumtippen, Lange-Drücken, 360°-Drehung und bestehende Reinigungs-/Backup-Logik bleiben erhalten.
 

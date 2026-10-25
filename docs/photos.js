@@ -58,6 +58,11 @@ async function render(){const box=root.document?.querySelector('#photo-gallery')
   function appendPage(){const end=Math.min(shown+size,records.length);
    for(;shown<end;shown++){const record=records[shown],card=mk('article','photo-entry');card.append(mk('strong','',record.roomName),mk('small','',new Date(record.at).toLocaleString('de-AT')));
     const grid=mk('div','photo-grid');for(const kind of ['before','after'])if(record[kind]){const figure=mk('figure',''),img=mk('img','');img.src=record[kind];img.alt=(kind==='before'?'Vorher':'Nachher')+' · '+record.roomName;img.loading='lazy';figure.append(img,mk('figcaption','',kind==='before'?'Vorher':'Nachher'));grid.append(figure);}card.append(grid);
+    if(record.before&&record.after){
+     const compare=mk('button','photo-compare-open-btn','🔎 Vorher / Nachher vergleichen');compare.type='button';
+     compare.setAttribute('aria-label','Fotos für '+record.roomName+' vergleichen');
+     compare.addEventListener('click',()=>root.PutzmanagerPhotoCompare?.open(record));card.append(compare);
+    }
     const del=mk('button','room-btn','Fotos dieser Reinigung löschen');del.type='button';del.addEventListener('click',()=>{if(root.confirm('Fotos dieser Reinigung wirklich endgültig löschen?'))remove(record.id).catch(err=>root.alert(err.message));});card.append(del);box.append(card);
    }
    if(shown<records.length){const button=mk('button','outline-button',`Ältere Fotos laden (${records.length-shown} weitere)`);button.type='button';button.addEventListener('click',()=>{button.remove();appendPage();});box.append(button);}

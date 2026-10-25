@@ -1,0 +1,6 @@
+Mein Putzmanager V1.4.0.14 – Fotovergleich – 26.10.2026
+Funktionen: Vorher/Nachher nebeneinander oder mit Schieberegler, Zoom 100–300%, Finger-Verschieben, Zurücksetzen.
+Vorhandene Vorher-/Nachher-Fotos bleiben in IndexedDB, keine neue Datenschemaänderung, Backups bleiben kompatibel.
+Ohne KI-Auswertung, ohne automatische Sauberkeitsbewertung.
+Tests: 114/114 Node-Tests; Chromium-Viewer auf 320/390/430px, kein Javascriptfehler.
+Android-Gerätetest offen. GitHub branch Root, Pages/Action-Status separat nach Commit prüfen.
