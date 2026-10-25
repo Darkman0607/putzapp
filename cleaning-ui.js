@@ -98,15 +98,22 @@
   }content.append(wrapper);
  }
  function addTimer(content){stopwatch?.dispose();stopwatch=window.PutzmanagerRoomTimer.create(selectedFloor,selectedRoom);content.append(stopwatch.element);}
- function finishCleaning(data){
-  const inv=window.PutzmanagerInventory,before=inv.get(),id=uid(),photoBefore=window.PutzmanagerPhotos?.snapshot?.() ?? null;
+ async function finishCleaning(data){
+  const inv=window.PutzmanagerInventory,before=inv.get(),id=uid();let photoSaved=false;
   try{
-   if((stagedPhotos.before||stagedPhotos.after)&&window.PutzmanagerPhotos)window.PutzmanagerPhotos.put({id,at:new Date().toISOString(),roomName:selectedData().room.name,...stagedPhotos});
+   // Photo storage is durable IndexedDB; await it, never silently lose a photo.
+   if((stagedPhotos.before||stagedPhotos.after)&&window.PutzmanagerPhotos){
+    await window.PutzmanagerPhotos.put({id,at:new Date().toISOString(),roomName:selectedData().room.name,...stagedPhotos});photoSaved=true;
+   }
    const added=inv.commit(id,selectedRoom,materials.assignmentsForSave());
    const entry=APP.recordCleaning({...data,id,at:new Date().toISOString(),floorId:selectedFloor,roomId:selectedRoom,durationSeconds:stopwatch?.seconds()||0});
-   if(!entry){inv.restore(before);throw Error('Keine gültige Reinigung ausgewählt.');}
+   if(!entry)throw Error('Keine gültige Reinigung ausgewählt.');
    stopwatch?.complete();stopwatch=null;close();refresh();return {entry,added};
-  }catch(err){inv.restore(before);window.PutzmanagerPhotos?.restore?.(photoBefore);alert('Reinigung NICHT abgeschlossen: '+err.message+' Bitte Material/Buchungsart oder verfügbaren Bestand im Lager prüfen.');return null;}
+  }catch(err){
+   inv.restore(before);
+   if(photoSaved)try{await window.PutzmanagerPhotos.remove(id);}catch(e){console.error('Foto-Rücksetzung fehlgeschlagen',e);}
+   alert('Reinigung NICHT abgeschlossen: '+err.message+' Bitte verfügbaren Speicher und Materialbestand prüfen.');return null;
+  }
  }
  function renderQuick(){
   stopwatch?.dispose();stopwatch=null;const {room}=selectedData(),content=$('#cleaning-content'),clean=CLEAN.sanitize(room.cleanliness);content.replaceChildren();

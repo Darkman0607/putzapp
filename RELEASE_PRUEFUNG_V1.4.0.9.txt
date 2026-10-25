@@ -1,0 +1,9 @@
+Mein Putzmanager V1.4.0.9 – Foto-/Versionshotfix vom 25. Oktober 2026
+
+BEHOBEN: Version 1.4.0.7 in HTML Title, Startseiten-Label und Profil wurde durch 1.4.0.9 ersetzt.
+BEHOBEN: MAX_ENTRIES=18 in photos.js und Backup-Validierung.
+NEU: Datenhaltung IndexedDB, paginierte Anzeige, transaktionale Migration bestehender Fotos, JSON/Drive-Backup-Schema 2 mit Fotodaten, Rückwärtskompatibilität Schema 1.
+NEU: Service-Worker-Cache 1.4.0.9, Online-first statische Ressourcen, Offline-Fallback.
+TEST: 96/96 Node-Tests, enthält alte und neue Backup-Versionen mit über 18 Bild-Einträgen.
+OFFEN: Android-Geräteprüfung, tatsächliche Drive-Wiederherstellung, physische Offline-PWA-Praxis.
+HINWEIS: Google Drive benötigt weiterhin manuelle Sicherung. Keine feste Fotoanzahl, aber lokale Gerätequote und 256 MB Einzelbackup-Schutzlimit.

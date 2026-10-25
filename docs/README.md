@@ -149,13 +149,13 @@ Im Wohnungs-Dashboard Räume per kurzem Tippen öffnen und per langem Druck Schn
 - **Verifiziert:** 90/90 Node-Tests, Chromium-Mobilbrowser mit simuliertem Google-Login und simuliertem Drive-Upload/Auflisten sowie bestehende Lager-, Reinigungs- und Layouttests. **Nicht verifiziert:** echte Google-OAuth-Anmeldung, tatsächlicher Upload in das persönliche Google-Konto, echter Android-Gerätewechsel und Restore mit sehr vielen Fotos. Diese Punkte bleiben im Master-Word offen.
 
 
-## Hotfix V1.4.0.8 (25.10.2026)
+## Foto-/Versionshotfix V1.4.0.9 (25.10.2026)
 
-- Einheitlicher Reinigungsstart: großer Knopf führt zur Raumwahl und bestehendem detaillierten Ablauf.
-- Korrektur der Aufgaben-abhängigen Sauberkeitsberechnung (Teilaufgaben setzen Bereich nicht auf 100 %).
-- Tagesputzplan mit überfälligen Aufgaben, Sauberkeits-Priorität, 15/30/60-Minuten-Budget und Verschieben bis morgen.
-- Vorher-/Nachher-Fotos je abgeschlossener Reinigung (max. 18 Sessions, 1 Paar je Session), lokale Galerie, Integration in neue Google-Drive-JSON-Sicherungen.
-- Sechs offline Reinigungsanleitungen; Erinnerungen innerhalb der App und optionale Benachrichtigung bei geöffneter PWA (keine Push-Hintergrundgarantie).
-- Die bestehende Google-Drive-Anmeldung/-Upload-Funktion bleibt unverändert. Nutzerbestätigung vom 25.10.2026: Speichern funktioniert am Android-Handy. Restore nicht bestätigt.
-- Keine 3D-Komponenten, keine Umstellung des localStorage-Hauptschlüssels, bestehende 2D-Raumdaten migrieren ohne Reset.
-- Tests: 93/93 Node-Tests und mobile Chromium-Simulation erfolgreich; Android-Praxistest offen.
+- Konsistente Beta-Versionsanzeige 1.4.0.9 in Titel, Startseite, Profil, Manifest und Offline-Cache (1.4.0.7 war teilweise versehentlich stehen geblieben).
+- Fotogalerie ohne Begrenzung auf 18 Reinigungseinträge; IndexedDB als Speicher statt localStorage, ältere Bilder werden seitenweise geladen.
+- Bestehende V1.4.0.8 Reinigungsfotos bleiben erhalten und werden beim Erststart transaktional übernommen.
+- Manuelle Google-Drive- und JSON-Sicherungen enthalten ab V1.4.0.9 die gesamte lokale Fotogalerie (Backup-Schema 2; Schema 1 bleibt lesbar).
+- Geräte- und Drive-Speicher sind nicht unbegrenzt. Schutzlimit für einzelne Backup-Exports: 256 MB.
+- Keine automatische Foto-Löschung, keine Drive-Live-Synchronisierung; Nutzer sichert manuell täglich.
+- PWA-Dateien werden bei bestehender Internetverbindung online-first geladen, offline weiter aus dem Cache.
+- Tests: 96/96 Node-Tests bestanden. Physischer Android-Test/Drive-Restore nicht bestätigt.

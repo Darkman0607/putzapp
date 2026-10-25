@@ -58,7 +58,11 @@ async function findFolder(create=false){
  if(!made.id)throw Error('Drive-Ordner konnte nicht erstellt werden.');folderId=made.id;return folderId;
 }
 function filename(){const iso=new Date().toISOString().replace(/[:.]/g,'-');return 'Mein_Putzmanager_'+iso+'.json';}
-async function makeFile(){const payload=await M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.6');const file=new File([JSON.stringify(payload)],filename(),{type:'application/json'});if(file.size>MAX)throw Error('Backup größer als 30 MB.');return file;}
+async function makePayload(){
+ const photos=await window.PutzmanagerPhotos.snapshot();
+ return M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.9',new Date().toISOString(),photos);
+}
+async function makeFile(){const payload=await makePayload();const file=new File([JSON.stringify(payload)],filename(),{type:'application/json'});if(file.size>MAX)throw Error('Sicherung überschreitet 256 MB.');return file;}
 function downloadFile(file){const u=URL.createObjectURL(file),a=document.createElement('a');a.href=u;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);}
 async function localExport(){if(busy)return;setBusy(true);try{const file=await makeFile();downloadFile(file);status('Lokale Sicherung erstellt: '+file.name+'. Bitte die Datei sicher aufbewahren.');}catch(e){showError(e);}finally{setBusy(false);}}
 async function uploadResumable(file,meta){
@@ -72,7 +76,7 @@ async function upload(){if(busy)return;setBusy(true);try{
  status('Lade '+(file.size/1024/1024).toFixed(2)+' MB auf Google Drive …');
  const result=await uploadResumable(file,{name:file.name,mimeType:'application/json',parents:[folder],description:'Mein Putzmanager vollständige manuelle App-Sicherung'});
  if(!result.id)throw Error('Keine Google-Bestätigung für den Upload erhalten.');
- status('✓ Google Drive hat die Sicherung bestätigt: '+result.name);await refreshFiles(true);
+ status('✓ Google Drive hat die vollständige Sicherung inklusive Reinigungsfotos bestätigt: '+result.name+'. Bitte abends das Datum in der Drive-Liste prüfen.');await refreshFiles(true);
  }catch(e){showError(e);}finally{setBusy(false);}}
 async function listFiles(){const parent=await findFolder(false);if(!parent)return [];
  let next='',files=[];do{const q=`'${escapeDriveQuery(parent)}' in parents and trashed = false`;
@@ -107,13 +111,21 @@ async function readRecovery(){return new Promise((resolve,reject)=>{
  req.onerror=()=>reject(Error('Wiederherstellungspunkt nicht verfügbar.'));
  req.onsuccess=()=>{const db=req.result,tx=db.transaction('checkpoints','readonly'),get=tx.objectStore('checkpoints').get('before-restore');get.onsuccess=()=>{db.close();resolve(get.result?.payload||null);};get.onerror=()=>{db.close();reject(Error('Wiederherstellungspunkt nicht lesbar.'));};};
  });}
-function summary(pack){const x=M.counts(pack.data);return `Sicherung vom ${new Date(pack.exportedAt).toLocaleString('de-AT')}\nVersion: ${pack.appVersion}\n${x.floors} Etagen, ${x.rooms} Räume, ${x.inventory} Lagerartikel, ${x.photos} Artikelfotos, ${x.sessions} Sitzungen, ${x.roomHistory} Raum-Reinigungseinträge.`;}
+function summary(pack){const x=M.counts(pack.data,pack.photos);return `Sicherung vom ${new Date(pack.exportedAt).toLocaleString('de-AT')}\nVersion: ${pack.appVersion}\n${x.floors} Etagen, ${x.rooms} Räume, ${x.inventory} Lagerartikel, ${x.photos} Artikelfotos, ${x.cleaningPhotos} Reinigungen mit Fotos, ${x.sessions} Sitzungen, ${x.roomHistory} Raum-Reinigungseinträge.`;}
 async function confirmRestore(pack){await M.validate(pack);
  const current=M.snapshot(localStorage);const summaryCurrent=M.counts(current);
  if(!window.confirm(summary(pack)+'\n\nAuf diesem Gerät: '+summaryCurrent.rooms+' Räume und '+summaryCurrent.inventory+' Lagerartikel.\n\nALLE aktuellen Putzmanager-Daten werden ersetzt. Zuerst wird eine lokale Sicherheitskopie erzeugt.\n\nWirklich wiederherstellen?')){status('Wiederherstellung abgebrochen.');return false;}
- const prior=await M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.6');
+ const prior=await makePayload();
  await storeRecovery(prior);
- M.restore(localStorage,pack);status('✓ Sicherung wiederhergestellt. App wird neu geladen.');location.reload();return true;
+ try{
+  // Legacy schema 1 keeps photos in the old localStorage key; migration on reload.
+  await window.PutzmanagerPhotos.replace(pack.schema===2?pack.photos:[]);
+  M.restore(localStorage,pack);
+ }catch(err){
+  try{M.restore(localStorage,prior);await window.PutzmanagerPhotos.replace(prior.photos);}catch(rollback){throw Error('Wiederherstellung fehlgeschlagen; automatische Rücksetzung unvollständig: '+rollback.message);}
+  throw Error('Wiederherstellung abgebrochen; vorherige Daten wiederhergestellt: '+err.message);
+ }
+ status('✓ Sicherung wiederhergestellt. App wird neu geladen.');location.reload();return true;
 }
 async function restoreFromDrive(file){if(busy)return;setBusy(true);try{
  if(!isLive())throw Error('Google-Anmeldung abgelaufen.');if(Number(file.size)>MAX)throw Error('Sicherung ist zu groß.');
@@ -126,7 +138,10 @@ async function localImport(event){const file=event.target.files?.[0];event.targe
  try{if(file.size>MAX)throw Error('Datei ist zu groß.');const text=await file.text();await confirmRestore(JSON.parse(text));}catch(e){showError(e);}finally{setBusy(false);}}
 async function recover(){if(busy)return;setBusy(true);try{const pack=await readRecovery();if(!pack)throw Error('Es gibt noch keine Sicherheitskopie vor einer Wiederherstellung.');
  await M.validate(pack);if(!confirm('Vorherige lokale Daten wiederherstellen? Der aktuelle Datenstand wird zuvor wiederum gesichert.'))return;
- const current=await M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.6');await storeRecovery(current);M.restore(localStorage,pack);status('✓ Frühere Daten geladen. App wird neu gestartet.');location.reload();
+ const current=await makePayload();await storeRecovery(current);
+ try{await window.PutzmanagerPhotos.replace(pack.schema===2?pack.photos:[]);M.restore(localStorage,pack);}
+ catch(err){try{M.restore(localStorage,current);await window.PutzmanagerPhotos.replace(current.photos);}catch(rollback){throw Error('Rücksetzung fehlgeschlagen: '+rollback.message);}throw err;}
+ status('✓ Frühere Daten geladen. App wird neu gestartet.');location.reload();
  }catch(e){showError(e);}finally{setBusy(false);}}
 $('#backup-client-save').addEventListener('click',()=>{try{saveClient();}catch(e){showError(e);}});
 $('#backup-connect').addEventListener('click',connect);

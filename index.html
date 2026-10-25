@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.7 mit optionaler Google-Drive-Sicherung.">
+  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.9 mit optionaler Google-Drive-Sicherung.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="./cleaning-materials.css">
   <link rel="stylesheet" href="./room-timer.css">
   <link rel="stylesheet" href="./backup-drive.css">
-  <title>Mein Putzmanager · Beta 1.4.0.7</title>
+  <title>Mein Putzmanager · Beta 1.4.0.9</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -58,7 +58,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.7</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.9</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -88,7 +88,7 @@
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
       <div class="surface menu-card"><h2>Weitere Bereiche</h2><button type="button" id="inventory-open-more" class="inventory-entry"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><span><strong>Putzlager</strong><small>Produkte, Geräte, Wäsche und Verbrauch · V1.4.0.5</small></span><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><button type="button" id="photos-open" class="inventory-entry"><span class="row-icon">📸</span><span><strong>Vorher-/Nachher-Fotos</strong><small>Lokale Fotogalerie · auch im Drive-Backup</small></span></button><button type="button" id="knowledge-open" class="inventory-entry"><span class="row-icon">📖</span><span><strong>Reinigungsanleitungen</strong><small>Schritt-für-Schritt · offline</small></span></button><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <section id="photo-panel" class="surface activities" aria-labelledby="photos-heading"><div class="card-heading"><h2 id="photos-heading">📸 Reinigungsfotos</h2><span id="photo-gallery-count" class="small-count"></span></div><p class="room-note">Vorher-/Nachher-Fotos werden beim Abschluss einer Raumreinigung gespeichert, lokal komprimiert und in neuen JSON-/Drive-Backups mitgesichert. Maximal 18 Reinigungen mit Fotos.</p><div id="photo-gallery" class="photo-gallery"></div></section><section id="knowledge-panel" class="surface activities"><h2>📖 Reinigungswissen</h2><p class="room-note">Orientierungshilfen. Dosierung, Einwirkzeit und Eignung immer am jeweiligen Produktetikett prüfen.</p><div id="knowledge-guides"></div></section>
+      <section id="photo-panel" class="surface activities" aria-labelledby="photos-heading"><div class="card-heading"><h2 id="photos-heading">📸 Reinigungsfotos</h2><span id="photo-gallery-count" class="small-count"></span></div><p class="room-note">Vorher-/Nachher-Fotos werden beim Abschluss einer Raumreinigung gespeichert, lokal komprimiert und in neuen JSON-/Drive-Backups mitgesichert. Keine feste Fotoanzahl: Fotos werden lokal in IndexedDB gespeichert. Neue tägliche Google-Drive-Sicherungen enthalten die Reinigungsfotos; bitte Upload-Bestätigung prüfen.</p><div id="photo-gallery" class="photo-gallery"></div></section><section id="knowledge-panel" class="surface activities"><h2>📖 Reinigungswissen</h2><p class="room-note">Orientierungshilfen. Dosierung, Einwirkzeit und Eignung immer am jeweiligen Produktetikett prüfen.</p><div id="knowledge-guides"></div></section>
       <section id="backup-panel" class="surface backup-panel" aria-labelledby="backup-heading">
         <div class="card-heading"><h2 id="backup-heading">☁️ Google Drive · Datensicherung</h2></div>
         <p>Alle aktuellen Putzmanager-Daten sichern: Wohnung/Grundrisse, Aufgaben, Reinigungen, Lager, Verbrauch, Fotos und Stoppuhren. Keine Live-Synchronisation. Google Drive nur nach deiner Anmeldung.</p>
@@ -105,7 +105,7 @@
         <p id="backup-status" class="backup-status" role="status" aria-live="polite">Bereit. Drive-Anmeldung nur mit Internet; die App selbst bleibt offline nutzbar.</p>
         <small class="backup-caution">⚠ Wiederherstellen ersetzt die Putzmanager-Daten auf diesem Gerät, nicht die Daten anderer Apps. Zuvor wird automatisch ein lokaler Wiederherstellungspunkt angelegt. Für einen Gerätewechsel auf beiden Geräten mit demselben Google-Konto anmelden. Passwörter oder Google-Tokens werden nicht in die Sicherung geschrieben.</small>
       </section>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.7 · Google Drive Sicherung (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.9 · Google Drive Sicherung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><div class="inventory-toolbar-actions"><button id="inventory-manage-categories" class="inventory-add" type="button" aria-expanded="false" aria-controls="inventory-category-manager">⚙ Kategorien</button><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
