@@ -12,3 +12,5 @@ Offen: echte Android-Installation, Offline-Praxistest, Drive-Restore, Android-Hi
 Google Drive Upload am Nutzerhandy (unverändert): vom Nutzer am 25.10.2026 als funktionierend bestätigt.
 Sicherung: auch neue Foto- und Plan-Schlüssel in JSON-Backup. Alte Sicherungen bleiben kompatibel.
 Hinweis: Browserbenachrichtigungen nur beim Öffnen der App; keine automatische Hintergrundzustellung.
+
+GitHub-Quellcode Commit: 751d50fa4f269628252284b9a646588252800d44; Beta CI 40229043874: success; Pages 40229043371: success.
