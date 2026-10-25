@@ -1,0 +1,25 @@
+Mein Putzmanager – V1.4.0.7 – ausschließlich 2D-Grundriss
+Datum: 25.10.2026
+Ausgangsversion: 1.4.0.6
+Code-Commit: fcacdc4f594719e4d6ac26fad939857111fd8bb2
+GitHub Actions: 40223704774 SUCCESS
+GitHub Pages: 40223704612 SUCCESS
+
+Funktionsumfang:
+- 3D-Reinigungsansicht und Umschalter entfernt, 2D-Grundriss bleibt erhalten.
+- view3d-model.js, view3d-ui.js und view3d.css (Root und docs) sowie veraltete 3D-Tests entfernt.
+- Service Worker Cache-Key von 1.4.0.6 auf 1.4.0.7 aktualisiert und 3D-Dateien nicht mehr gecacht.
+- Unveränderte lokale Datenspeicherkennungen; kein Löschen oder Migration.
+- Vorhandener interaktiver 2D-Raumplan, Sauberkeitswerte, Editor, Etagen, Lager, Wäsche, Zeitmessung und manuelles Drive-Backup erhalten.
+
+Prüfung:
+- 85/85 Node-Tests bestanden.
+- Mobile Chromium: ausschließlich 2D, 2 Räume, Raumdetails, Wertkorrektur, Editor, Geometrie, Speicherung und Neustart bestanden.
+- Mobile Chromium: U03, U04, U05, U16, Drehen im 2D-Editor, Kategorien, Materialauswahl, Lager/Stoppuhr und simuliertes Google Drive bestanden.
+- Mobile Breiten 320, 360, 390, 430 Pixel bestanden.
+- GitHub Root- und /docs-Dateien abgestimmt; ZIP-Integrität geprüft.
+
+Nicht abschließend geprüft:
+- Tatsächliches Android-Gerät mit bestehender PWA und Cache-Übergang.
+- Tatsächliche Google-Anmeldung, Upload und Restore von größeren Fotobeständen.
+- Alte 3D-Versionen/Protokolle im Git-History-Kontext werden nicht manipuliert.
