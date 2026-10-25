@@ -1,72 +1,39 @@
-/* U16 catalog UI. No consumption is booked when selecting a product. */
+/* Lageransicht: editierbare Artikel inklusive Fotos und bestätigter Nutzung pro Sitzung. */
 (()=>{'use strict';
-const M=window.PutzmanagerInventoryModel;
-const KEY='mein-putzmanager-inventory-v1';
-const $=s=>document.querySelector(s);
-const list=$('#inventory-items');if(!M||!list)return;
-let state;let persistent=true;let source='more';let selected=new Set();
-const emptyState=()=>M.sanitize({});
-try{state=M.sanitize(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{state=emptyState();persistent=false;}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));persistent=true;$('#inventory-storage-notice').hidden=true;}catch{persistent=false;$('#inventory-storage-notice').hidden=false;}}
-function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
-function refresh(){
- const stats=M.summary(state),items=M.filter(state);
- $('#inventory-count').textContent=`${items.length} von ${stats.total} Artikeln`;
- $('#inventory-warning-count').textContent=`${stats.low+stats.missing} Vorratswarnungen`;
- $('#inventory-warning-count').hidden=stats.low+stats.missing===0;
- $('#inventory-view-list').setAttribute('aria-pressed',String(state.view==='list'));
- $('#inventory-view-grid').setAttribute('aria-pressed',String(state.view==='grid'));
- list.className=`inventory-items inventory-${state.view}`;list.replaceChildren();
- const locations=[...new Set(state.items.map(x=>x.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de'));
- const locationSelect=$('#inventory-location');locationSelect.replaceChildren(new Option('Alle Lagerorte',''));
- for(const loc of locations)locationSelect.add(new Option(loc,loc));locationSelect.value=state.location;
- $('#inventory-search').value=state.search;$('#inventory-category').value=state.category;$('#inventory-status').value=state.status;$('#inventory-sort').value=state.sort;
- $('#inventory-selection').hidden=source!=='clean';
- if(!items.length){const msg=node('div','inventory-empty');msg.append(node('strong','',state.items.length?'Keine passenden Artikel.':'Dein Putzlager ist noch leer.'),node('p','',state.items.length?'Ändere Suche oder Filter, um weitere Artikel zu sehen.':'Füge dein erstes Putzmittel, Zubehör oder Reinigungsgerät hinzu.'));list.append(msg);}
- for(const item of items){
-  const card=node('article','inventory-card');card.dataset.itemId=item.id;
-  const top=node('div','inventory-card-top');const emblem=node('span','inventory-emblem',item.category==='mittel'?'🧴':item.category==='zubehoer'?'🧽':'🧹');
-  const main=node('div','inventory-card-main');main.append(node('strong','',item.name),node('small','',`${M.categories[item.category]} · ${item.location||'Lagerort fehlt'}`));
-  top.append(emblem,main);
-  const fav=node('button','inventory-fav',item.favorite?'★':'☆');fav.type='button';fav.dataset.action='favorite';fav.dataset.id=item.id;fav.setAttribute('aria-label',`${item.favorite?'Favorit entfernen':'Als Favorit merken'}: ${item.name}`);fav.setAttribute('aria-pressed',String(item.favorite));top.append(fav);card.append(top);
-  const foot=node('div','inventory-card-bottom');foot.append(node('span','inventory-quantity',`${new Intl.NumberFormat('de-AT').format(item.quantity)} ${item.unit}`));
-  const stat=M.status(item);if(stat!=='ok'){const tag=node('span',`inventory-tag ${stat}`,stat==='missing'?'Fehlt':'Fast leer');foot.append(tag);}
-  if(M.incomplete(item)){foot.append(node('span','inventory-tag incomplete','Unvollständig'));}
-  card.append(foot);
-  if(source==='clean'){
-    const button=node('button','inventory-choose',selected.has(item.id)?'✓ Vorgemerkt':'Für Reinigung vormerken');button.type='button';button.dataset.action='select';button.dataset.id=item.id;button.setAttribute('aria-pressed',String(selected.has(item.id)));card.append(button);
-  }
-  list.append(card);
- }
- const names=state.items.filter(x=>selected.has(x.id)).map(x=>x.name);
- $('#inventory-selection-count').textContent=`${names.length} Produkt${names.length===1?'':'e'} vorgemerkt`;
- $('#clean-supplies-display').textContent=names.length?`Für nächste Reinigung vorgemerkt: ${names.join(', ')}. Noch keine Verbrauchsbuchung.`:'Noch keine Putzmittel für die nächste Reinigung vorgemerkt.';
+const M=window.PutzmanagerInventoryModel,KEY='mein-putzmanager-inventory-v1',$=s=>document.querySelector(s),list=$('#inventory-items');if(!M||!list)return;
+let state;let source='more',selected=new Set(),editing=null,photos=[];
+try{state=M.sanitize(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{state=M.sanitize({});}
+function save(next){try{localStorage.setItem(KEY,JSON.stringify(next));state=next;$('#inventory-storage-notice').hidden=true;return true;}catch{ $('#inventory-storage-notice').hidden=false;return false;}}
+function n(tag,cls,text){const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
+function badgeFor(item){const wrap=n('span','inventory-emblem '+(item.icon||''));if(item.photos?.[0]){const img=n('img','inventory-thumb');img.src=item.photos[0];img.alt='Foto von '+item.name;wrap.append(img);}else{wrap.textContent=M.icons[item.icon]||'📦';wrap.style.color=M.iconColors[item.icon]||'';}return wrap;}
+function refresh(){const stats=M.summary(state),items=M.filter(state);$('#inventory-count').textContent=`${items.length} von ${stats.total} Artikeln`;$('#inventory-warning-count').textContent=`${stats.low+stats.missing} Vorratswarnungen`;$('#inventory-warning-count').hidden=stats.low+stats.missing===0;
+for(const mode of ['list','grid'])$('#inventory-view-'+mode).setAttribute('aria-pressed',String(state.view===mode));list.className=`inventory-items inventory-${state.view}`;list.replaceChildren();
+const locations=[...new Set(state.items.map(x=>x.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de')),loc=$('#inventory-location');loc.replaceChildren(new Option('Alle Lagerorte',''));for(const x of locations)loc.add(new Option(x,x));loc.value=state.location;
+for(const k of ['search','category','status','sort'])$('#inventory-'+k).value=state[k];$('#inventory-selection').hidden=source!=='clean';
+if(!items.length)list.append(n('div','inventory-empty',state.items.length?'Keine passenden Artikel.':'Dein Putzlager ist noch leer.'));
+for(const item of items){const card=n('article','inventory-card');card.dataset.itemId=item.id;const top=n('div','inventory-card-top'),main=n('div','inventory-card-main');main.append(n('strong','',item.name),n('small','',`${M.categories[item.category]} · ${item.location||'Lagerort fehlt'}`));top.append(badgeFor(item),main);
+const fav=n('button','inventory-fav',item.favorite?'★':'☆');fav.type='button';fav.dataset.action='favorite';fav.dataset.id=item.id;fav.setAttribute('aria-label',item.favorite?'Favorit entfernen':'Favorit merken');top.append(fav);card.append(top);
+const foot=n('div','inventory-card-bottom');foot.append(n('span','inventory-quantity',`${new Intl.NumberFormat('de-AT').format(item.quantity)} ${item.unit}`));if(M.status(item)!=='ok')foot.append(n('span','inventory-tag '+M.status(item),M.status(item)==='missing'?'Fehlt':'Fast leer'));card.append(foot);
+if(item.category==='mittel'){const sub=n('small','inventory-use-info',`Flasche: ${item.bottleUses} Verwendungen · ${item.bottleWeighted} Einheiten`);card.append(sub);const est=M.estimate(item);if(est)card.append(n('small','inventory-use-info',`Ø ${est.mean} Verbrauchseinheiten/Flasche · ${est.sampleCount} bestätigte leere Flasche(n)`));}
+const actions=n('div','inventory-card-actions'),edit=n('button','inventory-choose','✏️ Bearbeiten');edit.type='button';edit.dataset.action='edit';edit.dataset.id=item.id;actions.append(edit);
+if(item.category==='mittel'&&item.bottleWeighted>0){const empty=n('button','inventory-choose','Flasche leer');empty.type='button';empty.dataset.action='empty';empty.dataset.id=item.id;actions.append(empty);}
+if(source==='clean'){const choose=n('button','inventory-choose',selected.has(item.id)?'✓ Vorgemerkt':'Vormerken');choose.type='button';choose.dataset.action='select';choose.dataset.id=item.id;choose.setAttribute('aria-pressed',String(selected.has(item.id)));actions.append(choose);}card.append(actions);list.append(card);}
+const names=state.items.filter(x=>selected.has(x.id)).map(x=>x.name);$('#inventory-selection-count').textContent=`${names.length} Artikel vorgemerkt`;$('#clean-supplies-display').textContent=names.length?`Vorgemerkt: ${names.join(', ')}. Die Buchung erfolgt erst nach bestätigter Reinigung.`:'Wähle die Materialien beim Starten eines Raums oder direkt im Lager.';
 }
-function show(from='more'){
- source=from==='clean'?'clean':'more';
- document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-inventory'));
- document.querySelectorAll('.nav-button').forEach(b=>{const active=b.dataset.nav===source;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
- refresh();window.scrollTo({top:0,behavior:'instant'});$('#inventory-heading').focus({preventScroll:true});
-}
-function close(){const target=document.querySelector(`.nav-button[data-nav="${source}"]`);target?.click();}
-$('#inventory-back').addEventListener('click',close);
-$('#inventory-open-more').addEventListener('click',()=>show('more'));
-$('#inventory-open-clean').addEventListener('click',()=>show('clean'));
-$('#inventory-selection-done').addEventListener('click',close);
-for(const [id,key] of [['inventory-search','search'],['inventory-category','category'],['inventory-status','status'],['inventory-sort','sort'],['inventory-location','location']]){
- $('#'+id).addEventListener(id==='inventory-search'?'input':'change',e=>{state[key]=e.target.value;save();refresh();});
-}
-for(const mode of ['list','grid'])$('#inventory-view-'+mode).addEventListener('click',()=>{state.view=mode;save();refresh();});
-list.addEventListener('click',e=>{
- const action=e.target.closest('[data-action]');if(!action)return;
- if(action.dataset.action==='favorite'){state=M.setFavorite(state,action.dataset.id,!state.items.find(x=>x.id===action.dataset.id)?.favorite);save();refresh();}
- if(action.dataset.action==='select'){const id=action.dataset.id;if(selected.has(id))selected.delete(id);else selected.add(id);refresh();}
-});
-$('#inventory-add').addEventListener('click',()=>{$('#inventory-add-form').hidden=false;$('#inventory-name').focus();});
-$('#inventory-cancel').addEventListener('click',()=>{$('#inventory-add-form').hidden=true;$('#inventory-add-form').reset();});
-$('#inventory-add-form').addEventListener('submit',e=>{
- e.preventDefault();const fd=new FormData(e.currentTarget);
- try{const out=M.add(state,{name:fd.get('name'),category:fd.get('category'),location:fd.get('location'),quantity:fd.get('quantity'),unit:fd.get('unit'),minimum:fd.get('minimum')});state=out.state;save();$('#inventory-add-form').reset();$('#inventory-add-form').hidden=true;state.search='';state.category='all';state.location='';state.status='all';save();refresh();}catch(err){$('#inventory-form-error').textContent=err.message;}
-});
-refresh();window.PutzmanagerInventory={open:show,closeView:close,get:()=>structuredClone(state),storageKey:KEY};
+function show(from='more'){source=from==='clean'?'clean':'more';document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-inventory'));document.querySelectorAll('.nav-button').forEach(b=>{const active=b.dataset.nav===source;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});refresh();window.scrollTo({top:0,behavior:'instant'});$('#inventory-heading').focus({preventScroll:true});}
+function close(){document.querySelector(`.nav-button[data-nav="${source}"]`)?.click();}
+$('#inventory-back').addEventListener('click',close);$('#inventory-open-more').addEventListener('click',()=>show('more'));$('#inventory-open-clean').addEventListener('click',()=>show('clean'));$('#inventory-selection-done').addEventListener('click',close);
+for(const [id,key] of [['inventory-search','search'],['inventory-category','category'],['inventory-status','status'],['inventory-sort','sort'],['inventory-location','location']])$('#'+id).addEventListener(id==='inventory-search'?'input':'change',e=>{state[key]=e.target.value;save(state);refresh();});
+for(const mode of ['list','grid'])$('#inventory-view-'+mode).addEventListener('click',()=>{state.view=mode;save(state);refresh();});
+function openForm(id=null){editing=id;const item=state.items.find(x=>x.id===id);const f=$('#inventory-add-form');f.reset();photos=[...(item?.photos||[])];for(const field of ['name','category','location','quantity','unit','minimum','icon','brand','model','notes']){if(f.elements[field])f.elements[field].value=item?.[field]??(field==='quantity'?'1':field==='minimum'?'1':field==='category'?'mittel':field==='unit'?'Stück':field==='icon'?'bottle':'');}
+f.elements.reusable.checked=item?.reusable??true;$('#inventory-form-title').textContent=id?'Artikel bearbeiten':'Neuen Artikel erfassen';$('#inventory-save').textContent=id?'Änderungen speichern':'Artikel speichern';$('#inventory-form-error').textContent='';renderPhotos();f.hidden=false;f.scrollIntoView({behavior:'smooth',block:'start'});f.elements.name.focus();}
+function renderPhotos(){const wrap=$('#inventory-photo-preview');wrap.replaceChildren();for(const [i,src] of photos.entries()){const thumb=n('div','inventory-photo-tile'),img=n('img');img.src=src;img.alt=`Artikelfoto ${i+1}`;const del=n('button','',`✕ Foto ${i+1}`);del.type='button';del.addEventListener('click',()=>{photos.splice(i,1);renderPhotos();});thumb.append(img,del);wrap.append(thumb);}$('#inventory-photo-help').textContent=`${photos.length}/3 Fotos · verkleinert und lokal gespeichert. Browser-Speicher begrenzt.`;}
+function convertPhoto(file){return new Promise((resolve,reject)=>{if(!file.type.startsWith('image/'))return reject(Error('Bitte ein Bild auswählen.'));const img=new Image(),url=URL.createObjectURL(file);img.onload=()=>{try{const scale=Math.min(1,600/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',0.64));}catch(e){reject(e);}finally{URL.revokeObjectURL(url);}};img.onerror=()=>{URL.revokeObjectURL(url);reject(Error('Bild konnte nicht gelesen werden.'));};img.src=url;});}
+$('#inventory-photos').addEventListener('change',async e=>{try{for(const file of [...e.target.files].slice(0,3-photos.length)){const url=await convertPhoto(file);if(url.length>130000)throw Error('Foto ist trotz Verkleinerung zu groß.');photos.push(url);}renderPhotos();}catch(err){$('#inventory-form-error').textContent=err.message;}e.target.value='';});
+list.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const id=b.dataset.id,item=state.items.find(x=>x.id===id);try{if(b.dataset.action==='edit')openForm(id);if(b.dataset.action==='favorite')save(M.setFavorite(state,id,!item.favorite));if(b.dataset.action==='select'){if(selected.has(id))selected.delete(id);else selected.add(id);}if(b.dataset.action==='empty'){if(!confirm(`Ist die aktuell benutzte Flasche „${item.name}“ wirklich leer? Erst damit wird ihre Ergiebigkeit gelernt und der Bestand um eine Flasche verringert.`))return;save(M.markBottleEmpty(state,id).state);}refresh();}catch(err){alert(err.message);}});
+$('#inventory-add').addEventListener('click',()=>openForm());$('#inventory-cancel').addEventListener('click',()=>{$('#inventory-add-form').hidden=true;editing=null;});
+$('#inventory-add-form').addEventListener('submit',e=>{e.preventDefault();const f=e.currentTarget,fd=new FormData(f),details=Object.fromEntries(['name','category','location','quantity','unit','minimum','icon','brand','model','notes'].map(k=>[k,fd.get(k)]));details.reusable=f.elements.reusable.checked;details.photos=photos;try{const out=editing?M.update(state,editing,details):M.add(state,details);if(!save(out.state))throw Error('Speicher voll – Änderungen nicht übernommen. Bitte Fotos reduzieren.');f.hidden=true;editing=null;state.search='';state.category='all';state.location='';state.status='all';save(state);refresh();}catch(err){$('#inventory-form-error').textContent=err.message;}});
+function commit(sessionId,roomId,assignments){const result=M.registerUse(state,{sessionId,roomId,assignments});if(!save(result.state))throw Error('Lagerbuchung konnte nicht gespeichert werden. Speicher voll?');refresh();return result.added;}
+function suggestions(roomId,taskId){return M.suggestions(state,roomId,taskId);}
+refresh();window.PutzmanagerInventory={open:show,closeView:close,get:()=>structuredClone(state),storageKey:KEY,commit,suggestions,getSelected:()=>[...selected]};
 })();
