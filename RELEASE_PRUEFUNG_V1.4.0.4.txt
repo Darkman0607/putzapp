@@ -1,0 +1,25 @@
+Mein Putzmanager V1.4.0.4 — 3D-Reinigungsansicht
+Stand: 25.10.2026
+
+ENTHALTEN
+- Wechsel 2D-Grundriss / 3D Reinigen auf Zuhause
+- SVG-3D-Projektion vorhandener Räume inkl. gemeinsamer Wände, Türen, Fenster und Etagen
+- 360°-Kamera, Touch-Zoom/-Schwenken, Reset, vereinfachte Darstellung bei großen Plänen
+- Raumdetails, Schnell-/Detailreinigung, Aufgaben, Sauberkeitswerte aus demselben Bestandsmodell
+- Offline-Cacheliste aktualisiert, vorhandener lokaler Speicherschlüssel bleibt erhalten
+
+PRÜFUNGEN
+- node --test tests/*.test.mjs: 74/74 PASS
+- tests/view3d_browser.py: PASS (Mobile Chromium, 50-Raum-Simulation, 2D/3D, Reinigen, Scores, Reload, Etagen, Kamera)
+- tests/browser_smoke.py, editor_smoke.py, u03_browser.py, u04_browser.py, u05_browser.py,
+  u16_browser.py, rotation_browser.py, categories_browser.py, materials_browser.py,
+  mobile_sizes.py: PASS
+- GitHub Root Code: 0c2091fc1bcc26f14df2a4b550b72465fe1a878a
+- GitHub Actions: https://github.com/Darkman0607/putzapp/actions/runs/40213029648 (success)
+- GitHub Pages: https://github.com/Darkman0607/putzapp/actions/runs/40213029084 (success)
+
+BEWUSSTE GRENZEN
+- Keine kalibrierten Raumhöhen, Möbelplanung oder echtes 3D-CAD; 3D geometrisch schematisch.
+- Echte Android-Installation, längere physische Touch-/Leistungstests, Offline-Nutzung auf Zielgerät
+  und vollständiges Backup/Restore mit Fotos und Lagerdaten nicht bestätigt.
+- U07: 3/5, U08: 4/5, gesamt 36/130 Checklisten-Aufgaben abgenommen.
