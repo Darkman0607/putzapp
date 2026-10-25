@@ -1,5 +1,5 @@
-/* Offline shell V1.4.0 – navigations fallback under Github Pages /putzapp/ */
-const CACHE_NAME='mein-putzmanager-v1.4.0';
+/* Offline shell V1.4.0.1 – navigations fallback under Github Pages /putzapp/ */
+const CACHE_NAME='mein-putzmanager-v1.4.0.1';
 const APP_PATH='/putzapp/';
 const SHELL=[APP_PATH,APP_PATH+'index.html',APP_PATH+'style.css',APP_PATH+'editor.css',APP_PATH+'clean.css',APP_PATH+'cleaning.css',APP_PATH+'inventory.css',APP_PATH+'inventory-model.js',APP_PATH+'inventory-ui.js',APP_PATH+'task-model.js',APP_PATH+'cleaning-ui.js',APP_PATH+'app.js',APP_PATH+'editor.js',APP_PATH+'clean-model.js',APP_PATH+'geometry.js',APP_PATH+'manifest.webmanifest',APP_PATH+'assets/icon.svg',APP_PATH+'assets/icon-192.png',APP_PATH+'assets/icon-512.png'];
 self.addEventListener('install',event=>{

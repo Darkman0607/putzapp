@@ -73,6 +73,45 @@
   }
   const path = pts=>pts.map((p,i)=>`${i?'L':'M'}${p[0]} ${p[1]}`).join(' ')+' Z';
   function roomLabel(room){const xs=room.points.map(p=>p[0]),ys=room.points.map(p=>p[1]);return [(Math.min(...xs)+Math.max(...xs))/2,(Math.min(...ys)+Math.max(...ys))/2];}
+  function rotationGrip(room){
+    const pivot=GEO.polygonCenter(room.points),angle=GEO.edgeAngle(room.points)*Math.PI/180;
+    const maxRadius=Math.max(...room.points.map(p=>GEO.length(p,pivot)));
+    const radius=maxRadius+65;
+    return {pivot,from:[pivot[0]+Math.sin(angle)*(maxRadius+9),pivot[1]-Math.cos(angle)*(maxRadius+9)],point:[pivot[0]+Math.sin(angle)*radius,pivot[1]-Math.cos(angle)*radius]};
+  }
+  // An opening on a sole room wall must turn with that physical edge. A door on a
+  // shared wall stays on the stationary neighbour when the selected room detaches.
+  function rotateInPlace(baseFloor,roomId,degrees){
+    const original=baseFloor.rooms.find(r=>r.id===roomId),target=currentFloor().rooms.find(r=>r.id===roomId);
+    if(!original||!target||!Number.isFinite(degrees))return false;
+    const pivot=GEO.polygonCenter(original.points),oldWalls=GEO.walls(baseFloor.rooms);
+    target.points=GEO.rotatePoints(original.points,degrees,pivot);
+    const newWalls=walls();
+    for(const originalOpening of baseFloor.openings){
+      const oldWall=oldWalls.find(w=>w.id===originalOpening.wallId);
+      if(!oldWall||oldWall.owners.length!==1||oldWall.owners[0].roomId!==roomId)continue;
+      const turningCenter=GEO.rotatePoints([GEO.openingSpan(originalOpening,oldWall).center],degrees,pivot)[0];
+      const next=newWalls.find(w=>{
+        if(!w.owners.some(o=>o.roomId===roomId))return false;
+        const ux=(w.b[0]-w.a[0])/w.length,uy=(w.b[1]-w.a[1])/w.length;
+        const along=(turningCenter[0]-w.a[0])*ux+(turningCenter[1]-w.a[1])*uy;
+        const offset=Math.abs((turningCenter[0]-w.a[0])*uy-(turningCenter[1]-w.a[1])*ux);
+        // Rounded stored coordinates are allowed a tiny floating-point tolerance.
+        return along>=-.01&&along<=w.length+.01&&offset<.05;
+      });
+      if(!next||next.length<originalOpening.width+8)return false;
+      const present=currentFloor().openings.find(o=>o.id===originalOpening.id);
+      if(!present)return false;
+      present.wallId=next.id;
+      present.t=Math.max(0,Math.min(1,((turningCenter[0]-next.a[0])*(next.b[0]-next.a[0])+(turningCenter[1]-next.a[1])*(next.b[1]-next.a[1]))/(next.length*next.length)));
+    }
+    return true;
+  }
+  function rotateSelected(degrees){
+    if(!findRoom())return;
+    const base=clone(currentFloor());
+    safeChange(()=>rotateInPlace(base,selected,degrees));
+  }
   function renderWallLine(svg,w){
     const taken=currentFloor().openings.filter(o=>o.wallId===w.id).sort((a,b)=>a.t-b.t);
     const dir=[(w.b[0]-w.a[0])/w.length,(w.b[1]-w.a[1])/w.length];
@@ -110,14 +149,26 @@
     }
     // Walls are atomic and drawn only once even between rooms.
     for(const w of walls())renderWallLine(canvas,w);
-    if(selected){const room=findRoom();room?.points.forEach((p,i)=>canvas.append(svgEl('circle',{cx:p[0],cy:p[1],r:16,fill:'#e2fff7',stroke:'#068e77','stroke-width':5,'data-handle':i,'data-room':room.id})));}
+    if(selected){
+      const room=findRoom();room?.points.forEach((p,i)=>canvas.append(svgEl('circle',{cx:p[0],cy:p[1],r:16,fill:'#e2fff7',stroke:'#068e77','stroke-width':5,'data-handle':i,'data-room':room.id})));
+      if(room && !drawing){
+        const grip=rotationGrip(room),[gx,gy]=grip.point;
+        canvas.append(svgEl('line',{x1:grip.from[0],y1:grip.from[1],x2:gx,y2:gy,stroke:'#35f4cf','stroke-width':4,'stroke-dasharray':'7 7','pointer-events':'none'}));
+        canvas.append(svgEl('circle',{cx:gx,cy:gy,r:23,fill:'#0fc8a2',stroke:'#eafff9','stroke-width':5,'pointer-events':'none'}));
+        const label=svgEl('text',{x:gx,y:gy+2,'text-anchor':'middle','dominant-baseline':'middle',fill:'#063b3b','font-size':31,'font-weight':800,'pointer-events':'none'});
+        label.textContent='↻';canvas.append(label);
+        canvas.append(svgEl('circle',{cx:gx,cy:gy,r:38,fill:'transparent','data-rotate':room.id,'aria-label':'Drehgriff für '+room.name}));
+      }
+    }
     if(selectedWall){const w=wall();if(w){const mid=[(w.a[0]+w.b[0])/2,(w.a[1]+w.b[1])/2];canvas.append(svgEl('circle',{cx:mid[0],cy:mid[1],r:14,fill:'#ffe49a',stroke:'#85640b','stroke-width':4,'data-wall':w.id,'data-target':'wall'}));}}
     if(snapGuide){const w=walls().filter(v=>v.owners.some(o=>o.roomId===snapGuide.target));for(const line of w)canvas.append(svgEl('line',{x1:line.a[0],y1:line.a[1],x2:line.b[0],y2:line.b[1],stroke:'#ffd471','stroke-width':2,'stroke-dasharray':'9 8','pointer-events':'none'}));}
     if(drawing){const pts=drawing.points;if(pts.length){canvas.append(svgEl('polyline',{points:pts.map(p=>p.join(',')).join(' '),stroke:'#f9d376','stroke-width':7,fill:'none','stroke-dasharray':'14 10','pointer-events':'none'}));pts.forEach(p=>canvas.append(svgEl('circle',{cx:p[0],cy:p[1],r:10,fill:'#f9d376','pointer-events':'none'})));}}
     $('#editor-undo').disabled=!past.length;$('#editor-redo').disabled=!future.length;$('#editor-complete').hidden=!drawing;
-    $('#editor-drawing-hint').textContent=drawing?'Mindestens drei Eckpunkte setzen, danach Form schließen.':'Wand antippen für Maße, Tür oder Fenster; gelben Wandgriff ziehen. Raum antippen zum Verschieben; Eckpunkte ziehen zum Anpassen.';
+    $('#editor-drawing-hint').textContent=drawing?'Mindestens drei Eckpunkte setzen, danach Form schließen.':'Raum antippen: grünen Drehgriff ↻ ziehen oder Pfeile nutzen. Raum ziehen zum Verschieben, Eckpunkte zum Anpassen; Wand für Maße, Tür und Fenster antippen.';
     const r=findRoom(),w=wall();$('#editor-selection').classList.toggle('editor-selection-empty',!r);
-    if(r){$('#editor-selected-name').value=r.name;$('#editor-selected-caption').textContent=`${r.points.length} Eckpunkte · Zusammenhängende Räume bewegen sich als Gruppe`;}
+    if(r){$('#editor-selected-name').value=r.name;$('#editor-selected-caption').textContent=`${r.points.length} Eckpunkte · Verschieben verbindet Räume, Drehen betrifft nur diesen Raum`;
+      if(document.activeElement!==$('#editor-rotate-angle')||gesture?.type==='rotate')$('#editor-rotate-angle').value=Math.round(GEO.edgeAngle(r.points)*10)/10;
+    }
     $('#editor-level-picker').hidden=home.floors.length===1;$('#editor-level-name').textContent=floor.name;$('#editor-kind').value=home.kind;$('#editor-method').value=method;
     $('#editor-floor-count').textContent=`${home.floors.length} ${home.floors.length===1?'Ebene':'Ebenen'}`;$('#editor-rooms-count').textContent=`${floor.rooms.length} ${floor.rooms.length===1?'Raum':'Räume'}`;
     $('#editor-wall-tools').hidden=!w;
@@ -306,6 +357,7 @@
     e.preventDefault();canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(pointers.size===2){gesture={type:'pinch',initial:[...pointers.values()],start:clone(view)};return;}
     if(pointers.size!==1)return;
+    const rotateId=e.target.closest('[data-rotate]')?.getAttribute('data-rotate');
     const hitWall=e.target.closest('[data-wall]')?.getAttribute('data-wall');
     const hitOpening=e.target.closest('[data-opening]')?.getAttribute('data-opening');
     const room=e.target.closest('[data-room]')?.getAttribute('data-room');
@@ -313,7 +365,12 @@
     const [x,y]=world(e);
     if(drawing){gesture={type:'tap',screen:[e.clientX,e.clientY],at:[x,y]};return;}
     beforeGesture=clone(home);
-    if(hitWall && handle==null){if(selectedWall!==hitWall)$('#editor-wall-measure').value='';selectedWall=hitWall;selectedOpening=hitOpening??null;const beforeWalls=GEO.walls(beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor).rooms);gesture={type:'wall',origin:[x,y],wall:beforeWalls.find(w=>w.id===hitWall),beforeWalls};draw();}
+    if(rotateId){
+      selected=rotateId;selectedWall=null;selectedOpening=null;
+      const room=currentFloor().rooms.find(r=>r.id===selected),pivot=GEO.polygonCenter(room.points);
+      gesture={type:'rotate',room:selected,pivot,originAngle:Math.atan2(y-pivot[1],x-pivot[0]),degrees:0};
+      draw();
+    }else if(hitWall && handle==null){if(selectedWall!==hitWall)$('#editor-wall-measure').value='';selectedWall=hitWall;selectedOpening=hitOpening??null;const beforeWalls=GEO.walls(beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor).rooms);gesture={type:'wall',origin:[x,y],wall:beforeWalls.find(w=>w.id===hitWall),beforeWalls};draw();}
     else if(room){selected=room;selectedWall=null;selectedOpening=null;const group=connected(room,currentFloor().rooms);gesture={type:handle!=null?'handle':'room',room,handle:Number(handle),origin:[x,y],start:clone(findRoom()?.points),group:[...group]};draw();}
     else{selected=null;selectedWall=null;selectedOpening=null;gesture={type:'pan',screen:[e.clientX,e.clientY],start:clone(view)};draw();}
   });
@@ -332,6 +389,17 @@
     }
     if(gesture.type==='pan'){
       view={...gesture.start,x:gesture.start.x-(e.clientX-gesture.screen[0])*gesture.start.w/bounds.width,y:gesture.start.y-(e.clientY-gesture.screen[1])*gesture.start.h/bounds.height};draw();return;
+    }
+    if(gesture.type==='rotate'){
+      const base=beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor),[x,y]=world(e),[cx,cy]=gesture.pivot;
+      // atan2 returns [-180,+180] and normalizing the delta permits a full circle.
+      const radians=Math.atan2(y-cy,x-cx)-gesture.originAngle;
+      gesture.degrees=((radians*180/Math.PI+540)%360)-180;
+      currentFloor().rooms=clone(base.rooms);currentFloor().openings=clone(base.openings);
+      const valid=rotateInPlace(base,gesture.room,gesture.degrees);
+      const collision=GEO.collides(currentFloor().rooms);
+      notice(!valid?'Öffnung kann an dieser gedrehten Wand nicht erhalten bleiben.':collision?'⚠️ Räume überschneiden sich – Drehung wird beim Loslassen verworfen.':'');
+      draw();return;
     }
     if(['room','handle','wall'].includes(gesture.type)){
       const old=beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor);
@@ -357,6 +425,12 @@
     if(!pointers.has(e.pointerId))return;
     pointers.delete(e.pointerId);
     if(gesture?.type==='tap'&&pointers.size===0){const dx=Math.abs(e.clientX-gesture.screen[0]),dy=Math.abs(e.clientY-gesture.screen[1]);if(dx+dy<18)drawing.points.push(gesture.at.map(snap));}
+    if(gesture?.type==='rotate'&&pointers.size===0){
+      const base=beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor);
+      const invalid=e.type==='pointercancel'||!GEO.validPolygon(findRoom()?.points)||GEO.collides(currentFloor().rooms)||!rotateInPlace(base,gesture.room,gesture.degrees);
+      if(invalid){home=beforeGesture;notice('Drehung abgebrochen: Überschneidung, ungültige Form oder nicht übertragbare Öffnung.');}
+      else{reconcileOpenings(GEO.walls(base.rooms));commit(beforeGesture);notice('');}
+    }
     if(['room','handle','wall'].includes(gesture?.type)&&pointers.size===0){
       const invalid=currentFloor().rooms.some(r=>!GEO.validPolygon(r.points));const conflict=GEO.collides(currentFloor().rooms);if(invalid||conflict){home=beforeGesture;selectedWall=null;notice(invalid?'Ungültige Raumform verhindert.':'Überlappung verhindert: '+conflict.join(' und '));draw();}
       else{const oldWalls=GEO.walls(beforeGesture.floors.find(f=>f.id===beforeGesture.activeFloor).rooms);reconcileOpenings(oldWalls);commit(beforeGesture);notice('');}
@@ -375,6 +449,14 @@
   $('#editor-complete').addEventListener('click',finishDrawing);
   $('#editor-cancel-draw').addEventListener('click',()=>{drawing=null;draw();});
   $('#editor-add-room').addEventListener('click',addPreset);
+  $('#editor-rotate-left').addEventListener('click',()=>rotateSelected(-15));
+  $('#editor-rotate-right').addEventListener('click',()=>rotateSelected(15));
+  $('#editor-rotate-angle').addEventListener('change',e=>{
+    const r=findRoom();if(!r)return;
+    const raw=e.target.value.trim(),angle=Number(raw);
+    if(!raw||!Number.isFinite(angle)||angle<0||angle>360){notice('Winkel muss zwischen 0° und 360° liegen.');e.target.value=Math.round(GEO.edgeAngle(r.points));return;}
+    rotateSelected((angle%360)-GEO.edgeAngle(r.points));
+  });
   $('#editor-selected-name').addEventListener('change',e=>{if(!findRoom())return;const name=e.target.value.trim();if(!name){e.target.value=findRoom().name;return;}mutate(()=>{findRoom().name=name.slice(0,55);});});
   $('#editor-delete-room').addEventListener('click',()=>{const r=findRoom();if(!r)return;if(!confirm(`Raum „${r.name}“ wirklich löschen?`))return;mutate(()=>{const old=walls();currentFloor().rooms=currentFloor().rooms.filter(a=>a.id!==r.id);currentFloor().openings=currentFloor().openings.filter(o=>!old.filter(w=>w.owners.some(t=>t.roomId===r.id)).some(w=>w.id===o.wallId&&!w.owners.some(a=>a.roomId!==r.id)));selected=null;selectedWall=null;});});
   $('#editor-kind').addEventListener('change',e=>mutate(()=>{home.kind=e.target.value==='haus'?'haus':'wohnung';}));

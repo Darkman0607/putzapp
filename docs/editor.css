@@ -48,3 +48,12 @@ body.editing-plan{overflow:hidden}
 #editor-geometry-status{font-size:12px;font-weight:700;min-height:1px}
 #editor-geometry-status.warn{padding:8px;color:#ffd3bf;background:#622c37;border-radius:8px}
 @media(max-width:420px){.editor-geometry-tools .editor-inline{gap:5px}.editor-geometry-tools .editor-btn{padding:7px;font-size:11px}}
+
+/* V1.4.0.1: rotate individual rooms by an SVG touch handle or precise angle controls. */
+.editor-stage [data-rotate]{cursor:grab;touch-action:none}
+.editor-rotate-controls{display:flex;align-items:end;flex-wrap:wrap;gap:8px;margin-top:10px}
+.editor-rotate-controls .editor-setting{flex:0 0 auto;gap:3px;display:flex;flex-direction:column;font-size:11px;color:#bee4dc}
+.editor-rotate-controls .editor-rotate-input{width:83px;max-width:83px;min-height:41px;text-align:center;font-variant-numeric:tabular-nums}
+.editor-rotate-arrow{min-height:44px;min-width:89px;touch-action:manipulation}
+.editor-rotate-tip{display:block;margin-top:8px;color:#9fdcd1;line-height:1.35}
+@media(max-width:380px){.editor-rotate-controls{gap:5px}.editor-rotate-arrow{min-width:78px}}

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.4.0.">
+  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.4.0.1.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="./clean.css">
 <link rel="stylesheet" href="./cleaning.css">
   <link rel="stylesheet" href="./inventory.css">
-  <title>Mein Putzmanager · Beta 1.4.0</title>
+  <title>Mein Putzmanager · Beta 1.4.0.1</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -55,7 +55,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.1</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -85,7 +85,7 @@
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
       <div class="surface menu-card"><h2>Weitere Bereiche</h2><button type="button" id="inventory-open-more" class="inventory-entry"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><span><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4.0</small></span><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0 · Putzlager U16 (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.1 · Grundriss-Drehung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
@@ -150,7 +150,7 @@
 
 <section id="cleaning-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="cleaning-title" hidden><div class="room-sheet cleaning-sheet"><header class="room-sheet-top"><div><small id="cleaning-subtitle">U05 · REINIGUNG</small><h2 id="cleaning-title">Reinigung</h2></div><button type="button" id="cleaning-close" class="room-close" aria-label="Reinigung schließen">✕</button></header><div id="cleaning-content"></div></div></section>
 <section id="editor-overlay" class="editor-overlay" aria-label="Vollbild-Grundriss-Editor" hidden>
-  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.0.4 · U04</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
+  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.4.0.1 · Grundriss</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
   <div class="editor-controls">
     <label class="editor-setting">Wohnart <select id="editor-kind" class="editor-select"><option value="wohnung">Wohnung</option><option value="haus">Haus</option></select></label>
     <div id="editor-level-picker" class="editor-floor-nav" hidden><button id="editor-floor-prev" type="button" class="editor-btn" aria-label="Vorherige Ebene">‹</button><strong id="editor-level-name">Ebene 1</strong><button id="editor-floor-next" type="button" class="editor-btn" aria-label="Nächste Ebene">›</button></div>
@@ -159,11 +159,20 @@
     <button id="editor-remove-floor" type="button" class="editor-btn warn">Ebene löschen</button>
   </div>
   <div class="editor-toolbar"><label class="editor-setting">Aufbau <select id="editor-method" class="editor-select"><option value="room">Raum für Raum</option><option value="outline">Außenkontur zeichnen</option></select></label><button id="editor-new-outline" type="button" class="editor-btn">Außenkontur neu</button><button id="editor-undo" type="button" class="editor-btn" aria-label="Rückgängig">↶ Undo</button><button id="editor-redo" type="button" class="editor-btn" aria-label="Wiederholen">↷ Redo</button></div>
-  <div class="editor-stage"><svg id="drawing-canvas" viewBox="0 0 1000 720" role="application" aria-label="Zeichenfläche: Räume ziehen, Eckpunkte bearbeiten und zum Verschieben wischen"></svg><div class="editor-canvas-tools"><button id="editor-zoom-in" type="button" class="editor-btn" aria-label="Vergrößern">＋</button><button id="editor-zoom-out" type="button" class="editor-btn" aria-label="Verkleinern">－</button><button id="editor-fit" type="button" class="editor-btn">⛶</button></div></div>
+  <div class="editor-stage"><svg id="drawing-canvas" viewBox="0 0 1000 720" role="application" aria-label="Zeichenfläche: Räume verschieben, Eckpunkte bearbeiten und ausgewählten Raum am Drehgriff frei drehen"></svg><div class="editor-canvas-tools"><button id="editor-zoom-in" type="button" class="editor-btn" aria-label="Vergrößern">＋</button><button id="editor-zoom-out" type="button" class="editor-btn" aria-label="Verkleinern">－</button><button id="editor-fit" type="button" class="editor-btn">⛶</button></div></div>
   <p class="editor-hint" id="editor-drawing-hint" aria-live="polite"></p>
   <div class="editor-bottom-tools"><button id="editor-complete" type="button" class="editor-btn highlight" hidden>✓ Form schließen</button><button id="editor-cancel-draw" type="button" class="editor-btn">Zeichnen abbrechen</button></div>
   <div class="editor-new-room"><label for="editor-new-room">Neuen Raum anlegen</label><div class="editor-inline"><input id="editor-new-room" class="editor-input" type="text" placeholder="z. B. Badezimmer" maxlength="55"><select id="editor-room-shape" class="editor-select" aria-label="Raumform"><option value="rect">Rechteck</option><option value="l">L-Form</option><option value="frei">Frei zeichnen</option></select><button id="editor-add-room" type="button" class="editor-btn highlight">＋ Raum</button></div></div>
-  <div id="editor-selection" class="editor-selection editor-selection-empty"><label for="editor-selected-name">Ausgewählter Raum bearbeiten</label><div class="editor-inline"><input id="editor-selected-name" class="editor-input" type="text" maxlength="55"><button id="editor-delete-room" type="button" class="editor-btn warn">Raum löschen</button></div><small id="editor-selected-caption"></small></div>
+  <div id="editor-selection" class="editor-selection editor-selection-empty"><label for="editor-selected-name">Ausgewählter Raum bearbeiten</label><div class="editor-inline"><input id="editor-selected-name" class="editor-input" type="text" maxlength="55"><button id="editor-delete-room" type="button" class="editor-btn warn">Raum löschen</button></div><small id="editor-selected-caption"></small>
+    <div class="editor-rotate-controls" aria-label="Ausgewählten Raum drehen">
+      <button id="editor-rotate-left" class="editor-btn editor-rotate-arrow" type="button" aria-label="Raum 15 Grad nach links drehen">↶ −15°</button>
+      <label class="editor-setting" for="editor-rotate-angle">Winkel (°)
+        <input id="editor-rotate-angle" class="editor-input editor-rotate-input" type="number" min="0" max="360" step="1" inputmode="numeric" aria-label="Drehwinkel des Raums von 0 bis 360 Grad">
+      </label>
+      <button id="editor-rotate-right" class="editor-btn editor-rotate-arrow" type="button" aria-label="Raum 15 Grad nach rechts drehen">↷ +15°</button>
+    </div>
+    <small class="editor-rotate-tip">↻ Grünen Drehgriff am Raum mit dem Finger ziehen oder Pfeile/Winkel verwenden (360°).</small>
+  </div>
   <section class="editor-geometry-tools" aria-label="Wände, Maße und Öffnungen">
     <div id="editor-geometry-status" role="status" aria-live="polite"></div>
     <div id="editor-wall-tools" class="editor-panel" hidden>

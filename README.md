@@ -1,3 +1,11 @@
+## V1.4.0.1 – Grundriss-Drehung (25.10.2026)
+
+**Ergänzung zwischen U16 und U17 (kein Abschluss der U17-Lagerpunkte):** Jeder einzeln ausgewählte Raum (Rechteck, L-Form oder freies Polygon) kann durch Ziehen des grünen ↻-Drehgriffs auf dem Grundriss kontinuierlich um 360° gedreht werden. Alternativ stehen −15°- und +15°-Pfeile sowie eine direkte Grad-Eingabe (0–360°) zur Verfügung. Die Drehung berechnet echte Eckpunktkoordinaten um den Polygonschwerpunkt und speichert sie im bestehenden Grundriss-Datenformat. Die Rotation eines Raums dreht benachbarte Räume nicht mit; unzulässige Überlappungen werden abgewiesen. Vorhandene Tür-/Fensteröffnungen an ausschließlich diesem Raum zugehörigen Wänden folgen der Drehung; Türen/Fenster an unveränderten Nachbarwänden bleiben dort erhalten. Wenn eine Öffnung nicht sinnvoll übertragen werden kann, wird die Änderung abgelehnt, statt die Öffnung zu verlieren. Undo/Redo funktioniert weiterhin.
+
+**Teststand:** Automatisierte Node-Geometrietests und Chromium-Touch-Prüfung bestanden; realer Android-Praxistest und echte Installation bleiben offen. Alte Speicherschlüssel und Daten bleiben erhalten. U17–U26 sind unverändert weiter offen.
+
+---
+
 ## V1.4.0 / U16 – Putzlager (25.10.2026)
 
 Die Entwicklung wurde auf Wunsch auf **U16–U26 (Lager)** vorgezogen. U06–U15 bleiben offen.

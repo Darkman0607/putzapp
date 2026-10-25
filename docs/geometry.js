@@ -68,6 +68,27 @@ function collides(rooms,againstId=null){
  }return null;
 }
 const bbox=p=>({left:Math.min(...p.map(a=>a[0])),top:Math.min(...p.map(a=>a[1])),right:Math.max(...p.map(a=>a[0])),bottom:Math.max(...p.map(a=>a[1]))});
+// Rotate the actual polygon vertices: no transformed SVG wrapper and no new storage field.
+// A geometry-centroid pivot keeps even an L-shaped room in place while rotating.
+function polygonCenter(points){
+ let twiceArea=0,cx=0,cy=0;
+ for(let i=0;i<points.length;i++){
+  const a=points[i],b=points[(i+1)%points.length],cross=a[0]*b[1]-b[0]*a[1];
+  twiceArea+=cross;cx+=(a[0]+b[0])*cross;cy+=(a[1]+b[1])*cross;
+ }
+ if(Math.abs(twiceArea)<EPS){const b=bbox(points);return [(b.left+b.right)/2,(b.top+b.bottom)/2];}
+ return [cx/(3*twiceArea),cy/(3*twiceArea)];
+}
+function rotatePoints(points,degrees,pivot=polygonCenter(points)){
+ if(!Number.isFinite(degrees))return points.map(p=>[...p]);
+ const radians=degrees*Math.PI/180,c=Math.cos(radians),s=Math.sin(radians);
+ return points.map(([x,y])=>[round(pivot[0]+(x-pivot[0])*c-(y-pivot[1])*s),round(pivot[1]+(x-pivot[0])*s+(y-pivot[1])*c)]);
+}
+function edgeAngle(points){
+ const p=points[0],q=points[1];if(!p||!q)return 0;
+ return ((Math.atan2(q[1]-p[1],q[0]-p[0])*180/Math.PI)%360+360)%360;
+}
+
 function snapRoom(points,otherRooms,threshold=23){
  const me=bbox(points);let best=null;
  for(const r of otherRooms){const b=bbox(r.points);
@@ -136,5 +157,5 @@ function openingSpan(opening,wall){
  const p=u=>[wall.a[0]+(wall.b[0]-wall.a[0])*u,wall.a[1]+(wall.b[1]-wall.a[1])*u];
  return {a:p(t-w/(2*wall.length)),b:p(t+w/(2*wall.length)),center:p(t),width:w};
 }
-root.PutzmanagerGeometry={walls,overlaps,collides,validPolygon,bbox,snapRoom,newRoomPosition,moveWall,resizeRoom,wallAfter,openingSpan,wallKey,on,same,length};
+root.PutzmanagerGeometry={walls,overlaps,collides,validPolygon,bbox,snapRoom,newRoomPosition,moveWall,resizeRoom,wallAfter,openingSpan,wallKey,on,same,length,polygonCenter,rotatePoints,edgeAngle};
 })(typeof window!=='undefined'?window:globalThis);
