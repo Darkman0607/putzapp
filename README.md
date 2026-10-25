@@ -1,4 +1,4 @@
-# Mein Putzmanager — Private Beta V1.0.0
+# Mein Putzmanager — Private Beta V1.0.1
 
 Eigenständige installierbare Android-Web-App (PWA). **Nicht** Teil von `MR-Hausservice`; keine gemeinsame Datenbank und kein Import.
 
@@ -10,7 +10,7 @@ Eigenständige installierbare Android-Web-App (PWA). **Nicht** Teil von `MR-Haus
 4. Private Einzelnutzung ohne Konto, PIN oder Gewerbemodul.
 5. Grundriss-zentrierte Startseite mit explizitem Einrichtungszustand, solange noch kein echter Grundriss existiert.
 
-**Kleiner Beta-Zusatz:** Eine einfache Reinigung mit Start/Pause/Abschließen und lokalem Zeitprotokoll ist möglich. Das ist **noch kein** vollständiges Putzmodul mit Raum-Checklisten oder Sauberkeitsbewertung (U04/U05). Die Grundriss-Zeichnung folgt in U02 / V1.0.1.
+**Kleiner Beta-Zusatz:** Eine einfache Reinigung mit Start/Pause/Abschließen und lokalem Zeitprotokoll ist möglich. Das ist **noch kein** vollständiges Putzmodul mit Raum-Checklisten oder Sauberkeitsbewertung (U04/U05). Die Grundriss-Zeichnung ist in U02 / V1.0.1 als Beta-Editor enthalten.
 
 ## Start und Installation
 
@@ -31,3 +31,13 @@ Version 1.0.0 | Paket U01 | Projektstand 25.10.2026. Weitere 25 Updates sind in 
 GitHub Pages nutzt Branch `Root`; aktuell ist der Veröffentlichungsordner `/ (root)` eingestellt. Eine inhaltlich identische Kopie unter `/docs` ist als zusätzliche Absicherung enthalten, falls der Pages-Ordner später geändert wird. Auf der Startseite liegt nun ein Installationsknopf. Ist `beforeinstallprompt` verfügbar, wird der native Chrome-Dialog geöffnet. Andernfalls prüft ein Diagnosefenster Manifest, Icons, Startadresse und Service-Worker und erläutert die Installation in Chrome. Manifest-Scope und `start_url` sind eindeutig `/putzapp/`; die Datenkennung `mein-putzmanager-beta-v1` bleibt unverändert. Neu gefasster Service Worker ermöglicht eine Offline-Fallback-Navigation. Ein echter Android-WebAPK-Installationstest kann ausschließlich auf einem physischen Endgerät abschließend bestätigt werden.
 
 **Nachweisgrenze:** Nur ein erfolgreicher GitHub-Pages-Workflow und eine Bestätigung auf dem Android-Gerät können die öffentliche Auslieferung bzw. die echte Installation belegen. Lokale Browser-Smoke-Tests reichen dafür nicht.
+
+## V1.0.1 — U02 Wohnungsanlage und Grundriss-Editor (25.10.2026)
+
+- Haus/Wohnung mit einer Ebene oder weiteren benannten Etagen, Ebenen bearbeiten/wechseln/löschen.
+- Kombination von frei gezeichneter Außenkontur und Raum-für-Raum-Aufbau.
+- Vollbild-Editor mit SVG-Zeichenfläche, Zwei-Finger-Zoom, Ein-Finger-Pan und Zoomtasten.
+- Rechtecke, L-Form und freie Polygone; Räume umbenennen, per Drag bewegen, an Eckpunkten anpassen, sicher löschen.
+- Sofortige lokale Speicherung unter dem bisherigen Speicher-Schlüssel mit Undo/Redo je Editor-Sitzung.
+
+**Wichtig:** Vorhandene Einstellungen und Reinigungsprotokolle bleiben beim Laden erhalten. Der Grundriss wird nur in der lokalen Browser-Datenbank (`localStorage`) gesichert; ein vollständiges Backup kommt erst später. U03 (gemeinsame Wände, Tür-/Fensteröffnungen und exakte Maße), U04 (Sauberkeitswerte) und U05 (Putzaufgaben) sind **noch nicht** Bestandteil dieser Version. Undo/Redo gilt innerhalb der geöffneten Editor-Sitzung; nach App-Neustart ist der gespeicherte letzte Grundriss verfügbar, nicht die Undo-Historie. Die reale PWA-Installation und ein Offline-Test auf einem Android-Smartphone bleiben offen.

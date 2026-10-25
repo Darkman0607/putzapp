@@ -1,9 +1,9 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.0.0.1';
+  const VERSION = '1.0.1';
   const KEY = 'mein-putzmanager-beta-v1';
-  const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [] };
+  const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
   let storageAvailable = true;
   let currentSession = null;
@@ -24,7 +24,7 @@
         theme: ['dark', 'light'].includes(settings.theme) ? settings.theme : 'dark',
         accent: ['emerald', 'blue', 'violet', 'amber'].includes(settings.accent) ? settings.accent : 'emerald',
         budget: [15, 30, 60].includes(settings.budget) ? settings.budget : 30
-      }, sessions };
+      }, sessions, home: data?.home && typeof data.home === 'object' ? data.home : null };
     } catch (error) {
       storageAvailable = false;
       return structuredClone(defaultState);
@@ -215,8 +215,8 @@
     const accent=event.target.closest('[data-accent]');if(accent){state.settings.accent=accent.dataset.accent;persist();applySettings();return;}
     const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
   });
-  $('#setup-home').addEventListener('click',()=>messageModal('Wohnung einrichten','Der vollwertige Grundriss-Editor ist für das nächste Update V1.0.1 geplant. Aktuell wird bewusst noch kein Grundriss vorgetäuscht oder gespeichert.'));
-  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.0 enthält die fünf Basisfunktionen aus Paket U01. Putzplan, Grundriss-Editor und Lager werden in den vorgesehenen Updates ergänzt.'));
+  $('#setup-home').addEventListener('click',()=>window.PutzmanagerEditor?.open());
+  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.1 enthält den Grundriss-Editor (U02). Die echte Wand-an-Wand-Geometrie, Sauberkeitsanzeige und das Lager folgen in späteren Updates.'));
   $('#install-button').addEventListener('click',installApp);
   $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);
@@ -230,5 +230,5 @@
   applySettings();renderDates();renderHistory();
   if(!storageAvailable)toast('Privater Browsermodus: dauerhafte Speicherung nicht verfügbar.');
   // Public metadata for deterministic smoke tests, never used for authentication.
-  window.PutzmanagerBeta={version:VERSION,view:()=>$('.view.active')?.id,storageKey:KEY};
+  window.PutzmanagerBeta={version:VERSION,view:()=>$('.view.active')?.id,storageKey:KEY,getHome:()=>structuredClone(state.home),saveHome:(home)=>{state.home=structuredClone(home);persist();}};
 })();
