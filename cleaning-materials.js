@@ -11,7 +11,7 @@
   outer.append(el('label','cleaning-group-title','Wann erfassen?'),modeSelect);
   let deferred=false,assignments=[],draft=new Map(),currentGroups=[];
   const content=el('div','material-groups');outer.append(content);
-  function restore(key){if(!draft.has(key))draft.set(key,new Set(api()?.suggestions(roomId,key==='room'?'':key)||[]));return draft.get(key);}
+  function restore(key){if(!draft.has(key))draft.set(key,new Set((api()?.suggestions(roomId,key==='room'?'':key)||[]).length?api().suggestions(roomId,key==='room'?'':key):(api()?.getSelected()||[])));return draft.get(key);}
   function fill(groups){currentGroups=groups.map(g=>({id:g.id,name:g.name}));content.replaceChildren();
    for(const group of groups){const selected=restore(group.id),card=el('div','material-group');card.append(el('h4','',group.name));
     const items=api()?.get().items||[];
