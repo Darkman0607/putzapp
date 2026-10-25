@@ -15,7 +15,7 @@ with sync_playwright() as p:
   page.add_script_tag(content=(base/'task-model.js').read_text())
   page.add_script_tag(content=(base/'clean-model.js').read_text())
   page.add_script_tag(content=(base/'editor.js').read_text())
-  page.add_script_tag(content=(base/'cleaning-ui.js').read_text())
+  page.add_script_tag(content=(base/'room-timer.js','cleaning-ui.js').read_text())
   page.locator('#setup-home').click()
   assert page.locator('#drawing-canvas').is_visible()
   assert page.locator('#editor-close').is_visible()

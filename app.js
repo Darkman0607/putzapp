@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.4.0.4';
+  const VERSION = '1.4.0.5';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
@@ -90,13 +90,15 @@
   }
   function renderHistory() {
     const list=$('#history-list');list.replaceChildren();
-    $('#session-count').textContent=`${state.sessions.length} ${state.sessions.length===1?'Eintrag':'Einträge'}`;
-    if (!state.sessions.length) {const el=document.createElement('p');el.className='empty-note';el.textContent='Noch keine Reinigung abgeschlossen.';list.append(el);return;}
-    [...state.sessions].reverse().slice(0,8).forEach(session=>{
+    const rooms=(window.PutzmanagerEditor&&window.PutzmanagerTasks)?window.PutzmanagerTasks.sanitizeJournal(window.PutzmanagerEditor.get().history).map(x=>({name:x.roomName+' · '+(x.mode==='quick'?'Schnell':'Detail'),at:x.at,seconds:x.durationSeconds,room:true})):[];
+    const all=[...state.sessions,...rooms].sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+    $('#session-count').textContent=`${all.length} ${all.length===1?'Eintrag':'Einträge'}`;
+    if (!all.length) {const el=document.createElement('p');el.className='empty-note';el.textContent='Noch keine Reinigung abgeschlossen.';list.append(el);return;}
+    all.slice(0,8).forEach(session=>{
       const row=document.createElement('div');row.className='history-item';
       const texts=document.createElement('div');const name=document.createElement('strong');name.textContent=session.name;
       const date=document.createElement('small');date.textContent=dateFormat(new Date(session.at),{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      texts.append(name,date);const duration=document.createElement('span');duration.textContent=readableSeconds(session.seconds);row.append(texts,duration);list.append(row);
+      texts.append(name,date);const duration=document.createElement('span');duration.textContent=Number.isFinite(session.seconds)?readableSeconds(session.seconds):'–';row.append(texts,duration);list.append(row);
     });
   }
   function readableSeconds(sec) {const min=Math.floor(sec/60),s=sec%60;return min>0?`${min} min ${s} s`:`${s} s`;}
@@ -227,7 +229,7 @@
   if(isStandalone())$('#install-panel').hidden=true;
   window.addEventListener('beforeunload',event=>{if(currentSession){event.preventDefault();event.returnValue='';}});
   if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch((error)=>{console.warn('Putzmanager Service Worker:',error);});});}
-  applySettings();renderDates();renderHistory();
+  document.addEventListener('putzmanager:homechange',renderHistory);applySettings();renderDates();renderHistory();
   if(!storageAvailable)toast('Privater Browsermodus: dauerhafte Speicherung nicht verfügbar.');
   // Public metadata for deterministic smoke tests, never used for authentication.
   window.PutzmanagerBeta={version:VERSION,view:()=>$('.view.active')?.id,storageKey:KEY,getHome:()=>structuredClone(state.home),saveHome:(home)=>{state.home=structuredClone(home);persist();}};

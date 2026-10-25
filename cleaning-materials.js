@@ -4,7 +4,7 @@
  const makeId=()=>globalThis.crypto?.randomUUID?.()||'putz-'+Date.now()+'-'+Math.random().toString(36).slice(2);
  function create(roomId){
   const api=()=>root.PutzmanagerInventory, model=()=>root.PutzmanagerInventoryModel;
-  const outer=el('section','clean-materials'),title=el('h3','','🧺 Benötigte Materialien'),hint=el('p','room-note','Vorausgewählt aus der letzten Reinigung. Häkchen kannst du ändern. Nur bestätigte Verwendung zählt.');
+  const outer=el('section','clean-materials'),title=el('h3','','🧺 Benötigte Materialien'),hint=el('p','room-note','Vorausgewählt aus der letzten Reinigung. Häkchen kannst du ändern. Einwegmaterial wird erst beim Speichern abgezogen, waschbare Tücher kommen in die Wäsche.');
   outer.append(title,hint);
   const modeSelect=el('select','cleaning-select');[['during','Jetzt / während des Putzens abhaken'],['after','Nach dem Putzen abhaken']].forEach(([id,label])=>{const o=el('option','',label);o.value=id;modeSelect.append(o);});
   try{modeSelect.value=localStorage.getItem('mein-putzmanager-material-mode')==='after'?'after':'during';}catch{}
@@ -16,7 +16,7 @@
    for(const group of groups){const selected=restore(group.id),card=el('div','material-group');card.append(el('h4','',group.name));
     const items=api()?.get().items||[];
     if(!items.length)card.append(el('p','room-note','Noch keine Lagerartikel. Unter Mehr → Putzlager hinzufügen.'));
-    for(const item of items){const line=el('label','material-check-row'),check=el('input');check.type='checkbox';check.checked=selected.has(item.id);check.dataset.item=item.id;const name=el('span','',`${model()?.icons[item.icon]||'📦'} ${item.name}`);const level=el('select','material-dose');[['0.5','Wenig'],['1','Normal'],['2','Viel']].forEach(([value,text])=>{const o=el('option','',text);o.value=value;level.append(o);});level.setAttribute('aria-label','Verbrauchsintensität für '+item.name);level.hidden=model()?.categoryType(api()?.get(),item.category)!=='mittel';
+    for(const item of items){const line=el('label','material-check-row'),check=el('input');check.type='checkbox';check.checked=selected.has(item.id);check.dataset.item=item.id;const name=el('span','',`${model()?.icons[item.icon]||'📦'} ${item.name} · ${item.handling==='wash'?model().available(item)+' sauber / '+item.dirtyQuantity+' Wäsche':item.quantity+' '+item.unit} · ${item.handling==='consume'?'−1 bei Abschluss':item.handling==='wash'?'→ Wäsche':item.handling==='liquid'?'Nutzung zählen':'Bestand bleibt'}`);const level=el('select','material-dose');[['0.5','Wenig'],['1','Normal'],['2','Viel']].forEach(([value,text])=>{const o=el('option','',text);o.value=value;level.append(o);});level.setAttribute('aria-label','Verbrauchsintensität für '+item.name);level.hidden=item.handling!=='liquid';
      check.addEventListener('change',()=>{if(check.checked)selected.add(item.id);else selected.delete(item.id);});line.append(check,name,level);card.append(line);
     }
     content.append(card);

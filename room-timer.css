@@ -1,0 +1,7 @@
+.room-stopwatch{padding:15px;border:1px solid #43867d;border-radius:16px;background:linear-gradient(160deg,#12343c,#143e3d);margin:14px 0}
+.room-stopwatch-title{font-size:14px;font-weight:700;color:#b8e8dc}
+.room-stopwatch-clock{font-variant-numeric:tabular-nums;text-align:center;letter-spacing:1.5px;font-size:clamp(35px,9vw,52px);font-weight:700;color:#e6fff6;margin:10px 0 12px}
+.room-stopwatch-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.room-stopwatch-actions button{min-height:49px;min-width:0}
+.room-stopwatch-actions button:disabled{opacity:.48}
+@media(max-width:350px){.room-stopwatch-actions{grid-template-columns:1fr}}

@@ -10,9 +10,9 @@ with sync_playwright() as pw:
  def launch(store=None):
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('dialog',lambda d:d.accept())
   page.set_content(read('index.html'))
-  for f in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css']:page.add_style_tag(content=read(f))
+  for f in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css']:page.add_style_tag(content=read(f))
   page.evaluate('''(s)=>{const store=s||{};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:key=>store[key]??null,setItem:(key,v)=>store[key]=String(v)}});window.testStore=store;}''',store)
-  for f in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','cleaning-ui.js','inventory-model.js','inventory-ui.js']:page.add_script_tag(content=read(f))
+  for f in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js']:page.add_script_tag(content=read(f))
   return page
  page=launch()
  page.locator('.nav-button[data-nav=more]').click();page.locator('#inventory-open-more').click();page.locator('#inventory-add').click()

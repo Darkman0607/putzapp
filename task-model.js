@@ -53,7 +53,7 @@ function sanitizeJournal(raw){return (Array.isArray(raw)?raw:[]).slice(-MAX_HIST
  id:e.id.slice(0,120),at:new Date(e.at).toISOString(),floorId:String(e.floorId||'').slice(0,120),roomId:e.roomId.slice(0,120),roomName:String(e.roomName||'').slice(0,55),mode:e.mode==='detail'?'detail':'quick',
  scope:(Array.isArray(e.scope)?e.scope:[]).slice(0,55).map(a=>({id:String(a.id||'').slice(0,120),name:String(a.name||'').slice(0,55)})),
  tasks:(Array.isArray(e.tasks)?e.tasks:[]).slice(0,100).map(t=>({id:String(t.id||'').slice(0,120),text:String(t.text||'').slice(0,90),target:String(t.target||'').slice(0,120)})),
- notes:String(e.notes||'').slice(0,400),scoreBefore:Number.isFinite(e.scoreBefore)?e.scoreBefore:null,scoreAfter:Number.isFinite(e.scoreAfter)?e.scoreAfter:null
+ notes:String(e.notes||'').slice(0,400),durationSeconds:Number.isFinite(e.durationSeconds)?Math.max(0,Math.floor(e.durationSeconds)):null,scoreBefore:Number.isFinite(e.scoreBefore)?e.scoreBefore:null,scoreAfter:Number.isFinite(e.scoreAfter)?e.scoreAfter:null
  }));}
 function record(home, input, cleanApi){
  if(!home||!input||!['quick','detail'].includes(input.mode)||!validStamp(input.at))return null;
@@ -78,7 +78,7 @@ function record(home, input, cleanApi){
  if(!affected.length)return null;
  clean.override=null;
  room.cleanliness=cleanApi.sanitize(clean);
- const entry={id:String(input.id||'').slice(0,120),at:new Date(input.at).toISOString(),floorId:floor.id,roomId:room.id,roomName:room.name,mode:input.mode,scope:affected,tasks:doneTasks,notes:String(input.notes||'').slice(0,400),scoreBefore:prior,scoreAfter:cleanApi.roomScore(room.cleanliness)};
+ const entry={id:String(input.id||'').slice(0,120),at:new Date(input.at).toISOString(),floorId:floor.id,roomId:room.id,roomName:room.name,mode:input.mode,scope:affected,tasks:doneTasks,notes:String(input.notes||'').slice(0,400),durationSeconds:Number.isFinite(input.durationSeconds)?Math.max(0,Math.floor(input.durationSeconds)):null,scoreBefore:prior,scoreAfter:cleanApi.roomScore(room.cleanliness)};
  if(!entry.id)return null;
  home.history=sanitizeJournal([...(home.history||[]),entry]);return entry;
 }

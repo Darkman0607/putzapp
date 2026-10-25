@@ -4,8 +4,8 @@ from playwright.sync_api import sync_playwright
 import json,time
 BASE=Path(__file__).resolve().parent.parent
 read=lambda f:(BASE/f).read_text()
-FILES=['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','cleaning-ui.js','inventory-model.js','inventory-ui.js','view3d-model.js','view3d-ui.js']
-CSS=['style.css','editor.css','view3d.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css']
+FILES=['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js','view3d-model.js','view3d-ui.js']
+CSS=['style.css','editor.css','view3d.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css']
 with sync_playwright() as pw:
  browser=pw.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])
  context=browser.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True)
