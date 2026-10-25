@@ -16,6 +16,6 @@ test('same room-detail editing & quick/long-press handlers work for all rooms',(
 });
 test('updated version metadata, cache and published docs are consistent',()=>{
  for(const p of ['index.html','editor.js','clean.css','app.js','sw.js','manifest.webmanifest'])assert.equal(read(p),read('docs/'+p));
- const html=read('index.html'),sw=read('sw.js');assert(html.includes('BETA 1.4.0.12'));assert(sw.includes('mein-putzmanager-v1.4.0.12'));
+ const html=read('index.html'),sw=read('sw.js');assert(html.includes('BETA 1.4.0.13'));assert(sw.includes('mein-putzmanager-v1.4.0.13'));
  assert(read('app.js').includes("const KEY = 'mein-putzmanager-beta-v1'"));
 });

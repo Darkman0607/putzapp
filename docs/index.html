@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.12 mit optionaler Google-Drive-Sicherung.">
+  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.13 mit optionaler Google-Drive-Sicherung.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="./cleaning-materials.css">
   <link rel="stylesheet" href="./room-timer.css">
   <link rel="stylesheet" href="./backup-drive.css">
-  <title>Mein Putzmanager · Beta 1.4.0.12</title>
+  <title>Mein Putzmanager · Beta 1.4.0.13</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -60,7 +60,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.12</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.13</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -107,7 +107,7 @@
         <p id="backup-status" class="backup-status" role="status" aria-live="polite">Bereit. Drive-Anmeldung nur mit Internet; die App selbst bleibt offline nutzbar.</p>
         <small class="backup-caution">⚠ Wiederherstellen ersetzt die Putzmanager-Daten auf diesem Gerät, nicht die Daten anderer Apps. Zuvor wird automatisch ein lokaler Wiederherstellungspunkt angelegt. Für einen Gerätewechsel auf beiden Geräten mit demselben Google-Konto anmelden. Passwörter oder Google-Tokens werden nicht in die Sicherung geschrieben.</small>
       </section>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.12 · Google Drive Sicherung (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.13 · Google Drive Sicherung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><div class="inventory-toolbar-actions"><button id="inventory-manage-categories" class="inventory-add" type="button" aria-expanded="false" aria-controls="inventory-category-manager">⚙ Kategorien</button><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
@@ -121,7 +121,7 @@
        <div class="inventory-toolbar"><span class="inventory-note">Bestände und bestätigte Verwendungen werden lokal gespeichert.</span><div class="inventory-view-toggle" aria-label="Lagerdarstellung"><button type="button" id="inventory-view-list" aria-pressed="true">☷ Liste</button><button type="button" id="inventory-view-grid" aria-pressed="false">▦ Kacheln</button></div></div>
        <div id="inventory-items" class="inventory-items inventory-list" aria-live="polite"></div>
        <p class="inventory-storage-warning" id="inventory-storage-notice" hidden>⚠ Speichern nicht möglich. Die Änderungen sind nur bis zum Schließen der App vorhanden.</p>
-       <p class="inventory-note">Bei jeder abgeschlossenen Raumreinigung werden ausgewählte Einwegartikel automatisch abgezogen und waschbare Textilien zu „Wäsche“ gebucht. Bei Flüssigmitteln wird die Nutzung gezählt; der Flaschenbestand sinkt erst mit „Flasche leer“. Unter „Bearbeiten“ lässt sich die Buchungsart je Artikel ändern.</p>
+       <p class="inventory-note">Mit „🧺 In Wäsche +1“ kannst du benutzte Geschirr- oder Putztücher auch ohne Reinigungssitzung zur Wäsche buchen. „Gewaschen +1“ oder „Alle gewaschen“ setzt sie auf sauber zurück. Bei jeder abgeschlossenen Raumreinigung werden ausgewählte Einwegartikel automatisch abgezogen und waschbare Textilien zu „Wäsche“ gebucht. Bei Flüssigmitteln wird die Nutzung gezählt; der Flaschenbestand sinkt erst mit „Flasche leer“. Unter „Bearbeiten“ lässt sich die Buchungsart je Artikel ändern.</p>
        <div id="inventory-selection" class="inventory-selection" hidden><span id="inventory-selection-count">0 Produkte vorgemerkt</span><button type="button" id="inventory-selection-done" class="inventory-back">Zur Reinigung</button></div>
       </div>
       <section id="inventory-category-manager" class="surface inventory-category-manager" hidden aria-label="Kategorien verwalten">
@@ -153,6 +153,10 @@
        <label class="full">Notizen<textarea name="notes" maxlength="500" rows="2" placeholder="Optional: Material, Anwendung, Besonderheiten"></textarea></label>
        <label class="full">Wie wird der Artikel bei einer bestätigten Reinigung gebucht?
        <select name="handling" id="inventory-handling"><option value="liquid">🧴 Mittel – Verwendungen zählen, Flasche erst bei „leer“ abziehen</option><option value="consume">🗑️ Einweg – automatisch 1 Stück/Paar abziehen</option><option value="wash">🧺 Waschbar – 1 Stück/Paar in die Wäsche verschieben</option><option value="durable">♻️ Dauerhaft – Bestand bleibt gleich</option></select></label>
+       <label class="full inventory-wash-settings" id="inventory-wash-settings" hidden>Waschtemperatur laut Pflegeetikett (optional)
+         <select name="washTemperature" id="inventory-wash-temperature"><option value="">Nicht hinterlegt</option><option value="30">30 °C</option><option value="40">40 °C</option><option value="60">60 °C</option><option value="90">90 °C</option></select>
+         <small>Nur anzeigen, was auf deinem Tuch-Etikett erlaubt ist; keine automatische Temperatur-Empfehlung.</small>
+       </label>
        <small class="full inventory-note">Für Handschuhe, Putz- und Geschirrtücher Art bewusst einstellen. Waschbare Artikel kommen nach „Gewaschen“ zurück zu den sauberen Beständen.</small>
        <label class="full">Artikelfotos (max. 3)<input id="inventory-photos" type="file" accept="image/*" multiple></label>
        <div class="full" id="inventory-photo-preview"></div><p class="full room-note" id="inventory-photo-help"></p>

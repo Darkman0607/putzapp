@@ -1,0 +1,6 @@
+MEIN PUTZMANAGER – V1.4.0.13 – Wascheinstellungen
+Datum: 25.10.2026
+
+Wäschefunktion: Manuell „In Wäsche +1“ für waschbare Textilien, „Gewaschen +1“ und „Alle gewaschen“ wie bisher. Auch ohne Reinigungssitzung nutzbar. Temperatureinstellung 30/40/60/90°C optional laut Pflegeetikett; keine automatische Waschtemperatur. Namen Geschirrtücher/Putztücher/Putzfetzen automatisch erkannt. Gesamtbestand bleibt konstant.
+
+Prüfung lokal: 111/111 Node-Tests, mobile Chromium-Browserprüfung für beide Artikel, Persistenz, vorhandener Lager-/Reinigungsablauf; kein JS-Fehler. Echte Android-PWA-Praxisprüfung noch ausständig.

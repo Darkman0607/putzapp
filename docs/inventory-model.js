@@ -53,7 +53,7 @@
   if(Object.hasOwn(handlingModes,raw.handling))return raw.handling;
   const term=String(raw.name||'').toLocaleLowerCase('de');
   const icon=raw.icon||'';
-  if(['dishcloth','cloth'].includes(icon)||/geschirr.?tuch|putz.?tuch|mikrofaser|spül.?tuch|waschlappen/.test(term))return 'wash';
+  if(['dishcloth','cloth'].includes(icon)||/geschirr.?t(?:uch|ücher)|putz.?t(?:uch|ücher)|mikrofaser|spül.?t(?:uch|ücher)|waschlappen|putzfetzen|putzlappen|putztlappen|reinigungslappen|spüllappen/.test(term))return 'wash';
   if(['glovesWhite','glovesPink','glovesBlue','paper'].includes(icon)||/handschuh|einweg|küchenrolle|küchenpapier|müllbeutel/.test(term))return raw.reusable===true?'wash':'consume';
   if(family==='geraete')return 'durable';
   if(family==='mittel')return 'liquid';
@@ -69,8 +69,9 @@
   if(!raw||typeof raw!=='object'||!categoryType(categoryDefs,raw.category))return null;
   const family=categoryType(categoryDefs,raw.category);
   const name=safeText(raw.name,90);if(!name)return null;const handling=handlingFor(raw,family),quantity=numeric(raw.quantity);const dirtyQuantity=handling==='wash'?Math.min(Math.floor(quantity),Math.floor(numeric(raw.dirtyQuantity))):0;
+  const washTemperature=[30,40,60,90].includes(Number(raw.washTemperature))?Number(raw.washTemperature):null;
   const photos=Array.isArray(raw.photos)?raw.photos.slice(0,3).filter(p=>typeof p==='string'&&/^data:image\/(jpeg|png|webp);base64,/.test(p)&&p.length<140000):[];
-  return {id:safeText(raw.id,100)||cryptoId(),name,category:raw.category,location:safeText(raw.location,70),quantity,dirtyQuantity,handling,unit:safeText(raw.unit,25)||'Stück',minimum:numeric(raw.minimum),favorite:raw.favorite===true,icon:icons[raw.icon]?raw.icon:(family==='mittel'?'bottle':family==='geraete'?'device':'sponge'),brand:safeText(raw.brand,80),model:safeText(raw.model,80),notes:safeText(raw.notes,500),photos,reusable:raw.reusable===true||(raw.reusable===undefined&&family==='zubehoer'&&raw.icon!=='paper'),usageCount:Math.floor(numeric(raw.usageCount)),usageWeighted:numeric(raw.usageWeighted),activeBottleId:safeText(raw.activeBottleId,120),bottleUses:Math.floor(numeric(raw.bottleUses)),bottleWeighted:numeric(raw.bottleWeighted),samples:Array.isArray(raw.samples)?raw.samples.slice(-40).filter(v=>v&&numeric(v.weighted)>0).map(v=>({weighted:numeric(v.weighted),uses:Math.floor(numeric(v.uses)),at:validDate(v.at)})):[],createdAt:validDate(raw.createdAt),updatedAt:validDate(raw.updatedAt||raw.createdAt)};
+  return {id:safeText(raw.id,100)||cryptoId(),name,category:raw.category,location:safeText(raw.location,70),quantity,dirtyQuantity,handling,washTemperature,unit:safeText(raw.unit,25)||'Stück',minimum:numeric(raw.minimum),favorite:raw.favorite===true,icon:icons[raw.icon]?raw.icon:(family==='mittel'?'bottle':family==='geraete'?'device':'sponge'),brand:safeText(raw.brand,80),model:safeText(raw.model,80),notes:safeText(raw.notes,500),photos,reusable:raw.reusable===true||(raw.reusable===undefined&&family==='zubehoer'&&raw.icon!=='paper'),usageCount:Math.floor(numeric(raw.usageCount)),usageWeighted:numeric(raw.usageWeighted),activeBottleId:safeText(raw.activeBottleId,120),bottleUses:Math.floor(numeric(raw.bottleUses)),bottleWeighted:numeric(raw.bottleWeighted),samples:Array.isArray(raw.samples)?raw.samples.slice(-40).filter(v=>v&&numeric(v.weighted)>0).map(v=>({weighted:numeric(v.weighted),uses:Math.floor(numeric(v.uses)),at:validDate(v.at)})):[],createdAt:validDate(raw.createdAt),updatedAt:validDate(raw.updatedAt||raw.createdAt)};
  }
  function sanitize(raw){const categoryDefs=normalizeCategories(raw?.categories),items=Array.isArray(raw?.items)?raw.items:[],seen=new Set();const presets={};for(const [key,v] of Object.entries(raw?.presets&&typeof raw.presets==='object'?raw.presets:{}).slice(-500)){if(key.length>240)continue;presets[key]=Array.isArray(v)?v.filter(x=>typeof x==='string').slice(0,50):[];}
   return {categories:categoryDefs,items:items.slice(-3000).map(x=>normalize(x,categoryDefs)).filter(x=>x&&!seen.has(x.id)&&seen.add(x.id)),view:modes.includes(raw?.view)?raw.view:'list',sort:sorts.includes(raw?.sort)?raw.sort:'name',search:safeText(raw?.search,120),category:categoryType(categoryDefs,raw?.category)?raw.category:'all',status:statuses.includes(raw?.status)?raw.status:'all',location:safeText(raw?.location,70),presets,uses:Array.isArray(raw?.uses)?raw.uses.slice(-3000).filter(x=>x&&typeof x.sessionId==='string'&&typeof x.itemId==='string').map(x=>({...x,weight:[0.5,1,2].includes(x.weight)?x.weight:1})):[]};}
@@ -111,6 +112,12 @@
   }
   s.uses=s.uses.slice(-3000);return {state:s,added};
  }
+ function markForLaundry(raw,id,count=1,now=new Date().toISOString()){
+  const s=sanitize(raw),item=s.items.find(x=>x.id===id);
+  if(!item||item.handling!=='wash')throw Error('Artikel ist nicht als waschbar eingestellt.');
+  const n=Number(count);if(!Number.isInteger(n)||n<1||n>available(item))throw Error('Ungültige Anzahl – es müssen genügend saubere Artikel verfügbar sein.');
+  item.dirtyQuantity+=n;item.updatedAt=now;return {state:s,item};
+ }
  function markWashed(raw,id,count=1,now=new Date().toISOString()){
   const s=sanitize(raw),item=s.items.find(x=>x.id===id);
   if(!item||item.handling!=='wash')throw Error('Artikel ist nicht als waschbar eingestellt.');
@@ -122,5 +129,5 @@
   item.samples.push({weighted:item.bottleWeighted,uses:item.bottleUses,at:now});item.samples=item.samples.slice(-40);item.quantity=Math.max(0,item.quantity-1);item.activeBottleId='';item.bottleUses=0;item.bottleWeighted=0;item.updatedAt=now;return {state:s,item};
  }
  function estimate(item){if(!item.samples?.length)return null;return {sampleCount:item.samples.length,mean:Math.round(item.samples.reduce((sum,x)=>sum+x.weighted,0)/item.samples.length*10)/10};}
- return {categories,defaultCategories,normalizeCategories,categoryType,categoryName,createCategory,renameCategory,deleteCategory,handlingModes,handlingFor,available,markWashed,icons,iconColors,normalize,sanitize,status,incomplete,filter,summary,add,update,setFavorite,presetKey,suggestions,registerUse,markBottleEmpty,estimate};
+ return {categories,defaultCategories,normalizeCategories,categoryType,categoryName,createCategory,renameCategory,deleteCategory,handlingModes,handlingFor,available,markForLaundry,markWashed,icons,iconColors,normalize,sanitize,status,incomplete,filter,summary,add,update,setFavorite,presetKey,suggestions,registerUse,markBottleEmpty,estimate};
 });
