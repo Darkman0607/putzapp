@@ -45,6 +45,10 @@ with sync_playwright() as pw:
  assert page.locator('#room-detail-state').inner_text().startswith('75 %')
  page.locator('#room-areas .room-btn').first.click()
  assert 'WC neu' in page.locator('#room-areas').inner_text()
+ page.locator('.area-tasks input[type=text]').fill('WC reinigen');page.locator('.area-tasks .room-btn').last.click()
+ assert 'WC reinigen' in page.locator('#room-areas').inner_text()
+ page.locator('.area-task-row input[type=checkbox]').check()
+ assert page.evaluate('window.PutzmanagerEditor.get().floors[0].rooms[0].cleanliness.areas[0].tasks[0].done') is True
  page.locator('#room-detail-close').click()
  assert '75 %' in group.locator('text').last.text_content()
  assert page.evaluate('window.PutzmanagerEditor.get().floors[0].rooms[0].points')==original,'room geometry changed in view mode'
@@ -65,6 +69,8 @@ with sync_playwright() as pw:
  page.locator(f'[data-home-room="{rid}"]').click()
  assert '25 %' in page.locator('#room-detail-state').inner_text()
  assert 'WC neu' in page.locator('#room-areas').inner_text()
+ assert 'WC reinigen' in page.locator('#room-areas').inner_text()
+ assert page.locator('.area-task-row input[type=checkbox]').is_checked()
  page.locator('#room-detail-close').click()
  page.screenshot(path='/mnt/data/Putzmanager_V1.0.3_U04_Home.png',full_page=True)
  assert not errors,errors

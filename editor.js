@@ -196,7 +196,18 @@
       const actions=el('div',{class:'area-buttons'}),rename=el('button',{type:'button',class:'room-btn'},'✏️ Umbenennen'),del=el('button',{type:'button',class:'room-btn room-danger'},'Löschen');
       rename.addEventListener('click',()=>{const value=prompt('Name des Unterbereichs',a.name);if(value===null)return;const trimmed=value.trim().slice(0,55);if(!trimmed){alert('Bitte einen Namen angeben.');return;}persistClean(detailFloor,detailId,clean=>{const target=clean.areas.find(x=>x.id===a.id);if(!target)return false;target.name=trimmed;clean.override=null;});renderDetail();});
       del.addEventListener('click',()=>{if(!confirm(`Unterbereich „${a.name}“ entfernen?`))return;persistClean(detailFloor,detailId,clean=>{clean.areas=clean.areas.filter(x=>x.id!==a.id);clean.override=null;});renderDetail();});
-      actions.append(rename,del);line.append(row,slide,actions);list.append(line);
+      actions.append(rename,del);line.append(row,slide,actions);
+      const tasks=el('div',{class:'area-tasks'}),taskLabel=el('small',{},'Eigene Putzaufgaben für diesen Bereich');tasks.append(taskLabel);
+      for(const task of a.tasks){
+        const taskRow=el('div',{class:'area-task-row'}),label=el('label',{}),check=el('input',{type:'checkbox','aria-label':`Aufgabe ${task.text} erledigt`}),name=el('span',{},task.text),remove=el('button',{class:'room-btn room-danger',type:'button','aria-label':`Aufgabe ${task.text} löschen`},'✕');
+        check.checked=task.done;label.append(check,name);if(task.done)name.classList.add('done');
+        check.addEventListener('change',()=>{persistClean(detailFloor,detailId,clean=>{const target=clean.areas.find(x=>x.id===a.id)?.tasks.find(t=>t.id===task.id);if(!target)return false;target.done=check.checked;});renderDetail();});
+        remove.addEventListener('click',()=>{if(!confirm(`Aufgabe „${task.text}“ entfernen?`))return;persistClean(detailFloor,detailId,clean=>{const target=clean.areas.find(x=>x.id===a.id);if(!target)return false;target.tasks=target.tasks.filter(t=>t.id!==task.id);});renderDetail();});
+        taskRow.append(label,remove);tasks.append(taskRow);
+      }
+      const addTask=el('div',{class:'room-add-line'}),taskInput=el('input',{type:'text',maxlength:'90',placeholder:'Aufgabe eingeben, z. B. WC reinigen','aria-label':`Aufgabe für ${a.name} eingeben`}),addTaskButton=el('button',{type:'button',class:'room-btn'},'＋ Aufgabe');
+      const saveTask=()=>{const text=taskInput.value.trim().slice(0,90);if(!text){taskInput.focus();return;}persistClean(detailFloor,detailId,clean=>{const target=clean.areas.find(x=>x.id===a.id);if(!target||target.tasks.length>=30){alert('Maximal 30 Aufgaben pro Unterbereich.');return false;}target.tasks.push({id:uid(),text,done:false});});renderDetail();};
+      addTaskButton.addEventListener('click',saveTask);taskInput.addEventListener('keydown',e=>{if(e.key==='Enter')saveTask();});addTask.append(taskInput,addTaskButton);tasks.append(addTask);line.append(tasks);list.append(line);
     }
   }
   function showDetail(floorId,id){
@@ -274,7 +285,7 @@
   $('#room-base-save').addEventListener('click',()=>{persistClean(detailFloor,detailId,clean=>{clean.base=Number($('#room-base-input').value);clean.override=null;});renderDetail();});
   $('#room-area-add').addEventListener('click',()=>{
     const field=$('#room-area-name'),name=field.value.trim().slice(0,55);if(!name){field.focus();return;}
-    persistClean(detailFloor,detailId,clean=>{if(clean.areas.length>=50){alert('Maximal 50 Unterbereiche je Raum.');return false;}clean.areas.push({id:uid(),name,score:clean.base});clean.override=null;});
+    persistClean(detailFloor,detailId,clean=>{if(clean.areas.length>=50){alert('Maximal 50 Unterbereiche je Raum.');return false;}clean.areas.push({id:uid(),name,score:clean.base,tasks:[]});clean.override=null;});
     field.value='';renderDetail();
   });
   $('#room-area-name').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#room-area-add').click();}});

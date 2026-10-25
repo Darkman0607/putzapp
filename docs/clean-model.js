@@ -14,7 +14,8 @@
       areas: areas.slice(0, 50).filter(a => a && typeof a === 'object').map(a => ({
         id: typeof a.id === 'string' && a.id.length < 120 ? a.id : '',
         name: String(a.name || '').trim().slice(0, 55),
-        score: score(a.score)
+        score: score(a.score),
+        tasks: (Array.isArray(a.tasks) ? a.tasks : []).slice(0,30).filter(t => t && typeof t === 'object' && typeof t.id === 'string').map(t => ({id:t.id.slice(0,120),text:String(t.text || '').trim().slice(0,90),done:t.done === true})).filter(t=>t.id && t.text)
       })).filter(a => a.id && a.name && !used.has(a.id) && used.add(a.id))
     };
   }
