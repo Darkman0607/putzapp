@@ -3,6 +3,7 @@ Basis: V1.4.0.9 · Android-first PWA (GitHub Pages /putzapp/)
 Implementiert: kompaktes Bottom Sheet pro Raum, Fortschrittsring, thumb-grosse Reinigungs-/Checklisten-/Aufgabenknöpfe, einklappbare Unterbereiche und manuelle Bewertungsoptionen. Alle bisherigen Editor-, Putz-, Aufgaben- und Backup-Aktionen erhalten.
 Datenmigration: keine. Unveränderter LocalStorage-Key mein-putzmanager-beta-v1, unverändertes Datenformat, IndexedDB-Fotogalerie bleibt erhalten.
 Nachweise lokal: 99/99 Node-Tests, bestehender U04-Browsertest bestanden, neue Playwright-Bedienabläufe für 320, 390, 430, 768 px bestanden; keine JS-Fehler/horizontales Überlaufen.
-GitHub-Veröffentlichungsabnahme: ausstehend bis zum erfolgreichen Commit und CI-/Pages-Nachweis.
+GitHub-Veröffentlichung: Branch Root; Commit b360a780033e430c19c5ca75d788a07dfe6f4099. CI 40234761427 SUCCESS, Pages 40234761388 SUCCESS.
+ZIP: 107 Dateien, CRC vollständig geprüft.
 Android PWA: manuelle Abnahme der installierten Version und Offline-Nutzung weiterhin offen.
 Google Drive: tägliches manuelles Speichern vom Nutzer bestätigt, kompletter Geräte-Restore offen.
