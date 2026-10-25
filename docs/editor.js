@@ -57,11 +57,11 @@
   function commit(previous) {
     if(JSON.stringify(previous)===JSON.stringify(home))return;
     past.push(previous);if(past.length>70)past.shift();future=[];
-    API.saveHome(clone(home));refresh();
+    API.saveHome(clone(home));refresh();document.dispatchEvent(new Event('putzmanager:homechange'));
   }
   function mutate(fn){const before=clone(home);fn();commit(before);}
-  function undo(){if(!past.length)return;future.push(clone(home));home=past.pop();selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));refresh();}
-  function redo(){if(!future.length)return;past.push(clone(home));home=future.pop();selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));refresh();}
+  function undo(){if(!past.length)return;future.push(clone(home));home=past.pop();selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));refresh();document.dispatchEvent(new Event('putzmanager:homechange'));}
+  function redo(){if(!future.length)return;past.push(clone(home));home=future.pop();selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));refresh();document.dispatchEvent(new Event('putzmanager:homechange'));}
   function fit(){view={x:0,y:0,w:1000,h:720};draw();}
   function zoom(factor){const cx=view.x+view.w/2,cy=view.y+view.h/2;view.w=within(view.w*factor,150,2400);view.h=view.w*.72;view.x=cx-view.w/2;view.y=cy-view.h/2;draw();}
   function world(event){const svg=$('#drawing-canvas'),point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;const local=point.matrixTransform(svg.getScreenCTM().inverse());return [local.x,local.y];}
@@ -301,7 +301,7 @@
     if(home.floors.length>1){
       const level=el('select',{id:'home-floor-select',class:'home-floor-select','aria-label':'Etage auswählen'});
       home.floors.forEach(floor=>{const opt=el('option',{value:floor.id},floor.name);if(floor.id===home.activeFloor)opt.selected=true;level.append(opt);});
-      level.addEventListener('change',()=>{home.activeFloor=level.value;API.saveHome(clone(home));renderHome();});top.append(level);
+      level.addEventListener('change',()=>{setActiveFloor(level.value);});top.append(level);
     }
     preview.append(top);
     const allPts=[...f.rooms.flatMap(r=>r.points),...f.outline],xs=allPts.map(p=>p[0]),ys=allPts.map(p=>p[1]);
@@ -464,7 +464,7 @@
   $('#editor-rename-floor').addEventListener('click',()=>{const f=currentFloor(),name=prompt('Ebene umbenennen',f.name);if(name===null||!name.trim())return;mutate(()=>{f.name=name.trim().slice(0,50);});});
   $('#editor-remove-floor').addEventListener('click',()=>{if(home.floors.length<=1){alert('Mindestens eine Ebene ist erforderlich.');return;}if(!confirm(`Ebene „${currentFloor().name}“ mit allen Räumen löschen?`))return;mutate(()=>{home.floors=home.floors.filter(f=>f.id!==home.activeFloor);home.activeFloor=home.floors[0].id;selected=null;selectedWall=null;});});
   $('#editor-floor-prev').addEventListener('click',()=>cycleFloor(-1));$('#editor-floor-next').addEventListener('click',()=>cycleFloor(1));
-  function cycleFloor(step){const i=home.floors.findIndex(f=>f.id===home.activeFloor);home.activeFloor=home.floors[(i+step+home.floors.length)%home.floors.length].id;selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));draw();renderHome();}
+  function cycleFloor(step){const i=home.floors.findIndex(f=>f.id===home.activeFloor);home.activeFloor=home.floors[(i+step+home.floors.length)%home.floors.length].id;selected=null;selectedWall=null;selectedOpening=null;drawing=null;API.saveHome(clone(home));draw();renderHome();document.dispatchEvent(new Event('putzmanager:homechange'));}
   $('#editor-method').addEventListener('change',e=>{method=e.target.value; if(method==='outline')startDrawing('outline');else {drawing=null;draw();}});
   window.addEventListener('keydown',e=>{
     if($('#editor-overlay').hidden)return;
@@ -502,6 +502,7 @@
     room.cleanliness=CLEAN.sanitize(clean);commit(before);return true;
   }
   function recordCleaning(input){const before=clone(home);const entry=TASKS.record(home,input,CLEAN);if(entry)commit(before);return entry;}
-  window.PutzmanagerEditor={open,renderHome,get:()=>clone(home),updateClean,recordCleaning};
+  function setActiveFloor(floorId){if(!home.floors.some(f=>f.id===floorId))return false;home.activeFloor=floorId;API.saveHome(clone(home));renderHome();document.dispatchEvent(new Event('putzmanager:homechange'));return true;}
+  window.PutzmanagerEditor={open,renderHome,get:()=>clone(home),updateClean,recordCleaning,openDetails:showDetail,openQuick:showQuick,setActiveFloor};
   renderHome();
 })();

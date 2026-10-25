@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.4.0.2.">
+  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.4.0.4.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -12,11 +12,12 @@
   <link rel="apple-touch-icon" href="./assets/icon-192.png">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./editor.css">
+  <link rel="stylesheet" href="./view3d.css">
   <link rel="stylesheet" href="./clean.css">
 <link rel="stylesheet" href="./cleaning.css">
   <link rel="stylesheet" href="./inventory.css">
   <link rel="stylesheet" href="./cleaning-materials.css">
-  <title>Mein Putzmanager · Beta 1.4.0.2</title>
+  <title>Mein Putzmanager · Beta 1.4.0.4</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -56,7 +57,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.2</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.4</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -71,7 +72,9 @@
           </svg>
         </div>
         <div id="floorplan-empty" class="floorplan-empty"><div class="floorplan-empty-icon"><svg class="icon"><use href="#ic-layers"/></svg></div><h2>Noch kein Grundriss</h2><p>Deine Räume und ihre Sauberkeit werden hier sichtbar, sobald du deine Wohnung eingerichtet hast.</p><button type="button" id="setup-home" class="outline-button"><svg class="icon"><use href="#ic-chevron"/></svg> Grundriss einrichten / bearbeiten</button></div>
+        <div id="floorplan-view-choice" class="view3d-choice" role="group" aria-label="Wohnungsansicht wechseln" hidden><button id="floorplan-view-2d" type="button" aria-pressed="true">▦ 2D Grundriss</button><button id="floorplan-view-3d" type="button" aria-pressed="false">🏠 3D Reinigen</button></div>
         <div id="home-floorplan-preview" class="home-floorplan-preview" hidden></div>
+        <div id="home-3d-preview" class="home-3d-preview" aria-label="Interaktive 3D-Reinigungsansicht" hidden></div>
       </section>
       <div class="dashboard-grid"><button class="metric-card surface" type="button" data-nav="more"><span class="metric-icon"><svg class="icon"><use href="#ic-spark"/></svg></span><div><small>Wohnung gesamt</small><strong id="home-overall-value">– %</strong><span id="home-overall-caption">Noch keine Raumdaten</span></div><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><button class="metric-card surface" type="button" data-nav="plan"><span class="metric-icon"><svg class="icon"><use href="#ic-calendar"/></svg></span><div><small>Nächste Aufgabe</small><strong>Keine geplant</strong><span>Putzplan ansehen</span></div><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button></div>
       <div class="surface section-footer"><span class="status-light"></span><span>Privatmodus · Daten bleiben auf diesem Gerät</span></div>
@@ -86,7 +89,7 @@
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
       <div class="surface menu-card"><h2>Weitere Bereiche</h2><button type="button" id="inventory-open-more" class="inventory-entry"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><span><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4.0.3</small></span><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.2 · Lager & Putzmaterial (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.4 · 3D-Reinigung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><div class="inventory-toolbar-actions"><button id="inventory-manage-categories" class="inventory-add" type="button" aria-expanded="false" aria-controls="inventory-category-manager">⚙ Kategorien</button><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
@@ -174,7 +177,7 @@
 
 <section id="cleaning-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="cleaning-title" hidden><div class="room-sheet cleaning-sheet"><header class="room-sheet-top"><div><small id="cleaning-subtitle">U05 · REINIGUNG</small><h2 id="cleaning-title">Reinigung</h2></div><button type="button" id="cleaning-close" class="room-close" aria-label="Reinigung schließen">✕</button></header><div id="cleaning-content"></div></div></section>
 <section id="editor-overlay" class="editor-overlay" aria-label="Vollbild-Grundriss-Editor" hidden>
-  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.4.0.2 · Grundriss</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
+  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.4.0.4 · Grundriss</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
   <div class="editor-controls">
     <label class="editor-setting">Wohnart <select id="editor-kind" class="editor-select"><option value="wohnung">Wohnung</option><option value="haus">Haus</option></select></label>
     <div id="editor-level-picker" class="editor-floor-nav" hidden><button id="editor-floor-prev" type="button" class="editor-btn" aria-label="Vorherige Ebene">‹</button><strong id="editor-level-name">Ebene 1</strong><button id="editor-floor-next" type="button" class="editor-btn" aria-label="Nächste Ebene">›</button></div>
@@ -231,5 +234,7 @@
 <script src="./cleaning-ui.js" defer></script>
 <script src="./inventory-model.js" defer></script>
 <script src="./inventory-ui.js" defer></script>
+<script src="./view3d-model.js" defer></script>
+<script src="./view3d-ui.js" defer></script>
 </body>
 </html>

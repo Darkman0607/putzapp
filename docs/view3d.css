@@ -1,0 +1,30 @@
+/* 3D room cleaning view — display-only orthographic projection, no external assets. */
+.view3d-choice{display:flex;gap:6px;justify-content:center;align-items:center;margin:10px auto 4px;max-width:420px;width:100%;padding:4px;border:1px solid #456866;border-radius:15px;background:#0d2b32}
+.view3d-choice button{flex:1;min-height:44px;border:0;border-radius:11px;background:transparent;color:#c7e6e1;font-size:13px;font-weight:750;cursor:pointer}
+.view3d-choice button[aria-pressed="true"]{background:linear-gradient(130deg,#14c9a2,#087c83);color:white;box-shadow:0 2px 13px #13caab55}
+.home-3d-preview{width:100%;max-width:630px;margin:auto;padding:5px 0 14px;min-width:0}
+.view3d-top{display:flex;gap:9px;align-items:center;justify-content:space-between;padding:4px 4px 10px;flex-wrap:wrap}
+.view3d-top strong{color:var(--accent);font-size:13px}.view3d-top select{max-width:65%;font-size:13px;border:1px solid #3c7276;background:#0c3038;color:#ecfff8;border-radius:9px;min-height:44px;padding:6px}
+.view3d-scene-wrap{position:relative;overflow:hidden;border-radius:17px;border:1px solid #2c5b65;background:radial-gradient(circle at 50% 23%,#1a4350 0%,#102831 55%,#061a22 100%)}
+.view3d-scene{display:block;width:100%;height:auto;aspect-ratio:760/560;max-height:390px;touch-action:none;user-select:none;cursor:grab;outline-offset:2px}
+.view3d-scene:active{cursor:grabbing}
+.view3d-scene [data-3d-room]{cursor:pointer;outline:none}
+.view3d-scene [data-3d-room]:focus-visible polygon{stroke:#ffffff;stroke-width:7px}
+.view3d-scene [data-3d-room][aria-selected="true"] polygon{stroke:#e6fff4;stroke-width:5px}
+.view3d-tools{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:9px auto}
+.view3d-tools button,.view3d-actions button,.view3d-status button{min-height:44px;padding:8px 12px;border:1px solid #39746e;border-radius:11px;color:#effff9;background:#15444b;font-size:13px;font-weight:740}
+.view3d-tools button:focus-visible,.view3d-actions button:focus-visible,.view3d-status button:focus-visible{outline:2px solid #1bdfb4;outline-offset:2px}
+.view3d-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+.view3d-actions button:first-child{background:linear-gradient(125deg,#119d84,#0e6e7c)}
+.view3d-status{margin:7px 0 0;padding:12px;border-radius:13px;border:1px solid #396c6c;background:#102e36;min-height:86px}
+.view3d-status-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px}
+.view3d-status-head strong{font-size:17px;color:#ecfff7}
+.view3d-score{font-weight:800;color:#fff;padding:6px 9px;border-radius:9px;white-space:nowrap}
+.view3d-hint{font-size:12px;color:#b2d0d0;line-height:1.55;margin:7px 0}
+.view3d-mini{display:flex;gap:7px;flex-wrap:wrap}.view3d-mini button{min-width:56px;flex:1}
+.view3d-legend{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:10px;color:#c1dbd9;margin-top:7px}
+.view3d-legend span{display:inline-flex;gap:4px;align-items:center}.view3d-legend i{display:inline-block;width:8px;height:8px;border-radius:50%}
+.view3d-help{margin:0 4px;font-size:11px;line-height:1.45;color:#b3d0d1;text-align:center}
+.view3d-fallback{padding:19px;color:#e0f6f1;text-align:center}
+@media(max-width:360px){.view3d-tools button{padding:7px 9px;font-size:12px}.view3d-actions button{font-size:12px}.view3d-status{padding:9px}}
+body.theme-light .view3d-status{background:#d6eae9;color:#143b3f}body.theme-light .view3d-status strong{color:#174545}body.theme-light .view3d-hint,body.theme-light .view3d-help{color:#194547}
