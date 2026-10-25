@@ -41,3 +41,13 @@ GitHub Pages nutzt Branch `Root`; aktuell ist der Veröffentlichungsordner `/ (r
 - Sofortige lokale Speicherung unter dem bisherigen Speicher-Schlüssel mit Undo/Redo je Editor-Sitzung.
 
 **Wichtig:** Vorhandene Einstellungen und Reinigungsprotokolle bleiben beim Laden erhalten. Der Grundriss wird nur in der lokalen Browser-Datenbank (`localStorage`) gesichert; ein vollständiges Backup kommt erst später. U03 (gemeinsame Wände, Tür-/Fensteröffnungen und exakte Maße), U04 (Sauberkeitswerte) und U05 (Putzaufgaben) sind **noch nicht** Bestandteil dieser Version. Undo/Redo gilt innerhalb der geöffneten Editor-Sitzung; nach App-Neustart ist der gespeicherte letzte Grundriss verfügbar, nicht die Undo-Historie. Die reale PWA-Installation und ein Offline-Test auf einem Android-Smartphone bleiben offen.
+
+
+## V1.0.2 – U03: Lückenlose Wandgeometrie, Maße, Türen und Fenster (25.10.2026)
+
+- Raumbereiche teilen sich nur **ein** geometrisch abgeleitetes Wandsegment; beim gezielten Ziehen des gemeinsamen Wandgriffs ändern sich beide angrenzenden Raumkonturen. Verbundene Räume verschieben sich als Gruppe, gemeinsame Ecken werden synchron bearbeitet.
+- Raum-Vorlagen werden kollisionsfrei neben vorhandenen Räumen platziert. Beim Verschieben rasten benachbarte Kanten aneinander; ein Versuch, Räume überlappend abzulegen, wird verworfen und angezeigt.
+- Planmaße sind **zunächst ausdrücklich unkalibriert**. Eine reale Wandlänge dient zur freiwilligen Maßstabs-Kalibrierung (Meter pro Plan-Einheit). Gerade Wände lassen sich später in der Länge ändern; rechteckige Räume haben editierbare Breite und Tiefe. Für komplexe Nicht-Rechtecke wird eine solche maßgebundene Bearbeitung sicher verweigert.
+- Türen (ein- oder zweiflügelig, offen, Schiebetür; Anschlag, Breite, Position) und Fenster (Typ, Breite, optionale Höhe, Position) sind echte Unterbrechungen der gezeichneten Wandlinie. Öffnungen werden pro Ebene gespeichert und in der Startseiten-Vorschau gezeigt.
+- Das vorhandene lokale Datenformat `mein-putzmanager-beta-v1` und alle U02-Wohnungsdaten bleiben erhalten. Ein neuer optionaler Zustand `openings` und `metersPerUnit` je Ebene wird beim Lesen ergänzt; die Version benötigt keinen Datenreset.
+- Einschränkungen: Eine Bestätigung der echten Android-PWA-Installation und des Offline-Verhaltens erfordert noch einen Test auf einem physischen Android-Gerät. Die Maßfunktion ist kein bautechnisch kalibriertes CAD-System; freie schräge Wände lassen sich weiterhin zeichnen, aber nicht am Griff parallel verschieben.

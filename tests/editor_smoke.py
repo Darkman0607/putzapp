@@ -18,7 +18,7 @@ with sync_playwright() as p:
   }''',saved)
   page.on('pageerror',lambda e:errors.append(str(e)))
   page.add_script_tag(content=read('app.js'))
-  page.add_script_tag(content=read('editor.js'))
+  page.add_script_tag(content=read('geometry.js'));page.add_script_tag(content=read('editor.js'))
   return page
  page=page_for()
  page.locator('#setup-home').click()

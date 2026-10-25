@@ -80,7 +80,7 @@
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
       <div class="surface menu-card"><h2>Weitere Bereiche <span class="muted">· geplant</span></h2><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><div><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.0.1 · Grundriss-Editor U02</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.0.2 · Wandmodell U03</small></div></section>
   </main>
   <nav class="bottom-nav" aria-label="Hauptnavigation"><button class="nav-button active" type="button" data-nav="home" aria-current="page"><svg class="icon"><use href="#ic-home"/></svg><span>Zuhause</span></button><button class="nav-button" type="button" data-nav="clean"><svg class="icon"><use href="#ic-spray"/></svg><span>Putzen</span></button><button class="nav-button" type="button" data-nav="plan"><svg class="icon"><use href="#ic-calendar"/></svg><span>Putzplan</span></button><button class="nav-button" type="button" data-nav="more"><svg class="icon"><use href="#ic-more"/></svg><span>Mehr</span></button></nav>
 </div>
@@ -88,7 +88,7 @@
 <div id="toast" role="status" aria-live="polite"></div>
 
 <section id="editor-overlay" class="editor-overlay" aria-label="Vollbild-Grundriss-Editor" hidden>
-  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.0.1 · U02</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
+  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.0.2 · U03</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
   <div class="editor-controls">
     <label class="editor-setting">Wohnart <select id="editor-kind" class="editor-select"><option value="wohnung">Wohnung</option><option value="haus">Haus</option></select></label>
     <div id="editor-level-picker" class="editor-floor-nav" hidden><button id="editor-floor-prev" type="button" class="editor-btn" aria-label="Vorherige Ebene">‹</button><strong id="editor-level-name">Ebene 1</strong><button id="editor-floor-next" type="button" class="editor-btn" aria-label="Nächste Ebene">›</button></div>
@@ -102,10 +102,33 @@
   <div class="editor-bottom-tools"><button id="editor-complete" type="button" class="editor-btn highlight" hidden>✓ Form schließen</button><button id="editor-cancel-draw" type="button" class="editor-btn">Zeichnen abbrechen</button></div>
   <div class="editor-new-room"><label for="editor-new-room">Neuen Raum anlegen</label><div class="editor-inline"><input id="editor-new-room" class="editor-input" type="text" placeholder="z. B. Badezimmer" maxlength="55"><select id="editor-room-shape" class="editor-select" aria-label="Raumform"><option value="rect">Rechteck</option><option value="l">L-Form</option><option value="frei">Frei zeichnen</option></select><button id="editor-add-room" type="button" class="editor-btn highlight">＋ Raum</button></div></div>
   <div id="editor-selection" class="editor-selection editor-selection-empty"><label for="editor-selected-name">Ausgewählter Raum bearbeiten</label><div class="editor-inline"><input id="editor-selected-name" class="editor-input" type="text" maxlength="55"><button id="editor-delete-room" type="button" class="editor-btn warn">Raum löschen</button></div><small id="editor-selected-caption"></small></div>
-  <footer class="editor-footer"><span id="editor-floor-count">1 Ebene</span> · <span id="editor-rooms-count">0 Räume</span> · Auto-Speichern aktiv · Maßstab frei (exakte Maße ab U03)</footer>
+  <section class="editor-geometry-tools" aria-label="Wände, Maße und Öffnungen">
+    <div id="editor-geometry-status" role="status" aria-live="polite"></div>
+    <div id="editor-wall-tools" class="editor-panel" hidden>
+      <strong>🧱 Ausgewählte Wand</strong><small id="editor-wall-summary">Wand auswählen</small>
+      <small id="editor-scale-status">Noch kein Maßstab hinterlegt</small>
+      <div class="editor-inline"><label class="editor-setting">Wandlänge in Metern <input id="editor-wall-measure" class="editor-input editor-number" type="number" min="0.1" max="300" step="0.01" placeholder="z. B. 3,50"></label><button class="editor-btn" id="editor-calibrate" type="button">📏 Maßstab festlegen</button><button class="editor-btn" id="editor-set-wall-length" type="button">Wandlänge ändern</button></div>
+    </div>
+    <div id="editor-room-dimensions" class="editor-panel" hidden>
+      <strong>📐 Raummaße anpassen</strong><small id="editor-room-size-label"></small>
+      <div class="editor-inline"><label class="editor-setting">Breite (m)<input id="editor-room-width" class="editor-input editor-number" type="number" min="0.1" max="300" step="0.01" placeholder="Breite"></label><label class="editor-setting">Tiefe (m)<input id="editor-room-height" class="editor-input editor-number" type="number" min="0.1" max="300" step="0.01" placeholder="Tiefe"></label><button type="button" id="editor-set-room-size" class="editor-btn">Maße übernehmen</button></div>
+    </div>
+    <div id="editor-opening-panel" class="editor-panel" hidden>
+      <strong>🚪 Türen und 🪟 Fenster</strong><small>Wand antippen und Öffnung setzen. Freie Segmente werden tatsächlich aus der Wand ausgelassen.</small>
+      <div id="editor-opening-list" class="editor-inline"></div>
+      <div class="editor-inline"><label class="editor-setting">Art <select id="editor-opening-kind" class="editor-select"><option value="door">Tür</option><option value="window">Fenster</option></select></label><label class="editor-setting">Typ <select id="editor-opening-type" class="editor-select"><option value="single">Einflügelig</option><option value="double">Zweiflügelig</option><option value="sliding">Schiebetür / Schiebefenster</option><option value="open">Offener Durchgang</option></select></label>
+      <label id="editor-opening-swing-wrap" class="editor-setting">Anschlag <select id="editor-opening-swing" class="editor-select"><option value="left">Links</option><option value="right">Rechts</option></select></label></div>
+      <div class="editor-inline"><label class="editor-setting">Breite <input id="editor-opening-width" class="editor-input editor-number" type="number" min="0.01" step="0.01" value="80"></label><label class="editor-setting">Höhe (optional)<input id="editor-opening-height" class="editor-input editor-number" type="number" min="0.01" step="0.01" placeholder="Optional"></label>
+      <label class="editor-setting">Position <span id="editor-opening-position-label">50 %</span><input id="editor-opening-position" type="range" min="5" max="95" step="1" value="50"></label></div>
+      <small>Vor Maßstab-Kalibrierung sind Breite und Höhe in Plan-Einheiten, danach in Metern.</small>
+      <div class="editor-inline"><button id="editor-add-opening" type="button" class="editor-btn highlight">＋ Öffnung einsetzen</button><button id="editor-update-opening" type="button" class="editor-btn">Änderung speichern</button><button id="editor-remove-opening" type="button" class="editor-btn warn">Öffnung löschen</button></div>
+    </div>
+  </section>
+  <footer class="editor-footer"><span id="editor-floor-count">1 Ebene</span> · <span id="editor-rooms-count">0 Räume</span> · Auto-Speichern aktiv · Maße optional</footer>
 </section>
 
 <script src="./app.js" defer></script>
+<script src="./geometry.js" defer></script>
 <script src="./editor.js" defer></script>
 </body>
 </html>
