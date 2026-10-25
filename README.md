@@ -1,3 +1,17 @@
+## V1.4.0 / U16 – Putzlager (25.10.2026)
+
+Die Entwicklung wurde auf Wunsch auf **U16–U26 (Lager)** vorgezogen. U06–U15 bleiben offen.
+
+**U16 umfasst genau fünf neue Punkte:** 1) Putzmittel, Zubehör, Reinigungsgeräte als getrennte Kategorien; 2) Lager unter „Mehr“ und direkter Aufruf aus Putzen zum Vormerken von Artikeln; 3) Liste/Kacheln mit dauerhaft gespeicherter Ansicht; 4) kombinierte Volltextsuche, Sortierung und Filter nach Kategorie, Lagerort, Bestand/Status; 5) Favoriten und lesbare Statusfilter für fast leer, fehlt und unvollständig.
+
+Artikel können vorerst mit Name, Kategorie, Menge, Einheit, Mindestbestand und optionalem Lagerort hinzugefügt werden. Erweiterte Stammdaten, Nachbuchungen, mehrere Orte und Bilder folgen in **U17**, intelligente Prognosen erst in **U19–U22**. Das Vormerken beim Putzen erzeugt **keine Verbrauchsbuchung** und ist aktuell nur für die laufende App-Sitzung vorgesehen.
+
+**Datenspeicherung:** Bestehende Wohnungs- und Reinigungsdaten bleiben unter `mein-putzmanager-beta-v1`. Das Lager nutzt eigenständig `mein-putzmanager-inventory-v1`. Ohne erfolgreiche lokale Speicherung erscheint ein Warnhinweis. Vor Browserdaten-Löschung bitte beachten: ein vollständiger Export/Restore fehlt noch (U26).
+
+**Releasezustand:** Computergestützte Testabnahme im Repository; echter Android-Installations-/Offline-Test und vollständiger Backup/Restore auf einem Gerät sind weiterhin offen. Das ist eine Beta, keine vollständige Gerätefreigabe.
+
+---
+
 ## V1.0.4 / U05 – Putzaufgaben und Basisreinigung (25.10.2026)
 
 Die folgenden Funktionen sind **jetzt tatsächlich enthalten** (ältere README-Abschnitte beschreiben historische Zwischenstände):
