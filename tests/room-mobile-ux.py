@@ -1,4 +1,4 @@
-"""V1.4.0.10: real mobile touch interactions, state persistence, all rooms."""
+"""V1.4.0.11: real mobile touch interactions, state persistence, all rooms."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parent.parent
@@ -13,7 +13,7 @@ with sync_playwright() as pw:
   for f in styles:page.add_style_tag(content=(ROOT/f).read_text())
   page.evaluate("""()=>{const db={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>db[k]??null,setItem:(k,v)=>db[k]=String(v),removeItem:k=>delete db[k]}});window.mem=db;}""")
   for f in scripts:page.add_script_tag(content=(ROOT/f).read_text())
-  assert page.evaluate('PutzmanagerBeta.version')=='1.4.0.10'
+  assert page.evaluate('PutzmanagerBeta.version')=='1.4.0.11'
   # Start with a concrete apartment and two rooms (no fabricated fixtures in product)
   page.evaluate('''()=>{const d=PutzmanagerEditor.get();d.floors[0].rooms=[
   {id:'kitchen',name:'Küche',points:[[25,25],[290,25],[290,240],[25,240]],cleanliness:PutzmanagerClean.sanitize({base:75})},
@@ -33,7 +33,7 @@ with sync_playwright() as pw:
    assert min(sizes)>=46,sizes
    bounds=page.locator('.room-detail-sheet').bounding_box();assert bounds['x']>=-1 and bounds['x']+bounds['width']<=width+1,(width,bounds)
    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'),width
-   page.screenshot(path=f'/mnt/data/Putzmanager_V1.4.0.10_Raumansicht_{width}_{room}.png') if room=='living' else None
+   page.screenshot(path=f'/mnt/data/Putzmanager_V1.4.0.11_Raumansicht_{width}_{room}.png') if room=='living' else None
    if room=='kitchen':
     page.locator('#room-areas-panel summary').click()
     page.locator('#room-area-name').fill('Boden');page.locator('#room-area-add').click()
