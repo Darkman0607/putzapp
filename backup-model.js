@@ -1,4 +1,4 @@
-/* Mein Putzmanager V1.4.0.9: localStorage + IndexedDB photos, legacy schema 1 compatible. */
+/* Mein Putzmanager V1.4.0.10: localStorage + IndexedDB photos, legacy schema 1 compatible. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PutzmanagerBackupModel=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const FORMAT='mein-putzmanager-full-backup';const SCHEMA=2;
@@ -36,7 +36,7 @@ async function digest(content){const bytes=new TextEncoder().encode(content);let
  else if(typeof require==='function')return require('node:crypto').createHash('sha256').update(bytes).digest('hex');
  else throw Error('Integritätsprüfung erfordert HTTPS und WebCrypto.');
  return [...new Uint8Array(result)].map(x=>x.toString(16).padStart(2,'0')).join('');}
-async function make(storage,version='1.4.0.9',date=new Date().toISOString(),photos=[]){
+async function make(storage,version='1.4.0.10',date=new Date().toISOString(),photos=[]){
  const data=assertData(snapshot(storage));const safePhotos=assertPhotos(photos);const body={format:FORMAT,schema:SCHEMA,exportedAt:date,appVersion:version,data,photos:safePhotos};
  const raw=JSON.stringify(body);if(byteSize(raw)>MAX_BYTES)throw Error('Sicherungsdatei überschreitet 256 MB. Bilder vor dem nächsten Backup reduzieren.');
  return {...body,sha256:await digest(raw)};

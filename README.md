@@ -1,3 +1,11 @@
+## V1.4.0.10 – handfreundliche Raumansicht (25.10.2026)
+
+**UX-Korrektur für alle Räume:** Antippen eines Raums öffnet jetzt ein kurzes, vom unteren Bildschirmrand erreichbares Raummenü (Bottom Sheet) mit farbigem Sauberkeitsring, Raumname und großen Tasten für **Schnell reinigen**, **Checkliste** und **Aufgaben**. Die bisher sehr langen Regler und Infotexte sind in zwei bei Bedarf aufklappbare Bereiche verschoben: **Unterbereiche** (inklusive eigener Aufgaben) und **Sauberkeit anpassen** (Raumwert/Restflächen). Alle existierenden IDs/Aktionen, 2D-Grundrisse, Speicher-Schlüssel, Reinigungs- und Backupdaten bleiben unverändert.
+
+**Teststand:** 99/99 Node-Tests bestanden, realer Chromium-Mobiltest bei 320/390/430/768 Pixel und bestehender U04-Regressionsablauf bestanden. Handy-Installation, tatsächlicher Offlinebetrieb und Google-Drive-Restore bleiben als separate Gerätetests offen. Die Word-Mastercheckliste liegt unter `projektunterlagen/Mein_Putzmanager_Checkliste_V1.4.0.10_Raumansicht.docx`.
+
+---
+
 ## V1.4.0.1 – Grundriss-Drehung (25.10.2026)
 
 **Ergänzung zwischen U16 und U17 (kein Abschluss der U17-Lagerpunkte):** Jeder einzeln ausgewählte Raum (Rechteck, L-Form oder freies Polygon) kann durch Ziehen des grünen ↻-Drehgriffs auf dem Grundriss kontinuierlich um 360° gedreht werden. Alternativ stehen −15°- und +15°-Pfeile sowie eine direkte Grad-Eingabe (0–360°) zur Verfügung. Die Drehung berechnet echte Eckpunktkoordinaten um den Polygonschwerpunkt und speichert sie im bestehenden Grundriss-Datenformat. Die Rotation eines Raums dreht benachbarte Räume nicht mit; unzulässige Überlappungen werden abgewiesen. Vorhandene Tür-/Fensteröffnungen an ausschließlich diesem Raum zugehörigen Wänden folgen der Drehung; Türen/Fenster an unveränderten Nachbarwänden bleiben dort erhalten. Wenn eine Öffnung nicht sinnvoll übertragen werden kann, wird die Änderung abgelehnt, statt die Öffnung zu verlieren. Undo/Redo funktioniert weiterhin.

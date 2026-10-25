@@ -223,12 +223,16 @@
     room.cleanliness=CLEAN.sanitize(clean);commit(before);return true;
   }
   function stateLabel(n){return n<35?'Stark verschmutzt':n<65?'Reinigung sinnvoll':n<85?'Ordentlich':'Sehr sauber';}
-  function closeClean(){detailId=null;detailFloor=null;$('#room-detail-overlay').hidden=true;$('#room-quick-overlay').hidden=true;quickId=null;}
+  function closeClean(){detailId=null;detailFloor=null;$('#room-detail-overlay').hidden=true;$('#room-quick-overlay').hidden=true;quickId=null;document.body.classList.remove('room-dialog-open');}
   function renderDetail(){
     if(!detailId)return;
     const room=roomById(detailFloor,detailId);if(!room){closeClean();return;}
     const c=cleanOf(room),n=CLEAN.roomScore(c);
     $('#room-detail-title').textContent=room.name;
+    $('#room-detail-floor').textContent=home.floors.find(f=>f.id===detailFloor)?.name || 'DEIN RAUM';
+    $('#room-area-count').textContent=c.areas.length===0?'Noch keine Unterbereiche':`${c.areas.length} ${c.areas.length===1?'Unterbereich':'Unterbereiche'} angelegt`;
+    $('#room-detail-score-num').textContent=`${n}%`;
+    $('#room-detail-score-num').parentElement.style.setProperty('--room-score',`${n}%`);
     $('#room-detail-state').textContent=`${n} % · ${stateLabel(n)} (Schätzwert)`;
     $('#room-detail-state').style.color=CLEAN.stateColor(n);
     $('#room-score-input').value=n;
@@ -265,12 +269,13 @@
   function showDetail(floorId,id){
     const room=roomById(floorId,id);if(!room)return;
     detailFloor=floorId;detailId=id;$('#room-quick-overlay').hidden=true;quickId=null;
-    $('#room-detail-overlay').hidden=false;renderDetail();$('#room-detail-close').focus();
+    $('#room-areas-panel').open=false;$('#room-score-panel').open=false;
+    $('#room-detail-overlay').hidden=false;document.body.classList.add('room-dialog-open');renderDetail();$('#room-detail-close').focus();
   }
   function showQuick(floorId,id){
     const room=roomById(floorId,id);if(!room)return;
     quickId={floorId,id};$('#room-quick-title').textContent=room.name;
-    $('#room-quick-overlay').hidden=false;$('#room-quick-detail').focus();
+    $('#room-quick-overlay').hidden=false;document.body.classList.add('room-dialog-open');$('#room-quick-detail').focus();
   }
   function attachRoomEvents(node, floorId,roomId){
     node.addEventListener('pointerdown',event=>{

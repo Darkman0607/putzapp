@@ -1,4 +1,4 @@
-/* V1.4.0.9: IndexedDB photo gallery. No fixed number of cleaning records.
+/* V1.4.0.10: IndexedDB photo gallery. No fixed number of cleaning records.
    Existing V1.4.0.8 localStorage photos migrate without deleting before commit. */
 (function(root){'use strict';
 const LEGACY='mein-putzmanager-clean-photos-v1', DB='mein-putzmanager-photos-v2', STORE='records';

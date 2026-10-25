@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.9 mit optionaler Google-Drive-Sicherung.">
+  <meta name="description" content="Mein Putzmanager – privater Reinigungsplaner. Beta V1.4.0.10 mit optionaler Google-Drive-Sicherung.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="./cleaning-materials.css">
   <link rel="stylesheet" href="./room-timer.css">
   <link rel="stylesheet" href="./backup-drive.css">
-  <title>Mein Putzmanager · Beta 1.4.0.9</title>
+  <title>Mein Putzmanager · Beta 1.4.0.10</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -58,7 +58,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.9</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.4.0.10</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -105,7 +105,7 @@
         <p id="backup-status" class="backup-status" role="status" aria-live="polite">Bereit. Drive-Anmeldung nur mit Internet; die App selbst bleibt offline nutzbar.</p>
         <small class="backup-caution">⚠ Wiederherstellen ersetzt die Putzmanager-Daten auf diesem Gerät, nicht die Daten anderer Apps. Zuvor wird automatisch ein lokaler Wiederherstellungspunkt angelegt. Für einen Gerätewechsel auf beiden Geräten mit demselben Google-Konto anmelden. Passwörter oder Google-Tokens werden nicht in die Sicherung geschrieben.</small>
       </section>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.9 · Google Drive Sicherung (Beta)</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Die App speichert weiterhin lokal und offline. Google Drive ist eine manuelle, optionale Datensicherung, keine Live-Synchronisierung.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.10 · Google Drive Sicherung (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><div class="inventory-toolbar-actions"><button id="inventory-manage-categories" class="inventory-add" type="button" aria-expanded="false" aria-controls="inventory-category-manager">⚙ Kategorien</button><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
@@ -165,24 +165,47 @@
 
 <!-- U04: private view-mode room details. The SVG floorplan remains read-only. -->
 <section id="room-detail-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="room-detail-title" hidden>
-  <div class="room-sheet">
-    <div class="room-sheet-top"><div><small>RAUMDETAILS · SCHÄTZWERTE</small><h2 id="room-detail-title">Raum</h2></div><button id="room-detail-close" type="button" class="room-close" aria-label="Raumdetails schließen">✕</button></div>
-    <div id="room-detail-state" class="room-state-value"></div>
-    <label class="room-label" for="room-score-input">Gesamten Raum manuell bewerten <output id="room-score-display">50 %</output></label>
-    <input id="room-score-input" type="range" min="0" max="100" value="50" step="1">
-    <button id="room-score-save" class="room-primary" type="button">Raumwert übernehmen</button>
-    <p id="room-score-note" class="room-note"></p>
-    <div class="cleaning-actions"><button type="button" id="room-detail-quick" class="room-primary">⚡ Schnell reinigen</button><button type="button" id="room-detail-detailed" class="room-btn">☑ Checkliste</button><button type="button" id="room-detail-tasks" class="room-btn">✏️ Aufgaben</button></div>
-    <div class="room-sheet-divider"></div>
-    <h3>Unterbereiche & Gegenstände</h3>
-    <p class="room-note">Jeder Bereich hat einen eigenen geschätzten Zustand. Hier kannst du einfache Aufgaben abhaken; Wiederholungsintervalle und Checklisten kannst du im Aufgabenmanager einstellen.</p>
-    <div id="room-areas"></div>
-    <div class="room-add-line"><input id="room-area-name" type="text" maxlength="55" placeholder="z. B. Boden, WC, Dusche" aria-label="Name des neuen Unterbereichs"><button id="room-area-add" type="button" class="room-primary">＋ Anlegen</button></div>
-    <div class="room-sheet-divider"></div>
-    <label class="room-label" for="room-base-input">Nicht erfasste Flächen <output id="room-base-display">50 %</output></label>
-    <input id="room-base-input" type="range" min="0" max="100" value="50" step="1">
-    <button id="room-base-save" class="room-btn" type="button">Restflächen bewerten</button>
-    <p class="room-note">Berechnung: Restflächen zählen einmal, jeder angelegte Unterbereich einmal. Der Durchschnitt ergibt den Raumwert. Die direkte Raumkorrektur gilt, bis ein Bereich verändert wird. Keine Sensorwerte.</p>
+  <div class="room-sheet room-detail-sheet">
+    <div class="room-drag-indicator" aria-hidden="true"></div>
+    <header class="room-sheet-top room-detail-heading">
+      <div class="room-heading-copy"><small id="room-detail-floor">DEIN RAUM</small><h2 id="room-detail-title">Raum</h2></div>
+      <button id="room-detail-close" type="button" class="room-close" aria-label="Raumdetails schließen">✕</button>
+    </header>
+    <div class="room-overview-card" aria-label="Geschätzte Sauberkeit des Raums">
+      <div class="room-overview-gauge" aria-hidden="true"><strong id="room-detail-score-num">50%</strong></div>
+      <div class="room-overview-copy"><span class="room-overview-eyebrow">AKTUELLER ZUSTAND</span><div id="room-detail-state" class="room-state-value" aria-live="polite">50 % · Reinigung sinnvoll</div><small>Schätzung – jederzeit anpassbar</small></div>
+    </div>
+    <div class="room-main-actions" aria-label="Raumaktionen">
+      <button type="button" id="room-detail-quick" class="room-primary room-action-main"><span class="room-action-icon" aria-hidden="true">⚡</span><span>Schnell reinigen<small>Reinigung direkt starten</small></span><span class="room-action-arrow" aria-hidden="true">›</span></button>
+      <div class="room-action-pair">
+        <button type="button" id="room-detail-detailed" class="room-btn room-action-secondary"><span aria-hidden="true">☑</span><span>Checkliste</span></button>
+        <button type="button" id="room-detail-tasks" class="room-btn room-action-secondary"><span aria-hidden="true">✏️</span><span>Aufgaben</span></button>
+      </div>
+    </div>
+    <div class="room-detail-sections">
+      <details id="room-areas-panel" class="room-detail-accordion">
+        <summary><span class="room-accordion-icon" aria-hidden="true">▦</span><span class="room-accordion-label"><strong>Unterbereiche</strong><small id="room-area-count">Boden, Möbel, Gegenstände verwalten</small></span><span class="room-accordion-chevron" aria-hidden="true">⌄</span></summary>
+        <div class="room-accordion-body"><div id="room-areas"></div>
+          <label class="room-inline-label" for="room-area-name">Neuen Unterbereich anlegen</label>
+          <div class="room-add-line"><input id="room-area-name" type="text" maxlength="55" placeholder="z. B. Boden oder Fenster" aria-label="Name des neuen Unterbereichs"><button id="room-area-add" type="button" class="room-primary">＋ Anlegen</button></div>
+        </div>
+      </details>
+      <details id="room-score-panel" class="room-detail-accordion">
+        <summary><span class="room-accordion-icon" aria-hidden="true">◉</span><span class="room-accordion-label"><strong>Sauberkeit anpassen</strong><small>Raumwert und Restflächen</small></span><span class="room-accordion-chevron" aria-hidden="true">⌄</span></summary>
+        <div class="room-accordion-body">
+          <label class="room-label" for="room-score-input">Gesamten Raum bewerten <output id="room-score-display">50 %</output></label>
+          <input id="room-score-input" type="range" min="0" max="100" value="50" step="1">
+          <button id="room-score-save" class="room-primary room-save-action" type="button">Raumwert übernehmen</button>
+          <p id="room-score-note" class="room-note"></p>
+          <div class="room-inner-divider"></div>
+          <label class="room-label" for="room-base-input">Nicht erfasste Flächen <output id="room-base-display">50 %</output></label>
+          <input id="room-base-input" type="range" min="0" max="100" value="50" step="1">
+          <button id="room-base-save" class="room-btn room-save-action" type="button">Restflächen bewerten</button>
+          <p class="room-note">Schätzmodell: Restflächen und Unterbereiche zählen jeweils einmal. Eine manuelle Raumkorrektur gilt bis zur nächsten Änderung eines Unterbereichs.</p>
+        </div>
+      </details>
+    </div>
+    <p class="room-footnote">ⓘ Die Prozentwerte sind deine Schätzungen – keine Messwerte.</p>
   </div>
 </section>
 <section id="room-quick-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="room-quick-title" hidden>

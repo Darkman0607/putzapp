@@ -32,12 +32,14 @@ with sync_playwright() as pw:
  group.click()
  assert page.locator('#room-detail-overlay').is_visible()
  assert page.locator('#room-detail-state').inner_text().startswith('50 %')
+ page.locator('#room-areas-panel summary').click()
  page.locator('#room-area-name').fill('WC');page.locator('#room-area-add').click()
  assert page.locator('#room-areas .area-line').count()==1
  # area 90, base 50 -> 70
  slide=page.locator('#room-areas input[type=range]')
  slide.fill('90');slide.dispatch_event('change')
  assert page.locator('#room-detail-state').inner_text().startswith('70 %')
+ page.locator('#room-score-panel summary').click()
  page.locator('#room-score-input').fill('96');page.locator('#room-score-save').click()
  assert page.locator('#room-detail-state').inner_text().startswith('96 %')
  # area edit supersedes override
@@ -68,6 +70,7 @@ with sync_playwright() as pw:
  assert page.evaluate('window.PutzmanagerEditor.get().floors[0].rooms[0].points')==old
  page.locator(f'[data-home-room="{rid}"]').click()
  assert '25 %' in page.locator('#room-detail-state').inner_text()
+ page.locator('#room-areas-panel summary').click()
  assert 'WC neu' in page.locator('#room-areas').inner_text()
  assert 'WC reinigen' in page.locator('#room-areas').inner_text()
  assert page.locator('.area-task-row input[type=checkbox]').is_checked()

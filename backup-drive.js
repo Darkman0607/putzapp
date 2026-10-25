@@ -60,7 +60,7 @@ async function findFolder(create=false){
 function filename(){const iso=new Date().toISOString().replace(/[:.]/g,'-');return 'Mein_Putzmanager_'+iso+'.json';}
 async function makePayload(){
  const photos=await window.PutzmanagerPhotos.snapshot();
- return M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.9',new Date().toISOString(),photos);
+ return M.make(localStorage,window.PutzmanagerBeta?.version||'1.4.0.10',new Date().toISOString(),photos);
 }
 async function makeFile(){const payload=await makePayload();const file=new File([JSON.stringify(payload)],filename(),{type:'application/json'});if(file.size>MAX)throw Error('Sicherung überschreitet 256 MB.');return file;}
 function downloadFile(file){const u=URL.createObjectURL(file),a=document.createElement('a');a.href=u;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);}

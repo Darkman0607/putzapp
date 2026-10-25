@@ -40,6 +40,6 @@ test('offline shell, selectors and GitHub docs mirror',()=>{
  const html=read('index.html'),sw=read('sw.js');
  for(const id of ['backup-panel','backup-client-id','backup-connect','backup-disconnect','backup-drive-upload','backup-drive-list','backup-drive-files','backup-local-export','backup-local-import','backup-recovery'])assert(html.includes('id="'+id+'"'));
  for(const path of ['backup-model.js','backup-drive.js','backup-drive.css']){assert(sw.includes(path));assert.equal(read(path),read('docs/'+path));}
- assert(html.indexOf('backup-model.js')<html.indexOf('backup-drive.js'));assert(sw.includes("mein-putzmanager-v1.4.0.9"));
+ assert(html.indexOf('backup-model.js')<html.indexOf('backup-drive.js'));assert(sw.includes("mein-putzmanager-v1.4.0.10"));
  assert(read('backup-drive.js').includes('https://www.googleapis.com/auth/drive.file'));
 });
