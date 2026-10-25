@@ -15,7 +15,8 @@
   <link rel="stylesheet" href="./clean.css">
 <link rel="stylesheet" href="./cleaning.css">
   <link rel="stylesheet" href="./inventory.css">
-  <title>Mein Putzmanager · Beta 1.4.0.1</title>
+  <link rel="stylesheet" href="./cleaning-materials.css">
+  <title>Mein Putzmanager · Beta 1.4.0.2</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -84,8 +85,8 @@
     <section id="view-plan" class="view" aria-labelledby="plan-heading"><div class="page-heading"><small>DEIN ALLTAG</small><h1 id="plan-heading">Mein <span>Putzplan</span></h1><p>Alle Aufgaben im Blick – ohne Stress.</p></div><div class="surface plan-card"><div class="week-heading"><svg class="icon"><use href="#ic-calendar"/></svg><span id="week-range"></span></div><div id="week-days" class="week-days"></div><div class="plan-today"><h2>Heute</h2><small>Verfügbares Zeitbudget</small></div><div class="time-options" role="group" aria-label="Zeitbudget"><button type="button" data-minutes="15">15 min</button><button type="button" data-minutes="30">30 min</button><button type="button" data-minutes="60">60 min</button></div><div class="plan-empty"><svg class="icon"><use href="#ic-check"/></svg><h3>Aktuell keine Aufgaben geplant</h3><p>Der intelligente Aufgabenplan folgt in V1.3.1. Dein Zeitbudget wird bereits gespeichert.</p></div></div></section>
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
-      <div class="surface menu-card"><h2>Weitere Bereiche</h2><button type="button" id="inventory-open-more" class="inventory-entry"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><span><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4.0</small></span><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.1 · Grundriss-Drehung (Beta)</small></div></section>
+      <div class="surface menu-card"><h2>Weitere Bereiche</h2><button type="button" id="inventory-open-more" class="inventory-entry"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><span><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4.0.2</small></span><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.4.0.2 · Lager & Putzmaterial (Beta)</small></div></section>
     <section id="view-inventory" class="view inventory-page" aria-labelledby="inventory-heading">
       <div class="inventory-topline"><div class="page-heading"><small>LAGER · U16</small><h1 id="inventory-heading" tabindex="-1">Mein <span>Putzlager</span></h1><p>Putzmittel, Zubehör und Reinigungsgeräte.</p></div><button id="inventory-back" type="button" class="inventory-back">← Zurück</button></div>
       <div class="surface inventory-panel"><div class="inventory-toolbar"><h2>📦 Lagerübersicht</h2><button id="inventory-add" class="inventory-add" type="button">＋ Artikel</button></div><div class="inventory-counter"><span id="inventory-count">0 Artikel</span><span id="inventory-warning-count" class="inventory-chip" hidden>0 Vorratswarnungen</span></div>
@@ -96,20 +97,32 @@
         <label>Status<select id="inventory-status"><option value="all">Alle Artikel</option><option value="favorite">★ Favoriten</option><option value="low">Fast leer</option><option value="missing">Fehlt</option><option value="incomplete">Unvollständig</option></select></label>
         <label>Sortieren<select id="inventory-sort"><option value="name">Name A–Z</option><option value="newest">Neueste zuerst</option><option value="oldest">Älteste zuerst</option><option value="category">Kategorie</option><option value="location">Lagerort</option><option value="stock">Bestand aufsteigend</option></select></label>
        </div>
-       <div class="inventory-toolbar"><span class="inventory-note">Bestände sind manuell erfasst.</span><div class="inventory-view-toggle" aria-label="Lagerdarstellung"><button type="button" id="inventory-view-list" aria-pressed="true">☷ Liste</button><button type="button" id="inventory-view-grid" aria-pressed="false">▦ Kacheln</button></div></div>
+       <div class="inventory-toolbar"><span class="inventory-note">Bestände und bestätigte Verwendungen werden lokal gespeichert.</span><div class="inventory-view-toggle" aria-label="Lagerdarstellung"><button type="button" id="inventory-view-list" aria-pressed="true">☷ Liste</button><button type="button" id="inventory-view-grid" aria-pressed="false">▦ Kacheln</button></div></div>
        <div id="inventory-items" class="inventory-items inventory-list" aria-live="polite"></div>
        <p class="inventory-storage-warning" id="inventory-storage-notice" hidden>⚠ Speichern nicht möglich. Die Änderungen sind nur bis zum Schließen der App vorhanden.</p>
-       <p class="inventory-note">Vorratswarnungen vergleichen nur deine eingegebene Menge mit dem Mindestbestand. Keine automatische Verbrauchsbuchung oder zuverlässige Restnutzungsprognose in U16.</p>
+       <p class="inventory-note">Reinigungsmittel: jede bestätigte Sitzung zählt eine Verwendung je Artikel. „Flasche leer“ erzeugt erst dann einen echten Lernwert. Nicht alle Gebinde-/Lagerortvarianten sind in dieser Beta enthalten.</p>
        <div id="inventory-selection" class="inventory-selection" hidden><span id="inventory-selection-count">0 Produkte vorgemerkt</span><button type="button" id="inventory-selection-done" class="inventory-back">Zur Reinigung</button></div>
       </div>
-      <form id="inventory-add-form" class="surface inventory-add-form" hidden><h2>Neuen Artikel erfassen</h2><div class="inventory-add-form-grid">
+      <form id="inventory-add-form" class="surface inventory-add-form" hidden><h2 id="inventory-form-title">Neuen Artikel erfassen</h2><div class="inventory-add-form-grid">
        <label class="full">Artikelname *<input id="inventory-name" name="name" maxlength="90" required placeholder="z. B. Badreiniger"></label>
        <label>Kategorie *<select name="category" required><option value="mittel">Putzmittel</option><option value="zubehoer">Zubehör</option><option value="geraete">Reinigungsgeräte</option></select></label>
        <label>Lagerort<input name="location" maxlength="70" placeholder="z. B. Badschrank"></label>
        <label>Menge<input name="quantity" type="number" min="0" max="999999" step="0.01" value="1" required></label>
        <label>Einheit<select name="unit"><option>Stück</option><option>Flaschen</option><option>Packungen</option><option>Liter</option><option>Milliliter</option><option>Kilogramm</option><option>Gramm</option><option>Paar</option></select></label>
        <label>Mindestbestand<input name="minimum" type="number" min="0" max="999999" step="0.01" value="1"></label>
-       </div><p id="inventory-form-error" role="alert" class="inventory-storage-warning"></p><div class="inventory-form-buttons"><button type="button" id="inventory-cancel">Abbrechen</button><button type="submit">Artikel speichern</button></div></form>
+       <label>Artikel-Icon<select name="icon" id="inventory-icon">
+       <option value="bottle">🧴 Reinigungsmittel / Flasche</option><option value="spray">🫧 Reinigerspray</option>
+       <option value="glovesBlue">🧤 Blaue Handschuhe</option><option value="glovesWhite">🧤 Weiße Handschuhe</option><option value="glovesPink">🧤 Rosa Handschuhe</option>
+       <option value="dishcloth">🟨 Geschirrtuch</option><option value="cloth">🧻 Putztuch</option><option value="sponge">🧽 Schwamm</option>
+       <option value="brush">🪥 Bürste</option><option value="broom">🧹 Besen</option><option value="bucket">🪣 Eimer</option><option value="vacuum">🌀 Staubsauger</option><option value="device">⚙️ Gerät</option><option value="paper">🧻 Küchenpapier</option><option value="other">📦 Sonstiges</option>
+       </select></label>
+       <label>Marke / Hersteller<input name="brand" maxlength="80" placeholder="Optional"></label>
+       <label>Modell<input name="model" maxlength="80" placeholder="Optional"></label>
+       <label class="full">Notizen<textarea name="notes" maxlength="500" rows="2" placeholder="Optional: Material, Anwendung, Besonderheiten"></textarea></label>
+       <label class="full"><input type="checkbox" name="reusable"> Wiederverwendbar (Handschuhe, Tücher, Geräte)</label>
+       <label class="full">Artikelfotos (max. 3)<input id="inventory-photos" type="file" accept="image/*" multiple></label>
+       <div class="full" id="inventory-photo-preview"></div><p class="full room-note" id="inventory-photo-help"></p>
+       </div><p id="inventory-form-error" role="alert" class="inventory-storage-warning"></p><div class="inventory-form-buttons"><button type="button" id="inventory-cancel">Abbrechen</button><button type="submit" id="inventory-save">Artikel speichern</button></div></form>
     </section>
   </main>
   <nav class="bottom-nav" aria-label="Hauptnavigation"><button class="nav-button active" type="button" data-nav="home" aria-current="page"><svg class="icon"><use href="#ic-home"/></svg><span>Zuhause</span></button><button class="nav-button" type="button" data-nav="clean"><svg class="icon"><use href="#ic-spray"/></svg><span>Putzen</span></button><button class="nav-button" type="button" data-nav="plan"><svg class="icon"><use href="#ic-calendar"/></svg><span>Putzplan</span></button><button class="nav-button" type="button" data-nav="more"><svg class="icon"><use href="#ic-more"/></svg><span>Mehr</span></button></nav>
@@ -150,7 +163,7 @@
 
 <section id="cleaning-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="cleaning-title" hidden><div class="room-sheet cleaning-sheet"><header class="room-sheet-top"><div><small id="cleaning-subtitle">U05 · REINIGUNG</small><h2 id="cleaning-title">Reinigung</h2></div><button type="button" id="cleaning-close" class="room-close" aria-label="Reinigung schließen">✕</button></header><div id="cleaning-content"></div></div></section>
 <section id="editor-overlay" class="editor-overlay" aria-label="Vollbild-Grundriss-Editor" hidden>
-  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.4.0.1 · Grundriss</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
+  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.4.0.2 · Grundriss</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
   <div class="editor-controls">
     <label class="editor-setting">Wohnart <select id="editor-kind" class="editor-select"><option value="wohnung">Wohnung</option><option value="haus">Haus</option></select></label>
     <div id="editor-level-picker" class="editor-floor-nav" hidden><button id="editor-floor-prev" type="button" class="editor-btn" aria-label="Vorherige Ebene">‹</button><strong id="editor-level-name">Ebene 1</strong><button id="editor-floor-next" type="button" class="editor-btn" aria-label="Nächste Ebene">›</button></div>
@@ -203,6 +216,7 @@
 <script src="./task-model.js" defer></script>
 <script src="./clean-model.js" defer></script>
 <script src="./editor.js" defer></script>
+<script src="./cleaning-materials.js" defer></script>
 <script src="./cleaning-ui.js" defer></script>
 <script src="./inventory-model.js" defer></script>
 <script src="./inventory-ui.js" defer></script>
