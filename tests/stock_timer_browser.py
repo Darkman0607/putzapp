@@ -10,9 +10,9 @@ with sync_playwright() as pw:
  def launch(store=None):
   p=context.new_page();p.on('pageerror',lambda e:js_errors.append(str(e)));p.on('dialog',lambda d:(alerts.append(d.message),d.accept()))
   p.set_content(read('index.html'))
-  for file in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css','view3d.css']:p.add_style_tag(content=read(file))
+  for file in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css']:p.add_style_tag(content=read(file))
   p.evaluate('''(v)=>{const data=v||{};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]??null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}});window.fakeStore=data}''',store)
-  for file in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js','view3d-model.js','view3d-ui.js']:p.add_script_tag(content=read(file))
+  for file in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js']:p.add_script_tag(content=read(file))
   return p
  page=launch()
  page.locator('#setup-home').click();page.locator('#editor-new-room').fill('Küche');page.locator('#editor-add-room').click();page.locator('#editor-close').click()

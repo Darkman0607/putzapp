@@ -44,10 +44,10 @@ try:
   page=ctx.new_page();page.on('pageerror',lambda e:page_errors.append(str(e)))
   page.on('dialog',lambda d:d.accept())
   page.set_content((root/'index.html').read_text())
-  for sheet in ['style.css','editor.css','view3d.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css','backup-drive.css']:
+  for sheet in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css','room-timer.css','backup-drive.css']:
    page.add_style_tag(content=(root/sheet).read_text())
   page.evaluate('''()=>{const d={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>d[k]??null,setItem:(k,v)=>d[k]=String(v),removeItem:k=>delete d[k]}});Object.defineProperty(window,'crypto',{configurable:true,value:{subtle:{digest:async()=>new Uint8Array(32).buffer}}});window.testState=d;}''')
-  files=['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js','view3d-model.js','view3d-ui.js','backup-model.js','backup-drive.js']
+  files=['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','room-timer.js','cleaning-ui.js','inventory-model.js','inventory-ui.js','backup-model.js','backup-drive.js']
   for file in files:
    contents=(root/file).read_text()
    if file=='backup-drive.js':contents=contents.replace("if(location.protocol!=='https:'&&!['localhost','127.0.0.1'].includes(location.hostname))", "if(false && location.protocol!=='https:')")

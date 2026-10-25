@@ -130,6 +130,14 @@ Im Wohnungs-Dashboard Räume per kurzem Tippen öffnen und per langem Druck Schn
 **Hinweise:** Der Verbrauch von Flüssigmitteln bleibt wie geplant eine Nutzungszählung, keine geschätzte Milliliterbuchung. Bei bereits angelegten Artikelbeständen die Buchungsart kontrollieren; ein korrekt ausgewähltes Material wird nur beim bestätigten Reinigen gebucht. Individuelle Tücher/Handschuhe werden in dieser Beta als Mengenpool erfasst, nicht als einzelne RFID-/Inventarnummern.
 
 
+## V1.4.0.7 – 3D-Ansicht entfernt, 2D-Grundriss bleibt (25.10.2026)
+
+- Auf **Zuhause** wird ausschließlich der bereits gespeicherte **2D-Grundriss** angezeigt. 2D/3D-Umschalter, 3D-Visualisierung, Kamerasteuerung und die drei ungenutzten 3D-Assets sind vollständig aus der aktiven App sowie aus dem Offline-Cache entfernt.
+- **Kein Reset, keine Datenmigration:** `mein-putzmanager-beta-v1` und alle übrigen LocalStorage- und IndexedDB-Speicherkennungen bleiben unverändert. Grundriss-Eckpunkte, Räume, Geschosse, Sauberkeitswerte, Aufgaben, Lager, Reinigungszeiten und Google-Drive-Sicherungen bleiben erhalten.
+- **Weiterhin bedienbar:** Raum antippen für Details, lang drücken für Schnellaktionen, Etagenwahl, Sauberkeitsbearbeitung sowie **✏️ Grundriss bearbeiten** im bisherigen 2D-Editor.
+- Historische Hinweise auf V1.4.0.4 weiter unten dokumentieren nur den früheren Entwicklungsstand – **3D ist ab V1.4.0.7 bewusst deaktiviert und nicht mehr Teil der App**. Die bislang für 3D abgehakten Masterpunkte werden als *zurückgezogen/entfällt* gekennzeichnet, nicht als aktuell ausgelieferte Funktion.
+- **Abnahme:** Node-Regression, 2D-Grundriss im mobilen Browser mit gespeicherten Räumen, Lager/Waschen/Stoppuhr, simuliertes Drive-Backup und Offline-Dateiprüfung; physisches Android-Gerät bleibt offen.
+
 ## V1.4.0.6 – Manuelle Google-Drive-Vollsicherung (25.10.2026)
 
 - **Mehr → Google Drive · Datensicherung:** per Google Identity Services im Browser anmelden, analog zur MR-Hausservice-App. Wenn diese App unter derselben Browser-Herkunft `https://darkman0607.github.io` läuft, wird die bereits lokal gespeicherte **OAuth-Client-ID** aus MR-Hausservice vorgeschlagen. Andernfalls OAuth-Web-Client-ID einmal eintragen, Drive API im Google-Cloud-Projekt aktivieren und zulässige JavaScript-Herkunft konfigurieren. Die App kann das nicht ohne Zugriff auf dein Google-Projekt erledigen. **Es sind keine Google-Passwörter, Client-Secrets oder API-Schlüssel in der App.** Zugriffstoken leben nur in der Sitzung.
