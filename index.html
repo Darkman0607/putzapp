@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07181d">
+  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.0.0.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./assets/icon.svg">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <title>Mein Putzmanager · Beta 1.0.0</title>
+</head>
+<body class="theme-dark accent-emerald">
+<svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<symbol id="ic-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="ic-spray" viewBox="0 0 24 24"><path d="M8 5h7l2 3-3 2v2l3 3v5H7v-6l3-3V9L8 7zM10 5V3h8M7 15h10"/></symbol>
+<symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h3"/></symbol>
+<symbol id="ic-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></symbol>
+<symbol id="ic-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></symbol>
+<symbol id="ic-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+<symbol id="ic-spark" viewBox="0 0 24 24"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></symbol>
+<symbol id="ic-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9zM10 21h4"/></symbol>
+<symbol id="ic-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></symbol>
+<symbol id="ic-settings" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/></symbol>
+<symbol id="ic-layers" viewBox="0 0 24 24"><path d="m2 9 10-6 10 6-10 6zM2 14l10 6 10-6"/></symbol>
+<symbol id="ic-box" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></symbol>
+<symbol id="ic-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m4 18 5-5 3 3 4-5 5 6"/></symbol>
+<symbol id="ic-book" viewBox="0 0 24 24"><path d="M12 6c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1zM12 6v15"/></symbol>
+<symbol id="ic-chart" viewBox="0 0 24 24"><path d="M4 19V9M10 19V4M16 19v-8M22 19v-6M2 21h20"/></symbol>
+<symbol id="ic-moon" viewBox="0 0 24 24"><path d="M20 16A8 8 0 0 1 8 4a8.5 8.5 0 1 0 12 12z"/></symbol>
+<symbol id="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"/></symbol>
+<symbol id="ic-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+<symbol id="ic-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+</svg>
+<div id="app" class="app-shell">
+  <header class="app-header">
+    <div class="brand-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="brand-gradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#70f9d3"/><stop offset="1" stop-color="#008b90"/></linearGradient></defs><path fill="url(#brand-gradient)" d="M4 22 24 5 44 22v20H4z"/><path d="M14 37c4-17 19-22 24-21-1 18-13 24-24 21zm0 0 15-13" fill="none" stroke="#073a35" stroke-width="3" stroke-linecap="round"/></svg></div>
+    <div class="brand-copy"><div class="brand-title">Mein <span>Putzmanager</span></div><div class="brand-subtitle">SAUBER. EINFACH. ENTSPANNT.</div></div>
+    <button id="notifications" class="circle-button" type="button" aria-label="Informationen anzeigen"><svg class="icon"><use href="#ic-bell"/></svg><span class="notification-dot"></span></button>
+  </header>
+  <main id="main-content" tabindex="-1">
+    <section id="view-home" class="view active" aria-labelledby="home-heading">
+      <h1 class="sr-only" id="home-heading">Zuhause</h1>
+      <div class="overview-strip surface"><div class="date-icon"><svg class="icon"><use href="#ic-calendar"/></svg></div><div class="date-copy"><strong>Heute</strong><small id="today-date"></small></div><div class="overview-count"><strong id="open-count">0</strong><small>Aufgaben offen</small></div><button class="primary-button compact" data-action="quickstart"><svg class="icon"><use href="#ic-play"/></svg><span>Reinigung<br>starten</span></button></div>
+      <section class="floorplan surface" aria-label="Dein Grundriss">
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.0.0</span></div>
+        <div class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
+          <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
+            <ellipse cx="183" cy="291" rx="147" ry="26" fill="#01070b" opacity=".8" filter="url(#shadow)"/>
+            <path d="M50 62 204 28 313 97 313 242 169 304 46 228Z" fill="url(#floor)" stroke="#90a4a0" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M50 62 50 228M204 28 204 168M313 97 313 242M50 62 204 28 313 97" fill="none" stroke="url(#wall)" stroke-width="13" stroke-linecap="round"/>
+            <path d="M50 143 203 166 313 129M168 303V190L203 166M169 190 50 143" fill="none" stroke="#849b96" stroke-width="8" stroke-linejoin="round"/>
+            <path d="M130 98 172 88 198 106 156 116Z" fill="#7c5e3e"/><path d="m133 100-8 22 38 9 11-20" fill="#3b7459"/><rect x="85" y="159" width="62" height="54" rx="12" transform="rotate(12 85 159)" fill="#546e68"/><path d="m94 168 34 8 3 22-39-9" fill="#799188"/><circle cx="116" cy="230" r="14" fill="#8b7353"/><rect x="225" y="181" width="60" height="38" rx="3" transform="skewY(-18)" fill="#798c82"/><ellipse cx="243" cy="170" rx="14" ry="10" fill="#d7d8ce"/><path d="M210 112 274 124 261 143 197 130z" fill="#363c3a"/><rect x="224" y="54" width="23" height="48" transform="rotate(20 224 54)" fill="#52625b"/>
+            <path d="M50 62 204 28 313 97" fill="none" stroke="#e2e6d5" stroke-width="3" opacity=".7"/>
+            <path d="m50 62 15 8v58L50 142zM204 28l-13 9v53l13 7zM313 97l-14-6v55l14 8z" fill="#b7c2ae" opacity=".65"/>
+            <path d="M62 154v66l91 65M215 177l86-38" stroke="#17cbaa" stroke-opacity=".45" stroke-width="2" stroke-dasharray="5 8" fill="none"/>
+          </svg>
+        </div>
+        <div class="floorplan-empty"><div class="floorplan-empty-icon"><svg class="icon"><use href="#ic-layers"/></svg></div><h2>Noch kein Grundriss</h2><p>Deine Räume und ihre Sauberkeit werden hier sichtbar, sobald du deine Wohnung eingerichtet hast.</p><button type="button" id="setup-home" class="outline-button"><svg class="icon"><use href="#ic-chevron"/></svg> Grundriss einrichten <span class="soon-label">ab V1.0.1</span></button></div>
+      </section>
+      <div class="dashboard-grid"><button class="metric-card surface" type="button" data-nav="more"><span class="metric-icon"><svg class="icon"><use href="#ic-spark"/></svg></span><div><small>Wohnung gesamt</small><strong>– %</strong><span>Noch keine Raumdaten</span></div><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button><button class="metric-card surface" type="button" data-nav="plan"><span class="metric-icon"><svg class="icon"><use href="#ic-calendar"/></svg></span><div><small>Nächste Aufgabe</small><strong>Keine geplant</strong><span>Putzplan ansehen</span></div><svg class="icon muted-chevron"><use href="#ic-chevron"/></svg></button></div>
+      <div class="surface section-footer"><span class="status-light"></span><span>Privatmodus · Daten bleiben auf diesem Gerät</span></div>
+    </section>
+    <section id="view-clean" class="view" aria-labelledby="clean-heading"><div class="page-heading"><small>REINIGUNG</small><h1 id="clean-heading">Putzen <span>leicht gemacht</span></h1><p>Starte deine Reinigung mit einem Fingertipp.</p></div>
+       <div class="mode-grid"><button class="mode-card surface" data-action="quickstart" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-spray"/></svg></span><h2>Schnellreinigung</h2><p>Einfach starten, Zeit erfassen und abschließen.</p><span class="mode-action">Jetzt starten <svg class="icon"><use href="#ic-chevron"/></svg></span></button><button class="mode-card surface" data-action="detail" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-check"/></svg></span><h2>Detailreinigung</h2><p>Checklisten je Raum folgen in einem späteren Update.</p><span class="mode-action">Vorschau <svg class="icon"><use href="#ic-chevron"/></svg></span></button></div>
+       <div class="surface activities"><div class="card-heading"><h2>Letzte Reinigungen</h2><span id="session-count" class="small-count">0 Einträge</span></div><div id="history-list" class="history-list"><p class="empty-note">Noch keine Reinigung abgeschlossen.</p></div></div>
+    </section>
+    <section id="view-plan" class="view" aria-labelledby="plan-heading"><div class="page-heading"><small>DEIN ALLTAG</small><h1 id="plan-heading">Mein <span>Putzplan</span></h1><p>Alle Aufgaben im Blick – ohne Stress.</p></div><div class="surface plan-card"><div class="week-heading"><svg class="icon"><use href="#ic-calendar"/></svg><span id="week-range"></span></div><div id="week-days" class="week-days"></div><div class="plan-today"><h2>Heute</h2><small>Verfügbares Zeitbudget</small></div><div class="time-options" role="group" aria-label="Zeitbudget"><button type="button" data-minutes="15">15 min</button><button type="button" data-minutes="30">30 min</button><button type="button" data-minutes="60">60 min</button></div><div class="plan-empty"><svg class="icon"><use href="#ic-check"/></svg><h3>Aktuell keine Aufgaben geplant</h3><p>Der intelligente Aufgabenplan folgt in V1.3.1. Dein Zeitbudget wird bereits gespeichert.</p></div></div></section>
+    <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
+      <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
+      <div class="surface menu-card"><h2>Weitere Bereiche <span class="muted">· geplant</span></h2><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><div><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.0.0 · Erstes Beta-Paket U01</small></div></section>
+  </main>
+  <nav class="bottom-nav" aria-label="Hauptnavigation"><button class="nav-button active" type="button" data-nav="home" aria-current="page"><svg class="icon"><use href="#ic-home"/></svg><span>Zuhause</span></button><button class="nav-button" type="button" data-nav="clean"><svg class="icon"><use href="#ic-spray"/></svg><span>Putzen</span></button><button class="nav-button" type="button" data-nav="plan"><svg class="icon"><use href="#ic-calendar"/></svg><span>Putzplan</span></button><button class="nav-button" type="button" data-nav="more"><svg class="icon"><use href="#ic-more"/></svg><span>Mehr</span></button></nav>
+</div>
+<div class="modal-backdrop" id="modal" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="close-modal" id="close-modal" type="button" aria-label="Schließen">×</button><h2 id="modal-title"></h2><div id="modal-body"></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="./app.js" defer></script>
+</body>
+</html>
