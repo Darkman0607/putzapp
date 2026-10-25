@@ -16,11 +16,11 @@ Eigenständige installierbare Android-Web-App (PWA). **Nicht** Teil von `MR-Haus
 
 Lokal: `python3 -m http.server 8000`, danach `http://localhost:8000` öffnen. Ein Service Worker braucht HTTPS oder `localhost`; nicht direkt `file://` öffnen.
 
-Android: Dateien vollständig auf einen HTTPS-Webserver (z. B. GitHub Pages, falls im Repository aktiviert) laden, in Chrome öffnen, Browser-Menü → **App installieren**. Die App ist anschließend offline startbar. Der einfache Zeitstempel-Verlauf verwendet Browser-`localStorage` und bleibt nur auf dem betreffenden Gerät/Browser. **Keine Datensicherungsfunktion in dieser Version** – sichere wichtige Daten nicht ausschließlich hier. Daten können bei Browser-Speicherbereinigung verloren gehen.
+Android: Dateien vollständig auf einen HTTPS-Webserver (z. B. GitHub Pages, falls im Repository aktiviert) laden, in Chrome öffnen, Browser-Menü → **App installieren**. Der Service Worker ist für den Offline-Start vorgesehen, dies muss jedoch auf einem echten Android-Gerät noch getestet werden. Der einfache Zeitstempel-Verlauf verwendet Browser-`localStorage` und bleibt nur auf dem betreffenden Gerät/Browser. **Keine Datensicherungsfunktion in dieser Version** – sichere wichtige Daten nicht ausschließlich hier. Daten können bei Browser-Speicherbereinigung verloren gehen.
 
 ## Prüfungen
 
-`node --test tests/*.test.mjs` verifiziert die Lieferdateien und Quellcode-Invarianten. Zusätzlich Browser-Smoke-Test (`tests/browser_smoke.py`) mit Playwright/Chromium inkl. Navigation, Themes, Zeitprotokoll, Neustart, Offline-Test und Smartphone-Layout. Plattformtest auf echtem Android-Smartphone bleibt als eigener Freigabeschritt offen.
+`node --test tests/*.test.mjs` verifiziert die Lieferdateien und Quellcode-Invarianten. Zusätzlich Browser-Smoke-Test (`tests/browser_smoke.py`) mit Playwright/Chromium: Navigation, Themes, Zeitprotokoll, simulierter Neustart und Smartphone-Layout. Die Testumgebung blockiert lokale Browser-Navigation; deshalb werden HTML, CSS und JavaScript direkt in die Browser-Testseite eingespeist. **Echter HTTP-/Service-Worker-Offline-Test und Installation auf einem Android-Smartphone sind noch ausständig.**
 
 ## Release
 
