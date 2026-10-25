@@ -3,3 +3,23 @@
 
 .inventory-card-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}.inventory-card-actions .inventory-choose{flex:1;min-width:95px;margin-top:0}.inventory-emblem.glovesBlue,.inventory-emblem.glovesWhite,.inventory-emblem.glovesPink{position:relative}.inventory-emblem.glovesBlue{background:#164b78}.inventory-emblem.glovesWhite{background:#53626c}.inventory-emblem.glovesPink{background:#763655}.inventory-thumb{width:100%;height:100%;object-fit:cover;border-radius:10px}.inventory-add-form textarea{width:100%;min-height:65px;background:var(--surface-solid);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px}.inventory-add-form input[type=checkbox]{width:18px;min-height:18px;height:18px;display:inline-block}.inventory-use-info{display:block;margin-top:5px;font-size:11px;color:var(--secondary)}#inventory-photo-preview{display:flex;gap:8px;flex-wrap:wrap}.inventory-photo-tile{display:flex;flex-direction:column;gap:5px;width:95px}.inventory-photo-tile img{width:95px;height:95px;object-fit:cover;border-radius:10px}.inventory-photo-tile button{background:var(--accent-fog);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:5px}
 .glove-icon{display:block;width:36px;height:36px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.24));}
+
+/* V1.4.0.3: Kategorienverwaltung */
+.inventory-toolbar-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.inventory-category-manager{padding:15px;margin-top:14px}
+.inventory-category-manager[hidden]{display:none}
+.inventory-category-manager h2{font-size:18px;margin:0}
+.inventory-category-rows{display:grid;gap:8px;margin:14px 0}
+.inventory-category-row{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--surface-solid)}
+.inventory-category-info{min-width:0;overflow-wrap:anywhere}
+.inventory-category-info strong{font-size:14px;display:block}
+.inventory-category-info small{font-size:11px;color:var(--secondary);display:block;margin-top:3px}
+.inventory-category-actions{display:flex;gap:6px}
+.inventory-category-actions button{min-width:42px;min-height:42px;border-radius:9px;background:var(--accent-fog);border:1px solid var(--border);color:var(--text);font-size:19px}
+.inventory-category-form{display:grid;gap:10px;border-top:1px solid var(--border);padding-top:13px}
+.inventory-category-form h3{font-size:16px;margin:0}
+.inventory-category-form label{display:grid;gap:5px;color:var(--secondary);font-size:12px}
+.inventory-category-form input,.inventory-category-form select{min-height:45px;max-width:100%;width:100%;color:var(--text);background:var(--surface-solid);border:1px solid var(--border);padding:10px;border-radius:10px;font-size:14px}
+.inventory-category-form select:disabled{opacity:.7}
+.inventory-category-form .inventory-form-buttons{margin-top:0}
+@media(max-width:390px){.inventory-toolbar-actions{width:100%}.inventory-toolbar-actions button{flex:1}.inventory-category-manager{padding:11px}}

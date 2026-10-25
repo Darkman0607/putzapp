@@ -16,7 +16,7 @@
    for(const group of groups){const selected=restore(group.id),card=el('div','material-group');card.append(el('h4','',group.name));
     const items=api()?.get().items||[];
     if(!items.length)card.append(el('p','room-note','Noch keine Lagerartikel. Unter Mehr → Putzlager hinzufügen.'));
-    for(const item of items){const line=el('label','material-check-row'),check=el('input');check.type='checkbox';check.checked=selected.has(item.id);check.dataset.item=item.id;const name=el('span','',`${model()?.icons[item.icon]||'📦'} ${item.name}`);const level=el('select','material-dose');[['0.5','Wenig'],['1','Normal'],['2','Viel']].forEach(([value,text])=>{const o=el('option','',text);o.value=value;level.append(o);});level.setAttribute('aria-label','Verbrauchsintensität für '+item.name);level.hidden=item.category!=='mittel';
+    for(const item of items){const line=el('label','material-check-row'),check=el('input');check.type='checkbox';check.checked=selected.has(item.id);check.dataset.item=item.id;const name=el('span','',`${model()?.icons[item.icon]||'📦'} ${item.name}`);const level=el('select','material-dose');[['0.5','Wenig'],['1','Normal'],['2','Viel']].forEach(([value,text])=>{const o=el('option','',text);o.value=value;level.append(o);});level.setAttribute('aria-label','Verbrauchsintensität für '+item.name);level.hidden=model()?.categoryType(api()?.get(),item.category)!=='mittel';
      check.addEventListener('change',()=>{if(check.checked)selected.add(item.id);else selected.delete(item.id);});line.append(check,name,level);card.append(line);
     }
     content.append(card);
