@@ -12,4 +12,4 @@ Lokal: 105/105 node --test Tests bestanden; node --check premium/editor bestande
 Playwright: 320, 390, 430 px: sieben unterschiedliche Test-Räume mit ihren geometrischen Badges, keine Seitenfehler, kein horizontaler Überlauf; Raumdetail-Overlay und Editor interaktiv erreichbar.
 ZIP: CRC nach Erstellung prüfen.
 Offen: echtes Android PWA-Update, Offline-Test, visuelle Nutzer-Abnahme und Backup/Restore auf dem realen Gerät.
-GitHub: Veröffentlichung erst dann behaupten, wenn ein GitHub-Commit und CI-Nachweis vorliegen.
+GitHub: Commit d3c868f308b192c53c269cc58d5e8ed792421893 auf Branch Root. Actions Beta-Quellcode prüfen erfolgreich: 40241015400. GitHub Pages erfolgreich: 40241014738.
