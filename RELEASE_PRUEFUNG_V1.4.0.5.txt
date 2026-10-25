@@ -1,0 +1,22 @@
+MEIN PUTZMANAGER V1.4.0.5 – FREIGABENACHWEIS (25.10.2026)
+Repository: https://github.com/Darkman0607/putzapp
+Branch: Root
+Code-Commit: b4d66e2a7f16f163828bf0ec366efd126c86cc5e
+
+Neue Funktionen:
+1. Artikelbezogene Buchungsart: Flüssigmittel, Einweg, waschbar, dauerhaft.
+2. Automatischer Einwegabzug bei bestätigter raumbezogener Reinigung: maximal einmal je Sitzung und Artikel.
+3. Sauber-/Wäschebestand und „Gewaschen“ (+1/alles) für Tücher, Handschuhe, Geschirrtücher.
+4. Gesamte Buchung vorab auf Verfügbarkeit geprüft; keine Teilbuchung bei Fehlbestand.
+5. Raum-Stoppuhr: Start, Pause, Weiter, Zurücksetzen; Dauer in Raumjournal + letzter Reinigung.
+6. Bestehende lokale Bestände und ältere Kategorien bleiben erhalten (bei Altartikeln Buchungsart im Bearbeiten prüfen).
+
+Prüfung:
+- 84/84 automatische Node-Tests (node --test tests/*.test.mjs) erfolgreich.
+- Mobiler Chromium-Test tests/stock_timer_browser.py erfolgreich; Material und Waschzyklus, Stoppuhr, Blockade bei Fehlbestand, Reload.
+- Mobile Regressionen: U05, U16, Kategorien, Materialvorschläge und 3D-Ansicht erfolgreich.
+- GitHub Actions „Beta-Quellcode prüfen“: 40216889331 ERFOLGREICH.
+- GitHub Pages: 40216889309 ERFOLGREICH.
+
+OFFEN: realer Android-Installationstest, lange Nutzung auf Endgerät, vollständige Backup-/Restore-Abnahme inkl. Fotos/Material.
+Hinweis: Flüssigreiniger werden weiterhin pro Anwendung gezählt, Flaschen erst nach explizitem „Flasche leer“ physisch abgezogen.
