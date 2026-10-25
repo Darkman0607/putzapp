@@ -147,3 +147,15 @@ Im Wohnungs-Dashboard Räume per kurzem Tippen öffnen und per langem Druck Schn
 - **Wiederherstellen:** zeigt vorher Zeit, Räume und Lagerartikel an und verlangt explizite Bestätigung. Erzeugt vor dem Überschreiben eine Sicherung in IndexedDB. Wenn das nicht möglich ist, wird der Restore abgebrochen. Bei einem Speicherfehler rollt das Datenmodell auf die vorherigen `localStorage`-Werte zurück; es werden nur Putzmanager-Schlüssel überschrieben. Nach erfolgreichem Laden startet die Oberfläche neu. Vorherigen Stand über „↶ Vorherigen Stand zurückholen“ wiederherstellen.
 - **Datenschutz:** Die JSON-Sicherungen sind **nicht Ende-zu-Ende-verschlüsselt**; Zugriff über dein Google-Konto schützen. App speichert keine OAuth-Tokens im Backup. Bei Browserdaten-Löschung geht auch der lokale Wiederherstellungspunkt verloren; daher Drive-Backup separat prüfen.
 - **Verifiziert:** 90/90 Node-Tests, Chromium-Mobilbrowser mit simuliertem Google-Login und simuliertem Drive-Upload/Auflisten sowie bestehende Lager-, Reinigungs- und Layouttests. **Nicht verifiziert:** echte Google-OAuth-Anmeldung, tatsächlicher Upload in das persönliche Google-Konto, echter Android-Gerätewechsel und Restore mit sehr vielen Fotos. Diese Punkte bleiben im Master-Word offen.
+
+
+## Hotfix V1.4.0.8 (25.10.2026)
+
+- Einheitlicher Reinigungsstart: großer Knopf führt zur Raumwahl und bestehendem detaillierten Ablauf.
+- Korrektur der Aufgaben-abhängigen Sauberkeitsberechnung (Teilaufgaben setzen Bereich nicht auf 100 %).
+- Tagesputzplan mit überfälligen Aufgaben, Sauberkeits-Priorität, 15/30/60-Minuten-Budget und Verschieben bis morgen.
+- Vorher-/Nachher-Fotos je abgeschlossener Reinigung (max. 18 Sessions, 1 Paar je Session), lokale Galerie, Integration in neue Google-Drive-JSON-Sicherungen.
+- Sechs offline Reinigungsanleitungen; Erinnerungen innerhalb der App und optionale Benachrichtigung bei geöffneter PWA (keine Push-Hintergrundgarantie).
+- Die bestehende Google-Drive-Anmeldung/-Upload-Funktion bleibt unverändert. Nutzerbestätigung vom 25.10.2026: Speichern funktioniert am Android-Handy. Restore nicht bestätigt.
+- Keine 3D-Komponenten, keine Umstellung des localStorage-Hauptschlüssels, bestehende 2D-Raumdaten migrieren ohne Reset.
+- Tests: 93/93 Node-Tests und mobile Chromium-Simulation erfolgreich; Android-Praxistest offen.

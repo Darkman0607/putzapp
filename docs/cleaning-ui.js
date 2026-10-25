@@ -6,7 +6,7 @@
  const el=(tag,klass,text)=>{const n=document.createElement(tag);if(klass)n.className=klass;if(text!==undefined)n.textContent=text;return n;};
  const makeButton=(text,fn,klass='room-btn')=>{const b=el('button',klass,text);b.type='button';b.addEventListener('click',fn);return b;};
  const uid=()=>globalThis.crypto?.randomUUID?.()||('task-'+Date.now()+'-'+Math.random().toString(36).slice(2));
- let mode=null,selectedFloor=null,selectedRoom=null,materials=null,stopwatch=null;
+ let mode=null,selectedFloor=null,selectedRoom=null,materials=null,stopwatch=null,stagedPhotos={before:null,after:null};
  function snapshot(){return APP.get();}
  function find(floorId,roomId){const state=snapshot();const floor=state.floors.find(f=>f.id===floorId),room=floor?.rooms.find(r=>r.id===roomId);return {state,floor,room};}
  function values(){return snapshot().floors.flatMap(f=>f.rooms.map(r=>({floorId:f.id,id:r.id,text:f.name+' · '+r.name})));}
@@ -39,7 +39,7 @@
  function open(nextMode,floorId,roomId){
   if(!['tasks','quick','detail'].includes(nextMode))return;
   const {room}=find(floorId,roomId);if(!room){$('#cleaning-room-status').textContent='Bitte zuerst einen Raum anlegen oder auswählen.';return;}
-  stopwatch?.dispose();stopwatch=null;mode=nextMode;selectedFloor=floorId;selectedRoom=roomId;materials=null;
+  stopwatch?.dispose();stopwatch=null;stagedPhotos={before:null,after:null};mode=nextMode;selectedFloor=floorId;selectedRoom=roomId;materials=null;
   $('#cleaning-title').textContent=room.name;
   $('#cleaning-subtitle').textContent=nextMode==='tasks'?'✏️ AUFGABEN & INTERVALLE':nextMode==='quick'?'⚡ SCHNELLREINIGUNG':'☑ DETAILREINIGUNG';
   $('#cleaning-overlay').hidden=false;render();$('#cleaning-close').focus();
@@ -89,15 +89,24 @@
   if(!total)content.append(el('p','room-note','Noch keine Aufgaben. Oben eine Vorlage übernehmen oder eigene Aufgabe anlegen.'));
   content.append(makeButton('← Zur Detailreinigung',()=>{mode='detail';render();}));
  }
+ function addPhotos(content){
+  if(!window.PutzmanagerPhotos)return;
+  const wrapper=el('section','cleaning-photos');wrapper.append(el('h4','', '📸 Vorher / Nachher (optional)'));
+  for(const kind of ['before','after']){const label=el('label','cleaning-photo-input');label.append(el('span','',kind==='before'?'Vorher-Foto':'Nachher-Foto'));const input=el('input');input.type='file';input.accept='image/*';input.setAttribute('aria-label',kind==='before'?'Vorher-Foto auswählen':'Nachher-Foto auswählen');const preview=el('div','photo-preview');
+   input.addEventListener('change',async()=>{try{const result=await window.PutzmanagerPhotos.encode(input.files?.[0]);stagedPhotos[kind]=result;preview.replaceChildren();if(result){const image=el('img');image.src=result;image.alt=kind==='before'?'Vorschau vorher':'Vorschau nachher';preview.append(image);}}catch(e){stagedPhotos[kind]=null;input.value='';alert('Foto konnte nicht ausgewählt werden: '+e.message);}});
+   label.append(input,preview);wrapper.append(label);
+  }content.append(wrapper);
+ }
  function addTimer(content){stopwatch?.dispose();stopwatch=window.PutzmanagerRoomTimer.create(selectedFloor,selectedRoom);content.append(stopwatch.element);}
  function finishCleaning(data){
-  const inv=window.PutzmanagerInventory,before=inv.get(),id=uid();
+  const inv=window.PutzmanagerInventory,before=inv.get(),id=uid(),photoBefore=window.PutzmanagerPhotos?.snapshot?.() ?? null;
   try{
+   if((stagedPhotos.before||stagedPhotos.after)&&window.PutzmanagerPhotos)window.PutzmanagerPhotos.put({id,at:new Date().toISOString(),roomName:selectedData().room.name,...stagedPhotos});
    const added=inv.commit(id,selectedRoom,materials.assignmentsForSave());
    const entry=APP.recordCleaning({...data,id,at:new Date().toISOString(),floorId:selectedFloor,roomId:selectedRoom,durationSeconds:stopwatch?.seconds()||0});
    if(!entry){inv.restore(before);throw Error('Keine gültige Reinigung ausgewählt.');}
    stopwatch?.complete();stopwatch=null;close();refresh();return {entry,added};
-  }catch(err){alert('Reinigung NICHT abgeschlossen: '+err.message+' Bitte Material/Buchungsart oder verfügbaren Bestand im Lager prüfen.');return null;}
+  }catch(err){inv.restore(before);window.PutzmanagerPhotos?.restore?.(photoBefore);alert('Reinigung NICHT abgeschlossen: '+err.message+' Bitte Material/Buchungsart oder verfügbaren Bestand im Lager prüfen.');return null;}
  }
  function renderQuick(){
   stopwatch?.dispose();stopwatch=null;const {room}=selectedData(),content=$('#cleaning-content'),clean=CLEAN.sanitize(room.cleanliness);content.replaceChildren();
@@ -107,7 +116,7 @@
    const label=el('label','cleaning-check-row');const cb=el('input');cb.type='checkbox';cb.checked=true;cb.value=group.id;
    const text=el('span','',group.name);label.append(cb,text);choices.append(label);inputs.push(cb);
   }
-  content.append(choices);addTimer(content);materials=window.PutzmanagerMaterials.create(selectedRoom);content.append(materials.element);materials.fill([{id:'room',name:'Material für diesen Raum'}]);const notes=notesInput();content.append(formLabel('Notiz',notes));
+  content.append(choices);addTimer(content);addPhotos(content);if(window.PutzmanagerKnowledge)content.append(window.PutzmanagerKnowledge.forRoom(room.name));materials=window.PutzmanagerMaterials.create(selectedRoom);content.append(materials.element);materials.fill([{id:'room',name:'Material für diesen Raum'}]);const notes=notesInput();content.append(formLabel('Notiz',notes));
   content.append(makeButton('✓ Reinigung speichern',()=>{
    const targets=inputs.filter(c=>c.checked).map(c=>c.value);if(!targets.length){alert('Bitte mindestens einen gereinigten Bereich wählen.');return;}
    if(!materials.confirmAfter())return;finishCleaning({mode:'quick',targets,notes:notes.value});
@@ -115,7 +124,7 @@
  }
  function renderDetail(){
   const {room}=selectedData(),content=$('#cleaning-content'),groups=TASKS.taskGroups(CLEAN.sanitize(room.cleanliness));content.replaceChildren();
-  content.append(blockTitle('Reinigung mit Checkliste','Hake nur die tatsächlich erledigten Aufgaben ab. Ausschließlich zugehörige Bereiche werden auf 100 % geschätzt.'));
+  content.append(blockTitle('Reinigung mit Checkliste','Hake nur erledigte Aufgaben ab. Bei mehreren Aufgaben steigt der Bereichswert anteilig; 100 % erst bei vollständiger Liste.'));
   const checks=[];
   for(const group of groups){if(!group.tasks.length)continue;
    content.append(el('h4','cleaning-group-title',group.name));
@@ -123,7 +132,7 @@
     const t=el('span','',task.text),due=el('small','',TASKS.status(task));label.append(checkbox,t,due);content.append(label);checks.push(checkbox);}
   }
   if(!checks.length)content.append(el('p','room-note','Für diesen Raum sind noch keine Aufgaben angelegt. Lege zuerst passende Aufgaben an.'));
-  addTimer(content);const manage=makeButton('✏️ Aufgaben verwalten',()=>{mode='tasks';render();});content.append(manage);
+  addTimer(content);addPhotos(content);if(window.PutzmanagerKnowledge)content.append(window.PutzmanagerKnowledge.forRoom(room.name));const manage=makeButton('✏️ Aufgaben verwalten',()=>{mode='tasks';render();});content.append(manage);
   materials=window.PutzmanagerMaterials.create(selectedRoom);content.append(materials.element);
   const updateMaterials=()=>{const chosen=checks.filter(c=>c.checked);materials.fill(chosen.map(c=>({id:c.value,name:groups.flatMap(g=>g.tasks).find(t=>t.id===c.value)?.text||'Aufgabe'})));};
   for(const c of checks)c.addEventListener('change',updateMaterials);updateMaterials();
@@ -139,5 +148,5 @@
  $('#cleaning-close').addEventListener('click',close);
  $('#cleaning-overlay').addEventListener('click',e=>{if(e.target===$('#cleaning-overlay'))close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#cleaning-overlay').hidden){e.preventDefault();close();}});
- window.PutzmanagerCleaning={open,openSelected,refresh,close};refresh();
+ window.PutzmanagerCleaning={open,openSelected,refresh,close,focusPicker:()=>$('#cleaning-room-picker')?.focus()};refresh();
 })();

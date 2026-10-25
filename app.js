@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.4.0.7';
+  const VERSION = '1.4.0.8';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
@@ -212,13 +212,15 @@
   }
   document.addEventListener('click',event=>{
     const nav=event.target.closest('[data-nav]');if(nav){navigate(nav.dataset.nav);return;}
-    const action=event.target.closest('[data-action]');if(action){if(action.dataset.action==='quickstart'){if(currentSession){showSession();}else chooseMode();}else if(action.dataset.action==='detail'){navigate('clean');window.PutzmanagerCleaning?.openSelected?.('detail');}return;}
+    const action=event.target.closest('[data-action]');if(action){if(action.dataset.action==='quickstart'){navigate('clean');window.PutzmanagerCleaning?.focusPicker?.();}else if(action.dataset.action==='detail'){navigate('clean');window.PutzmanagerCleaning?.openSelected?.('detail');}return;}
     const theme=event.target.closest('[data-theme]');if(theme){state.settings.theme=theme.dataset.theme;persist();applySettings();return;}
     const accent=event.target.closest('[data-accent]');if(accent){state.settings.accent=accent.dataset.accent;persist();applySettings();return;}
-    const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
+    const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();window.PutzmanagerPlan?.render();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
   });
+  $('#photos-open').addEventListener('click',()=>document.querySelector('#photo-panel').scrollIntoView({block:'start'}));
+  $('#knowledge-open').addEventListener('click',()=>document.querySelector('#knowledge-panel').scrollIntoView({block:'start'}));
   $('#setup-home').addEventListener('click',()=>window.PutzmanagerEditor?.open());
-  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.4.0.7: Optionales Google-Drive-Backup mit Anmeldung, Speicherung und Wiederherstellung. Lokale Offline-Daten bleiben erhalten.'));
+  $('#notifications').addEventListener('click',()=>{navigate('plan');document.querySelector('#plan-reminders')?.scrollIntoView({block:'center'});});
   $('#install-button').addEventListener('click',installApp);
   $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);
@@ -229,8 +231,8 @@
   if(isStandalone())$('#install-panel').hidden=true;
   window.addEventListener('beforeunload',event=>{if(currentSession){event.preventDefault();event.returnValue='';}});
   if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch((error)=>{console.warn('Putzmanager Service Worker:',error);});});}
-  document.addEventListener('putzmanager:homechange',renderHistory);applySettings();renderDates();renderHistory();
+  document.addEventListener('putzmanager:homechange',()=>{renderHistory();window.PutzmanagerPlan?.render();});applySettings();renderDates();renderHistory();
   if(!storageAvailable)toast('Privater Browsermodus: dauerhafte Speicherung nicht verfügbar.');
   // Public metadata for deterministic smoke tests, never used for authentication.
-  window.PutzmanagerBeta={version:VERSION,view:()=>$('.view.active')?.id,storageKey:KEY,getHome:()=>structuredClone(state.home),saveHome:(home)=>{state.home=structuredClone(home);persist();}};
+  window.PutzmanagerBeta={version:VERSION,view:()=>$('.view.active')?.id,storageKey:KEY,getBudget:()=>state.settings.budget,getHome:()=>structuredClone(state.home),saveHome:(home)=>{state.home=structuredClone(home);persist();}};
 })();

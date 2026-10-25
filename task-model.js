@@ -71,7 +71,13 @@ function record(home, input, cleanApi){
   for(const g of taskGroups(clean)){
    const matches=g.tasks.filter(t=>selected.has(t.id));if(!matches.length)continue;
    for(const t of matches){Object.assign(t,complete(t,input.at));doneTasks.push({id:t.id,text:t.text,target:g.id});}
-   if(g.id==='base')clean.base=100;else clean.areas.find(a=>a.id===g.id).score=100;
+   // A single finished item never implies that other tasks in its area are finished.
+   // Recurring tasks count as current only up to their next due date.
+   const current=g.tasks.filter(t=>{const x=normalized(t);return x.done && (x.interval==='none'||(x.nextDue&&x.nextDue>dateKey(input.at)));}).length;
+   const fraction=g.tasks.length?current/g.tasks.length:0;
+   const targetScore=Math.round(100*fraction);
+   if(g.id==='base')clean.base=Math.max(clean.base,targetScore);
+   else {const a=clean.areas.find(a=>a.id===g.id);a.score=Math.max(a.score,targetScore);}
    affected.push({id:g.id,name:g.name});
   }
  }

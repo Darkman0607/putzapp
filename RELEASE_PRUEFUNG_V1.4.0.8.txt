@@ -1,0 +1,14 @@
+Mein Putzmanager V1.4.0.8 – Hotfix 25.10.2026
+
+Priorität 1: Startknopf -> Raumwahl der echten Raumreinigung.
+Priorität 2: Bereichs-Score ändert sich bei Teilerledigung anteilig; offene Aufgaben bleiben offen.
+Priorität 3: Intelligenter Tagesplan mit Fälligkeit, Budget, Verschieben.
+Priorität 4: Vorher/Nachher-Fotos, optionale Foreground-Erinnerungen, sechs Offline-Reinigungsanleitungen.
+
+Automatische Prüfungen: 93/93 Node-Tests bestanden.
+Mobiler Chromium-Simulationstest: Reinigung, Fotoaufnahme, Persistenz, Backup-Snapshot, Tagesplan, Verschieben, Anleitungen, 390-px-Ansicht: PASS.
+2D Bestandsprüfung: PASS.
+Offen: echte Android-Installation, Offline-Praxistest, Drive-Restore, Android-Hintergrundbenachrichtigungen.
+Google Drive Upload am Nutzerhandy (unverändert): vom Nutzer am 25.10.2026 als funktionierend bestätigt.
+Sicherung: auch neue Foto- und Plan-Schlüssel in JSON-Backup. Alte Sicherungen bleiben kompatibel.
+Hinweis: Browserbenachrichtigungen nur beim Öffnen der App; keine automatische Hintergrundzustellung.

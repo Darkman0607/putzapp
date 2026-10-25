@@ -2,7 +2,7 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PutzmanagerBackupModel=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const FORMAT='mein-putzmanager-full-backup';const SCHEMA=1;
-const KNOWN=['mein-putzmanager-beta-v1','mein-putzmanager-inventory-v1','mein-putzmanager-material-mode','mein-putzmanager-room-timers-v1'];
+const KNOWN=['mein-putzmanager-beta-v1','mein-putzmanager-inventory-v1','mein-putzmanager-material-mode','mein-putzmanager-room-timers-v1','mein-putzmanager-plan-v1','mein-putzmanager-clean-photos-v1'];
 const MAX_BYTES=30*1024*1024;
 const allowed=k=>typeof k==='string'&&KNOWN.includes(k);
 function snapshot(storage){const data={};for(const key of KNOWN){const value=storage.getItem(key);if(value!==null)data[key]=value;}return data;}
@@ -16,6 +16,8 @@ function assertData(data,requireMain=true){
   let obj;try{obj=JSON.parse(data[key]);}catch{throw Error('Beschädigte JSON-Daten: '+key);}
   if(!obj||typeof obj!=='object'||Array.isArray(obj))throw Error('Ungültiger Dateninhalt: '+key);
  }
+ if(Object.hasOwn(data,KNOWN[5])){try{const x=JSON.parse(data[KNOWN[5]]);if(!Array.isArray(x)||x.length>18||x.some(e=>!e||typeof e!=='object'||typeof e.id!=='string'||typeof e.at!=='string'||!['before','after'].every(k=>e[k]==null||(typeof e[k]==='string'&&e[k].length<=180000&&/^data:image\/jpeg;base64,/.test(e[k])))))throw Error();}catch{throw Error('Ungültige Reinigungsfotos in der Sicherung.');}}
+ if(Object.hasOwn(data,KNOWN[4])){try{const x=JSON.parse(data[KNOWN[4]]);if(!x||typeof x!=='object'||Array.isArray(x))throw Error();}catch{throw Error('Ungültiger Putzplan in der Sicherung.');}}
  if(data[KNOWN[2]]&&!['during','after'].includes(data[KNOWN[2]]))throw Error('Ungültige Materialeinstellung.');
  return data;
 }
