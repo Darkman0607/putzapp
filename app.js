@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.0.0';
+  const VERSION = '1.0.0.1';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [] };
   let memoryState = structuredClone(defaultState);
@@ -143,9 +143,70 @@
     actions.append(pause,finish);wrap.append(p,counter,actions,discard);modal('Reinigung läuft',wrap);
   }
   function cancelSession(){clearInterval(timerInterval);timerInterval=null;currentSession=null;}
+  const isStandalone = () => window.matchMedia?.('(display-mode: standalone)').matches || navigator.standalone === true;
+  async function installationDiagnostics() {
+    const entries = [];
+    const record = (ok, name) => entries.push(`${ok ? '✓' : '✗'} ${name}`);
+    record(window.isSecureContext === true, 'Sichere HTTPS-Verbindung');
+    record(navigator.onLine !== false, 'Gerät meldet eine Internetverbindung');
+    const manifestLink = document.querySelector('link[rel="manifest"]');
+    let m = null;
+    if (manifestLink) {
+      try {
+        const result = await fetch(manifestLink.href, {cache:'no-store'});
+        if (!result.ok) throw new Error(`HTTP ${result.status}`);
+        m = await result.json();
+        record(true, 'App-Manifest geladen');
+      } catch (e) { record(false, `App-Manifest nicht ladbar (${e.message})`); }
+    } else record(false, 'Kein App-Manifest verlinkt');
+    if (m) {
+      const icons = Array.isArray(m.icons) ? m.icons : [];
+      record(Boolean(m.name || m.short_name) && Boolean(m.start_url) && ['standalone','fullscreen','minimal-ui'].includes(m.display), 'Name, Startseite und App-Anzeigemodus');
+      record(['192x192','512x512'].every(size => icons.some(i => (i.sizes || '').split(/\s+/).includes(size))), 'App-Symbole 192 × 192 und 512 × 512 angegeben');
+      try {
+        const start = new URL(m.start_url, manifestLink.href);
+        const scope = new URL(m.scope || './', manifestLink.href);
+        record(start.origin === location.origin && start.pathname.startsWith(scope.pathname), 'Startadresse innerhalb des App-Bereichs');
+      } catch {record(false, 'Startadresse ungültig');}
+    }
+    if ('serviceWorker' in navigator) {
+      try {
+        const sw = await navigator.serviceWorker.getRegistration('./');
+        record(Boolean(sw?.active), 'Offline-Service-Worker aktiviert');
+      } catch {record(false, 'Offline-Service-Worker konnte nicht überprüft werden');}
+    } else record(false, 'Service Worker wird vom Browser unterstützt');
+    record(isStandalone(), 'App bereits im eigenständigen Modus geöffnet');
+    return entries;
+  }
+  function installHelp(message, diagnostics) {
+    const wrap = document.createElement('div');
+    const intro = document.createElement('p'); intro.className = 'install-explain';intro.textContent = message;
+    wrap.append(intro);
+    if (diagnostics?.length) {
+      const heading = document.createElement('strong');heading.textContent = 'Installationsprüfung:';wrap.append(heading);
+      const list = document.createElement('ul');list.className = 'install-check-list';
+      diagnostics.forEach(item => {const li = document.createElement('li');li.textContent=item;list.append(li);});
+      wrap.append(list);
+    }
+    const steps = document.createElement('p');steps.className='install-explain';
+    steps.textContent='Öffne https://darkman0607.github.io/putzapp/ direkt in der Chrome-App (nicht innerhalb eines anderen Apps). Tippe auf ⋮ → „Zum Startbildschirm hinzufügen“ bzw. „Installieren und Verknüpfung erstellen“ → „Installieren“. Falls Chrome keine Installation anbietet: prüfe, ob „Putzmanager“ bereits unter Android Einstellungen → Apps vorhanden ist. Eine alte defekte Installation oder Verknüpfung gegebenenfalls entfernen und neu versuchen.';
+    wrap.append(steps);modal('Putzmanager installieren',wrap);
+  }
   async function installApp(){
-    if(deferredInstallPrompt){deferredInstallPrompt.prompt();try{await deferredInstallPrompt.userChoice;}catch(e){}deferredInstallPrompt=null;return;}
-    messageModal('App installieren','Öffne die App im Chrome-Browser auf Android über HTTPS. Wähle im Browser-Menü „App installieren“ oder „Zum Startbildschirm hinzufügen“. Falls diese Option fehlt, ist die PWA möglicherweise noch nicht installierbar oder bereits installiert.');
+    if (isStandalone()) {toast('Putzmanager läuft bereits als installierte App.');return;}
+    if (deferredInstallPrompt) {
+      const promptEvent=deferredInstallPrompt;deferredInstallPrompt=null;
+      try {
+        await promptEvent.prompt();
+        const choice=await promptEvent.userChoice;
+        if(choice?.outcome === 'accepted')toast('Chrome hat die Anfrage angenommen. Prüfe dein App-Symbol.');
+        else installHelp('Die Installation wurde nicht abgeschlossen. Du kannst sie jederzeit erneut über das Chrome-Menü anstoßen.');
+      } catch(error) {
+        installHelp('Chrome konnte den Installationsdialog nicht öffnen. Prüfe die folgenden Angaben.', await installationDiagnostics());
+      }
+      return;
+    }
+    installHelp('Chrome hat der Seite noch keinen eigenen Installationsdialog angeboten. Das kann unmittelbar nach dem ersten Aufruf, bei einer bereits vorhandenen App oder durch Browsereinstellungen vorkommen.', await installationDiagnostics());
   }
   document.addEventListener('click',event=>{
     const nav=event.target.closest('[data-nav]');if(nav){navigate(nav.dataset.nav);return;}
@@ -157,13 +218,15 @@
   $('#setup-home').addEventListener('click',()=>messageModal('Wohnung einrichten','Der vollwertige Grundriss-Editor ist für das nächste Update V1.0.1 geplant. Aktuell wird bewusst noch kein Grundriss vorgetäuscht oder gespeichert.'));
   $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.0 enthält die fünf Basisfunktionen aus Paket U01. Putzplan, Grundriss-Editor und Lager werden in den vorgesehenen Updates ergänzt.'));
   $('#install-button').addEventListener('click',installApp);
+  $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);
   $('#modal').addEventListener('click',event=>{if(event.target===$('#modal'))closeModal();});
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#modal').hidden){event.preventDefault();closeModal();}});
-  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;});
-  window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;toast('Putzmanager installiert.');});
+  window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;$('#install-hint').textContent='Chrome ist bereit – jetzt installieren.';});
+  window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;$('#install-panel').hidden=true;toast('Putzmanager installiert.');});
+  if(isStandalone())$('#install-panel').hidden=true;
   window.addEventListener('beforeunload',event=>{if(currentSession){event.preventDefault();event.returnValue='';}});
-  if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{/* funktioniert auch ohne SW online */});});}
+  if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch((error)=>{console.warn('Putzmanager Service Worker:',error);});});}
   applySettings();renderDates();renderHistory();
   if(!storageAvailable)toast('Privater Browsermodus: dauerhafte Speicherung nicht verfügbar.');
   // Public metadata for deterministic smoke tests, never used for authentication.

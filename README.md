@@ -25,3 +25,9 @@ Android: Dateien vollständig auf einen HTTPS-Webserver (z. B. GitHub Pages, fal
 ## Release
 
 Version 1.0.0 | Paket U01 | Projektstand 25.10.2026. Weitere 25 Updates sind in der separaten Master-Word-Checkliste geplant.
+
+## V1.0.0.1 – Installationsfix (25.10.2026)
+
+GitHub Pages nutzt Branch `Root`; aktuell ist der Veröffentlichungsordner `/ (root)` eingestellt. Eine inhaltlich identische Kopie unter `/docs` ist als zusätzliche Absicherung enthalten, falls der Pages-Ordner später geändert wird. Auf der Startseite liegt nun ein Installationsknopf. Ist `beforeinstallprompt` verfügbar, wird der native Chrome-Dialog geöffnet. Andernfalls prüft ein Diagnosefenster Manifest, Icons, Startadresse und Service-Worker und erläutert die Installation in Chrome. Manifest-Scope und `start_url` sind eindeutig `/putzapp/`; die Datenkennung `mein-putzmanager-beta-v1` bleibt unverändert. Neu gefasster Service Worker ermöglicht eine Offline-Fallback-Navigation. Ein echter Android-WebAPK-Installationstest kann ausschließlich auf einem physischen Endgerät abschließend bestätigt werden.
+
+**Nachweisgrenze:** Nur ein erfolgreicher GitHub-Pages-Workflow und eine Bestätigung auf dem Android-Gerät können die öffentliche Auslieferung bzw. die echte Installation belegen. Lokale Browser-Smoke-Tests reichen dafür nicht.

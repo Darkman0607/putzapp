@@ -1,9 +1,9 @@
 name: Beta-Quellcode prüfen
 on:
   push:
-    branches: [main]
+    branches: [Root]
   pull_request:
-    branches: [main]
+    branches: [Root]
 jobs:
   validate:
     runs-on: ubuntu-latest

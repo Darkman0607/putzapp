@@ -1,17 +1,27 @@
 {
-  "id": "./",
+  "id": "/putzapp/",
   "name": "Mein Putzmanager",
   "short_name": "Putzmanager",
-  "description": "Private Putz-App für deinen Haushalt – Beta 1.0.0",
+  "description": "Private Putz-App für deinen Haushalt – Beta V1.0.0.1",
   "lang": "de-AT",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/putzapp/",
+  "scope": "/putzapp/",
   "display": "standalone",
   "background_color": "#07171c",
   "theme_color": "#07181d",
+  "prefer_related_applications": false,
   "icons": [
-    {"src":"./assets/icon-192.png","type":"image/png","sizes":"192x192","purpose":"any maskable"},
-    {"src":"./assets/icon-512.png","type":"image/png","sizes":"512x512","purpose":"any maskable"},
-    {"src":"./assets/icon.svg","type":"image/svg+xml","sizes":"any","purpose":"any"}
+    {
+      "src": "./assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
   ]
 }
