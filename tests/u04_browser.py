@@ -11,7 +11,7 @@ with sync_playwright() as pw:
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
   page.on('dialog',lambda d:d.accept('WC neu'))
   page.set_content(read('index.html'))
-  for style in ['style.css','editor.css','clean.css','cleaning.css']: page.add_style_tag(content=read(style))
+  for style in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css']: page.add_style_tag(content=read(style))
   page.evaluate('''(saved)=>{const values=saved||{};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>values[k]??null,setItem:(k,v)=>values[k]=String(v)}});window.testStore=values;}''', saved)
   for f in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js']:page.add_script_tag(content=read(f))
   return page
