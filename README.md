@@ -1,3 +1,9 @@
+## V1.4.0.11 – Illustrierter Premium-2D-Grundriss (25.10.2026)
+
+Die Wohnungszentrale folgt jetzt dem gewählten Designbild 1: schematisch möblierte Räume in echter Draufsicht, unterschiedliche Holz-/Fliesenmuster, dekorative Pflanzen, plastisch betonte Wände und farbige Sauberkeits-Karten mit besser lesbaren Raumnamen. Alles entsteht **dynamisch aus vorhandenen Polygonen und gespeicherten Raumzuständen**. Türen/Fenster, Drehung, Reinigungsaktionen, lange Berührung, Daten-Schlüssel und Bearbeitungsmodus bleiben erhalten; keine Möbelpositionen werden als reale Wohnungseinrichtung behauptet. Ein Raum kann individuell geformt oder rotiert sein; die Möbelskizzen werden in dessen Form ausgeschnitten. Neue CSS-/JS-Dateien sind auch offline im Service Worker und in `docs/` eingebunden. Android-Geräteprüfung bleibt separat nötig.
+
+---
+
 ## V1.4.0.10 – handfreundliche Raumansicht (25.10.2026)
 
 **UX-Korrektur für alle Räume:** Antippen eines Raums öffnet jetzt ein kurzes, vom unteren Bildschirmrand erreichbares Raummenü (Bottom Sheet) mit farbigem Sauberkeitsring, Raumname und großen Tasten für **Schnell reinigen**, **Checkliste** und **Aufgaben**. Die bisher sehr langen Regler und Infotexte sind in zwei bei Bedarf aufklappbare Bereiche verschoben: **Unterbereiche** (inklusive eigener Aufgaben) und **Sauberkeit anpassen** (Raumwert/Restflächen). Alle existierenden IDs/Aktionen, 2D-Grundrisse, Speicher-Schlüssel, Reinigungs- und Backupdaten bleiben unverändert.
