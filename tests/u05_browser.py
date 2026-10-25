@@ -10,9 +10,9 @@ with sync_playwright() as pw:
  def launch(saved=None):
   page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('dialog',lambda d:d.accept())
   page.set_content(read('index.html'))
-  for f in ['style.css','editor.css','clean.css','cleaning.css']:page.add_style_tag(content=read(f))
+  for f in ['style.css','editor.css','clean.css','cleaning.css','inventory.css','cleaning-materials.css']:page.add_style_tag(content=read(f))
   page.evaluate('''(saved)=>{const store=saved||{};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:key=>store[key]??null,setItem:(key,v)=>store[key]=String(v)}});window.testStore=store;}''',saved)
-  for f in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-ui.js']:page.add_script_tag(content=read(f))
+  for f in ['app.js','geometry.js','task-model.js','clean-model.js','editor.js','cleaning-materials.js','cleaning-ui.js','inventory-model.js','inventory-ui.js']:page.add_script_tag(content=read(f))
   return page
  page=launch()
  page.locator('#setup-home').click()
