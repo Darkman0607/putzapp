@@ -1,7 +1,7 @@
 /* Mein Putzmanager — eigenständige private Beta 1.0.0 (U01) */
 (() => {
   'use strict';
-  const VERSION = '1.0.3';
+  const VERSION = '1.0.4';
   const KEY = 'mein-putzmanager-beta-v1';
   const defaultState = { settings: { theme: 'dark', accent: 'emerald', budget: 30 }, sessions: [], home: null };
   let memoryState = structuredClone(defaultState);
@@ -116,7 +116,7 @@
   function messageModal(title, msg){const p=document.createElement('p');p.textContent=msg;modal(title,p);}
   function chooseMode() {
     const wrap=document.createElement('div');
-    const p=document.createElement('p');p.textContent='In dieser ersten Beta kannst du eine einfache Reinigung mit Zeitmessung dokumentieren. Raum-Checklisten und das Grundrissmodell folgen in späteren Versionen.';
+    const p=document.createElement('p');p.textContent='Hier kannst du weiterhin eine freie Reinigung mit Zeitmessung erfassen. Für raumbezogene Checklisten nutze die Detailreinigung.';
     const label=document.createElement('label');label.className='form-label';label.htmlFor='session-name';label.textContent='Bereich oder Tätigkeit';
     const input=document.createElement('input');input.id='session-name';input.className='form-input';input.maxLength=70;input.autocomplete='off';input.placeholder='z. B. Bad reinigen';
     const start=document.createElement('button');start.className='primary-button modal-action';start.type='button';start.textContent='Reinigung starten';
@@ -210,13 +210,13 @@
   }
   document.addEventListener('click',event=>{
     const nav=event.target.closest('[data-nav]');if(nav){navigate(nav.dataset.nav);return;}
-    const action=event.target.closest('[data-action]');if(action){if(action.dataset.action==='quickstart'){if(currentSession){showSession();}else chooseMode();}else if(action.dataset.action==='detail')messageModal('Detailreinigung','Checklisten, Raum-Zustände und geführte Abläufe werden in V1.0.4 ergänzt. Bis dahin kannst du den Schnellstart nutzen.');return;}
+    const action=event.target.closest('[data-action]');if(action){if(action.dataset.action==='quickstart'){if(currentSession){showSession();}else chooseMode();}else if(action.dataset.action==='detail'){navigate('clean');window.PutzmanagerCleaning?.openSelected?.('detail');}return;}
     const theme=event.target.closest('[data-theme]');if(theme){state.settings.theme=theme.dataset.theme;persist();applySettings();return;}
     const accent=event.target.closest('[data-accent]');if(accent){state.settings.accent=accent.dataset.accent;persist();applySettings();return;}
     const minutes=event.target.closest('[data-minutes]');if(minutes){state.settings.budget=Number(minutes.dataset.minutes);persist();applySettings();toast(`Zeitbudget: ${state.settings.budget} Minuten`);}
   });
   $('#setup-home').addEventListener('click',()=>window.PutzmanagerEditor?.open());
-  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.3 enthält die interaktive Wohnungskarte (U04). Aufgaben je Unterbereich und das Putzlager folgen in späteren Updates.'));
+  $('#notifications').addEventListener('click',()=>messageModal('Beta-Information','V1.0.4 enthält raumbezogene Aufgaben, Intervalle und eine Reinigungshistorie. Putzlager und weiterführende Funktionen folgen später.'));
   $('#install-button').addEventListener('click',installApp);
   $('#install-home-button').addEventListener('click',installApp);
   $('#close-modal').addEventListener('click',closeModal);

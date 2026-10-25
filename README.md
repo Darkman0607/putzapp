@@ -1,3 +1,15 @@
+## V1.0.4 / U05 – Putzaufgaben und Basisreinigung (25.10.2026)
+
+Die folgenden Funktionen sind **jetzt tatsächlich enthalten** (ältere README-Abschnitte beschreiben historische Zwischenstände):
+
+- Aufgaben pro Raum oder Unterbereich: aus 12 Vorschlägen wählen, frei anlegen, bearbeiten, löschen; bisherige U04-Aufgaben bleiben gespeichert.
+- Intervalle: einmalig, täglich, wöchentlich oder alle 1–365 Tage. Nach einem dokumentierten Abschluss werden `lastDoneAt` und die nächste Fälligkeit gesetzt. Offene und fällige Aufgaben werden in der Übersicht gezählt.
+- Schnellreinigung: alle Teilbereiche sind zunächst ausgewählt, abwählbar. Nur ausgewählte Teilflächen und Restflächen erhalten einen neuen **geschätzten** Sauberkeitswert 100 %. Datum/Uhrzeit und optionale Notiz werden gespeichert.
+- Detailreinigung: jede Aufgabe separat auswählen; nur deren Unterbereich oder allgemeine Restflächen bekommen den neuen Schätzwert. Kein automatisches Hochsetzen nicht gereinigter Bereiche.
+- Reinigungshistorie: chronologische Dokumentation von bis zu 500 letzten Raumreinigungen mit Art, Datum/Uhrzeit, Bereichen, Aufgaben, Vorher-/Nachher-Schätzwert und Notiz. Ältere U01-Stoppuhr-Sitzungen sind weiterhin getrennt vorhanden.
+
+Technik: gleiche lokale Browser-Datenkennung `mein-putzmanager-beta-v1`; `home.history`, erweiterte `home.floors[].rooms[].cleanliness` und `task-model.js`; keine Cloud. GitHub-Pages-Root und `/docs` bleiben deckungsgleich. Automatische Tests, Chromium-Mobile-Tests und Zip-Test belegen den Beta-Stand; echte Android-WebAPK-Installation, Offline-Praxistest und vollständiger Backup-Restore **nicht** bestätigt.
+
 # Mein Putzmanager — Private Beta V1.0.1
 
 Eigenständige installierbare Android-Web-App (PWA). **Nicht** Teil von `MR-Hausservice`; keine gemeinsame Datenbank und kein Import.

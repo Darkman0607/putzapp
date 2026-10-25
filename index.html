@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07181d">
-  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.0.3.">
+  <meta name="description" content="Mein Putzmanager – dein privater Reinigungsplaner. Beta V1.0.4.">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="./manifest.webmanifest">
@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./editor.css">
   <link rel="stylesheet" href="./clean.css">
-  <title>Mein Putzmanager · Beta 1.0.3</title>
+<link rel="stylesheet" href="./cleaning.css">
+  <title>Mein Putzmanager · Beta 1.0.4</title>
 </head>
 <body class="theme-dark accent-emerald">
 <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -53,7 +54,7 @@
         <button id="install-home-button" type="button" class="outline-button">Installieren</button>
       </div>
       <section class="floorplan surface" aria-label="Dein Grundriss">
-        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.0.3</span></div>
+        <div class="section-overline">DEIN ZUHAUSE <span class="beta-pill">BETA 1.0.4</span></div>
         <div id="floorplan-art" class="floorplan-art" role="img" aria-label="Dekorative schematische Wohnungsvorschau, noch kein gespeicherter Grundriss">
           <svg viewBox="0 0 360 332" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs><linearGradient id="floor" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#63706e"/><stop offset="1" stop-color="#1d282c"/></linearGradient><linearGradient id="wall" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#b1b4a9"/><stop offset="1" stop-color="#3c5054"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter></defs>
@@ -74,14 +75,15 @@
       <div class="surface section-footer"><span class="status-light"></span><span>Privatmodus · Daten bleiben auf diesem Gerät</span></div>
     </section>
     <section id="view-clean" class="view" aria-labelledby="clean-heading"><div class="page-heading"><small>REINIGUNG</small><h1 id="clean-heading">Putzen <span>leicht gemacht</span></h1><p>Starte deine Reinigung mit einem Fingertipp.</p></div>
-       <div class="mode-grid"><button class="mode-card surface" data-action="quickstart" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-spray"/></svg></span><h2>Schnellreinigung</h2><p>Einfach starten, Zeit erfassen und abschließen.</p><span class="mode-action">Jetzt starten <svg class="icon"><use href="#ic-chevron"/></svg></span></button><button class="mode-card surface" data-action="detail" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-check"/></svg></span><h2>Detailreinigung</h2><p>Checklisten je Raum folgen in einem späteren Update.</p><span class="mode-action">Vorschau <svg class="icon"><use href="#ic-chevron"/></svg></span></button></div>
-       <div class="surface activities"><div class="card-heading"><h2>Letzte Reinigungen</h2><span id="session-count" class="small-count">0 Einträge</span></div><div id="history-list" class="history-list"><p class="empty-note">Noch keine Reinigung abgeschlossen.</p></div></div>
+       <div class="mode-grid"><button class="mode-card surface" data-action="quickstart" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-spray"/></svg></span><h2>Schnellreinigung</h2><p>Einfach starten, Zeit erfassen und abschließen.</p><span class="mode-action">Jetzt starten <svg class="icon"><use href="#ic-chevron"/></svg></span></button><button class="mode-card surface" data-action="detail" type="button"><span class="mode-icon"><svg class="icon"><use href="#ic-check"/></svg></span><h2>Detailreinigung</h2><p>Wähle einen Raum und hake tatsächlich gereinigte Bereiche ab.</p><span class="mode-action">Jetzt reinigen <svg class="icon"><use href="#ic-chevron"/></svg></span></button></div>
+       <section class="surface cleaning-manager" aria-labelledby="cleaning-manager-title"><div class="card-heading"><h2 id="cleaning-manager-title">🏠 Reinigung nach Raum</h2></div><label for="cleaning-room-picker" class="room-label">Raum wählen</label><select id="cleaning-room-picker" class="cleaning-select" aria-label="Raum für die Reinigung wählen"></select><div class="cleaning-actions"><button type="button" id="cleaning-room-quick" class="room-primary">⚡ Schnellreinigung</button><button type="button" id="cleaning-room-detail" class="room-btn">☑ Detailreinigung</button><button type="button" id="cleaning-room-manage" class="room-btn">✏️ Aufgaben</button></div><p id="cleaning-room-status" class="room-note"></p></section>
+       <div class="surface activities"><div class="card-heading"><h2>Letzte Reinigungen</h2><span id="session-count" class="small-count">0 Einträge</span></div><div id="history-list" class="history-list"><p class="empty-note">Noch keine Reinigung abgeschlossen.</p></div></div><section class="surface activities"><div class="card-heading"><h2>🧾 Raum-Reinigungshistorie</h2><span id="room-history-count" class="small-count">0 Einträge</span></div><div id="room-clean-history" class="cleaning-history"><p class="empty-note">Noch keine Raumreinigung dokumentiert.</p></div></section>
     </section>
     <section id="view-plan" class="view" aria-labelledby="plan-heading"><div class="page-heading"><small>DEIN ALLTAG</small><h1 id="plan-heading">Mein <span>Putzplan</span></h1><p>Alle Aufgaben im Blick – ohne Stress.</p></div><div class="surface plan-card"><div class="week-heading"><svg class="icon"><use href="#ic-calendar"/></svg><span id="week-range"></span></div><div id="week-days" class="week-days"></div><div class="plan-today"><h2>Heute</h2><small>Verfügbares Zeitbudget</small></div><div class="time-options" role="group" aria-label="Zeitbudget"><button type="button" data-minutes="15">15 min</button><button type="button" data-minutes="30">30 min</button><button type="button" data-minutes="60">60 min</button></div><div class="plan-empty"><svg class="icon"><use href="#ic-check"/></svg><h3>Aktuell keine Aufgaben geplant</h3><p>Der intelligente Aufgabenplan folgt in V1.3.1. Dein Zeitbudget wird bereits gespeichert.</p></div></div></section>
     <section id="view-more" class="view" aria-labelledby="more-heading"><div class="page-heading"><small>DEIN PERSÖNLICHER BEREICH</small><h1 id="more-heading">Mehr <span>entdecken</span></h1><p>Einstellungen und kommende Funktionen.</p></div>
       <div class="surface settings-card"><div class="card-heading"><h2><svg class="icon"><use href="#ic-settings"/></svg> Erscheinungsbild</h2></div><div class="setting-title">Designmodus</div><div class="appearance-switch" role="group" aria-label="Designmodus"><button type="button" data-theme="dark"><svg class="icon"><use href="#ic-moon"/></svg> Dunkel</button><button type="button" data-theme="light"><svg class="icon"><use href="#ic-sun"/></svg> Hell</button></div><div class="setting-title">Akzentfarbe</div><div class="swatches" role="group" aria-label="Akzentfarbe"><button data-accent="emerald" type="button" aria-label="Smaragd-Türkis" title="Smaragd-Türkis"><span></span></button><button data-accent="blue" type="button" aria-label="Ozeanblau" title="Ozeanblau"><span></span></button><button data-accent="violet" type="button" aria-label="Violett" title="Violett"><span></span></button><button data-accent="amber" type="button" aria-label="Gold" title="Gold"><span></span></button></div></div>
       <div class="surface menu-card"><h2>Weitere Bereiche <span class="muted">· geplant</span></h2><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-box"/></svg></span><div><strong>Putzlager</strong><small>Produkte, Geräte und Vorräte · V1.4</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-image"/></svg></span><div><strong>Fotos</strong><small>Vorher / Nachher · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-book"/></svg></span><div><strong>Anleitungen</strong><small>Reinigungswissen · V1.2</small></div><span class="soon-label">Später</span></div><div class="menu-row"><span class="row-icon"><svg class="icon"><use href="#ic-chart"/></svg></span><div><strong>Statistik</strong><small>Verlauf und Auswertung · V1.3</small></div><span class="soon-label">Später</span></div></div>
-      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.0.3 · Raumübersicht U04</small></div></section>
+      <div class="surface privacy-card"><strong>Deine private Beta</strong><p>Keine Anmeldung, kein Konto und keine Cloud. Einstellungen und erste Reinigungen werden lokal in diesem Browser gespeichert. Ein vollständiges Backup kommt mit V1.0.5.</p><button id="install-button" class="outline-button" type="button">App installieren / Anleitung</button><small>Version 1.0.4 · Putzaufgaben U05</small></div></section>
   </main>
   <nav class="bottom-nav" aria-label="Hauptnavigation"><button class="nav-button active" type="button" data-nav="home" aria-current="page"><svg class="icon"><use href="#ic-home"/></svg><span>Zuhause</span></button><button class="nav-button" type="button" data-nav="clean"><svg class="icon"><use href="#ic-spray"/></svg><span>Putzen</span></button><button class="nav-button" type="button" data-nav="plan"><svg class="icon"><use href="#ic-calendar"/></svg><span>Putzplan</span></button><button class="nav-button" type="button" data-nav="more"><svg class="icon"><use href="#ic-more"/></svg><span>Mehr</span></button></nav>
 </div>
@@ -98,9 +100,10 @@
     <input id="room-score-input" type="range" min="0" max="100" value="50" step="1">
     <button id="room-score-save" class="room-primary" type="button">Raumwert übernehmen</button>
     <p id="room-score-note" class="room-note"></p>
+    <div class="cleaning-actions"><button type="button" id="room-detail-quick" class="room-primary">⚡ Schnell reinigen</button><button type="button" id="room-detail-detailed" class="room-btn">☑ Checkliste</button><button type="button" id="room-detail-tasks" class="room-btn">✏️ Aufgaben</button></div>
     <div class="room-sheet-divider"></div>
     <h3>Unterbereiche & Gegenstände</h3>
-    <p class="room-note">Jeder Bereich hat einen eigenen geschätzten Zustand. Hier kannst du einfache Aufgaben abhaken; Termine, Intervalle und Putzplanung folgen in U05.</p>
+    <p class="room-note">Jeder Bereich hat einen eigenen geschätzten Zustand. Hier kannst du einfache Aufgaben abhaken; Wiederholungsintervalle und Checklisten kannst du im Aufgabenmanager einstellen.</p>
     <div id="room-areas"></div>
     <div class="room-add-line"><input id="room-area-name" type="text" maxlength="55" placeholder="z. B. Boden, WC, Dusche" aria-label="Name des neuen Unterbereichs"><button id="room-area-add" type="button" class="room-primary">＋ Anlegen</button></div>
     <div class="room-sheet-divider"></div>
@@ -114,12 +117,13 @@
   <div class="room-sheet room-quick"><div class="room-sheet-top"><div><small>SCHNELLAKTIONEN</small><h2 id="room-quick-title">Raum</h2></div><button type="button" id="room-quick-close" class="room-close" aria-label="Schnellaktionen schließen">✕</button></div>
     <p class="room-note">Sauberkeit manuell setzen (geschätzt):</p>
     <div class="quick-score-grid"><button type="button" data-quick-score="25">25 %</button><button type="button" data-quick-score="50">50 %</button><button type="button" data-quick-score="75">75 %</button><button type="button" data-quick-score="100">100 %</button></div>
-    <button type="button" id="room-quick-detail" class="room-primary">Raumdetails öffnen</button>
+    <div class="cleaning-actions"><button type="button" id="room-quick-clean" class="room-primary">⚡ Raum reinigen</button><button type="button" id="room-quick-detail" class="room-btn">Raumdetails öffnen</button></div>
   </div>
 </section>
 
+<section id="cleaning-overlay" class="room-sheet-overlay" role="dialog" aria-modal="true" aria-labelledby="cleaning-title" hidden><div class="room-sheet cleaning-sheet"><header class="room-sheet-top"><div><small id="cleaning-subtitle">U05 · REINIGUNG</small><h2 id="cleaning-title">Reinigung</h2></div><button type="button" id="cleaning-close" class="room-close" aria-label="Reinigung schließen">✕</button></header><div id="cleaning-content"></div></div></section>
 <section id="editor-overlay" class="editor-overlay" aria-label="Vollbild-Grundriss-Editor" hidden>
-  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.0.3 · U04</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
+  <header class="editor-topline"><div><strong>📐 Grundriss zeichnen</strong> <small>V1.0.4 · U04</small></div><button id="editor-close" type="button" class="editor-btn highlight">✓ Fertig</button></header>
   <div class="editor-controls">
     <label class="editor-setting">Wohnart <select id="editor-kind" class="editor-select"><option value="wohnung">Wohnung</option><option value="haus">Haus</option></select></label>
     <div id="editor-level-picker" class="editor-floor-nav" hidden><button id="editor-floor-prev" type="button" class="editor-btn" aria-label="Vorherige Ebene">‹</button><strong id="editor-level-name">Ebene 1</strong><button id="editor-floor-next" type="button" class="editor-btn" aria-label="Nächste Ebene">›</button></div>
@@ -160,7 +164,9 @@
 
 <script src="./app.js" defer></script>
 <script src="./geometry.js" defer></script>
+<script src="./task-model.js" defer></script>
 <script src="./clean-model.js" defer></script>
 <script src="./editor.js" defer></script>
+<script src="./cleaning-ui.js" defer></script>
 </body>
 </html>

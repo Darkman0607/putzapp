@@ -4,6 +4,7 @@
   const API = window.PutzmanagerBeta;
   const GEO = window.PutzmanagerGeometry;
   const CLEAN = window.PutzmanagerClean;
+  const TASKS = window.PutzmanagerTasks;
   const svgNS = 'http://www.w3.org/2000/svg';
   const $ = (s) => document.querySelector(s);
   const el = (name, attrs = {}, text) => {
@@ -19,7 +20,7 @@
   };
   const uid = () => crypto?.randomUUID?.() ?? `p-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const clone = x => structuredClone(x);
-  const fresh = () => {const id=uid();return {kind:'wohnung', floors:[{id,name:'Ebene 1',outline:[],rooms:[],openings:[],metersPerUnit:null}],activeFloor:id};};
+  const fresh = () => {const id=uid();return {kind:'wohnung', history:[], floors:[{id,name:'Ebene 1',outline:[],rooms:[],openings:[],metersPerUnit:null}],activeFloor:id};};
   const within = (v,min,max) => Math.min(max,Math.max(min,v));
   const validPoint = p => Array.isArray(p) && p.length===2 && p.every(v=>Number.isFinite(v) && Math.abs(v)<20000);
   function sanitize(input) {
@@ -36,7 +37,7 @@
       })).filter(r=>r.points.length>=3)
     }));
     if(!floors.length) floors.push(fresh().floors[0]);
-    return {kind:input.kind==='haus'?'haus':'wohnung',floors,activeFloor:floors.some(f=>f.id===input.activeFloor)?input.activeFloor:floors[0].id};
+    return {kind:input.kind==='haus'?'haus':'wohnung',history:TASKS.sanitizeJournal(input.history),floors,activeFloor:floors.some(f=>f.id===input.activeFloor)?input.activeFloor:floors[0].id};
   }
   let home=sanitize(API.getHome());
   let selected=null, selectedWall=null, selectedOpening=null, snapGuide=null, warning='', method='room', drawing=null, view={x:0,y:0,w:1000,h:720};
@@ -134,7 +135,7 @@
     notice(warning);
   }
   function fillOpeningForm(o){$('#editor-opening-kind').value=o.kind;$('#editor-opening-type').value=o.type;$('#editor-opening-width').value=(o.width*(currentFloor().metersPerUnit||1)).toFixed(2);$('#editor-opening-height').value=o.height==null?'':(o.height*(currentFloor().metersPerUnit||1)).toFixed(2);$('#editor-opening-position').value=Math.round(o.t*100);$('#editor-opening-swing').value=o.swing;}
-  function refresh(){draw();renderHome();}
+  function refresh(){draw();renderHome();window.PutzmanagerCleaning?.refresh?.();}
   function startDrawing(type){drawing={type,points:[]};selected=null;draw();}
   function finishDrawing(){
     if(!drawing)return;
@@ -290,6 +291,8 @@
   });
   $('#room-area-name').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#room-area-add').click();}});
   $('#room-quick-detail').addEventListener('click',()=>{if(quickId)showDetail(quickId.floorId,quickId.id);});
+  for(const [id,mode] of [['room-detail-quick','quick'],['room-detail-detailed','detail'],['room-detail-tasks','tasks']])$('#'+id).addEventListener('click',()=>{if(detailId){const f=detailFloor,r=detailId;closeClean();window.PutzmanagerCleaning?.open?.(mode,f,r);}});
+  $('#room-quick-clean').addEventListener('click',()=>{if(quickId){const {floorId,id}=quickId;closeClean();window.PutzmanagerCleaning?.open?.('quick',floorId,id);}});
   document.querySelectorAll('[data-quick-score]').forEach(btn=>btn.addEventListener('click',()=>{if(!quickId)return;const {floorId,id}=quickId,n=Number(btn.dataset.quickScore);persistClean(floorId,id,clean=>{clean.override=n;});closeClean();}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape' && (!$('#room-detail-overlay').hidden||!$('#room-quick-overlay').hidden)){e.preventDefault();closeClean();}});
   function open(){
@@ -410,6 +413,13 @@
   $('#editor-opening-position').addEventListener('input',e=>{$('#editor-opening-position-label').textContent=e.target.value+' %';});
   $('#editor-wall-measure').addEventListener('focus',e=>{const w=wall();if(w&&currentFloor().metersPerUnit&&!e.target.value)e.target.value=(w.length*currentFloor().metersPerUnit).toFixed(2);});
   window.PutzmanagerEditorGeometry=GEO;
-  window.PutzmanagerEditor={open,renderHome,get:()=>clone(home)};
+  function updateClean(floorId,roomId,callback){
+    const room=roomById(floorId,roomId);if(!room)return false;
+    const before=clone(home), clean=cleanOf(room);
+    if(callback(clean)===false)return false;
+    room.cleanliness=CLEAN.sanitize(clean);commit(before);return true;
+  }
+  function recordCleaning(input){const before=clone(home);const entry=TASKS.record(home,input,CLEAN);if(entry)commit(before);return entry;}
+  window.PutzmanagerEditor={open,renderHome,get:()=>clone(home),updateClean,recordCleaning};
   renderHome();
 })();
