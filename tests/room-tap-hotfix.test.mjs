@@ -13,6 +13,6 @@ test('Keyboard accessibility and long-press quick menu remain available',()=>{
  assert.match(ed,/node\.addEventListener\('keydown'/);
  assert.match(ed,/showQuick\(floorId,roomId\)/);
  assert.match(ed,/attachRoomEvents\(g,f\.id,r\.id\)/);
- assert(html.includes('1.4.0.16'));
+ assert(html.includes('1.4.0.17'));
  assert.equal(readFileSync(new URL('../docs/editor.js',import.meta.url),'utf8'),ed);
 });

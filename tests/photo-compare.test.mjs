@@ -14,7 +14,7 @@ test('photo comparison script, CSS and mobile controls available and cached offl
 test('comparison only on records with both images, with no deletion or AI decision',()=>{
  const photos=read('photos.js'),viewer=read('photo-compare.js');
  assert(photos.includes('if(record.before&&record.after)'));
- assert(photos.includes('PutzmanagerPhotoCompare?.open(record)'));
+ assert(photos.includes('PutzmanagerPhotoCompare?.open({...record,'));
  assert(viewer.includes('!record.before||!record.after'));
  assert(!viewer.includes('PutzmanagerPhotos.remove'));
  assert(!viewer.includes('fetch('));
@@ -23,7 +23,7 @@ test('comparison only on records with both images, with no deletion or AI decisi
 });
 test('version and backups do not change photo schema or local data keys',()=>{
  const html=read('index.html'),manifest=JSON.parse(read('manifest.webmanifest'));
- assert(html.includes('1.4.0.16'));assert(manifest.description.includes('1.4.0.16'));
+ assert(html.includes('1.4.0.17'));assert(manifest.description.includes('1.4.0.17'));
  assert(read('photos.js').includes("DB='mein-putzmanager-photos-v2'"));
  assert(read('app.js').includes("KEY = 'mein-putzmanager-beta-v1'"));
  assert(read('backup-model.js').includes('schema:')); // existing backup tests validate supported schemas

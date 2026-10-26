@@ -1,3 +1,10 @@
+## V1.4.0.17 – Mehrere Reinigungsfotos (26.10.2026)
+
+- **Schnellreinigung und Detailreinigung:** Mehrere Vorher- und Nachher-Fotos je Sitzung über Mehrfachauswahl oder wiederholtes Hinzufügen. Vorschau, Anzahl und Entfernen einzelner Fotos vor dem Speichern.
+- **Galerie:** Beliebig viele Fotos je Sitzung anzeigen, einzelne Bilder löschen, gewünschtes Vorher-/Nachher-Paar für Schieberegler und Zoom auswählen. Bestehende Ein-Foto-Einträge bleiben lesbar.
+- **Persistenz/Backup:** Bestehende IndexedDB-/localStorage-Schlüssel bleiben unverändert. Zusätzliche `beforePhotos` / `afterPhotos`-Arrays werden in IndexedDB und JSON-/Drive-Sicherungen unterstützt, Import prüft alle Einzelbilder. Maximal 15 MB pro Original, komprimierte JPEG-Daten bis 180.000 Zeichen pro Bild, Gesamtbackup bis 256 MB; verfügbarer Gerätespeicher kann früher begrenzen.
+- **Sicherheit:** Speichern einer Reinigung während der Fotoverarbeitung wird verhindert; bei Fehlern werden Fotoeintrag und Materialbuchung zurückgesetzt. Ein Löschen von Fotos verändert nicht das Reinigungsjournal.
+
 ## V1.4.0.16 – Raum-Tap Hotfix (26.10.2026)
 
 Bei echten Fingertipps auf die oberen Räume (insbesondere **Schlafzimmer** und **Kinderzimmer**) öffnete sich das Detailfenster sofort beim `pointerup`. Der Browser erzeugte danach noch ein `click`-Ereignis, das auf den neu eingeblendeten Dialog-Hintergrund traf und die Ansicht unbeabsichtigt direkt wieder schloss. Im Browser-Test reproduzierbar.
