@@ -1,4 +1,4 @@
-/* Mein Putzmanager – V1.4.0.14. Rein lokaler Vorher-/Nachher-Vergleich.
+/* Mein Putzmanager – V1.4.0.17. Rein lokaler Vorher-/Nachher-Vergleich.
    Kein KI-Urteil: es werden die unveränderten, bereits lokal gespeicherten Fotos angezeigt. */
 (function(root){'use strict';
  const mk=(tag,klass,text)=>{const e=root.document.createElement(tag);if(klass)e.className=klass;if(text!==undefined)e.textContent=text;return e;};
