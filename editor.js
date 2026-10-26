@@ -212,7 +212,7 @@
     safeChange(()=>{const placed=GEO.newRoomPosition(points,currentFloor().rooms);if(!placed)return false;const r={id:uid(),name,points:placed,cleanliness:CLEAN.sanitize()};currentFloor().rooms.push(r);selected=r.id;selectedWall=null;});
   }
   // U04 view is deliberately separate from the editor: no wall/vertex handlers in the dashboard.
-  let detailId=null, detailFloor=null, quickId=null, press=null, blockClickUntil=0;
+  let detailId=null, detailFloor=null, quickId=null, press=null, blockClickUntil=0, dialogOpenedAt=0;
   const roomById=(floorId,id)=>home.floors.find(f=>f.id===floorId)?.rooms.find(r=>r.id===id);
   const cleanOf=room=>CLEAN.sanitize(room.cleanliness);
   const scoreOf=room=>CLEAN.roomScore(cleanOf(room));
@@ -268,13 +268,13 @@
   }
   function showDetail(floorId,id){
     const room=roomById(floorId,id);if(!room)return;
-    detailFloor=floorId;detailId=id;$('#room-quick-overlay').hidden=true;quickId=null;
+    detailFloor=floorId;detailId=id;dialogOpenedAt=Date.now();$('#room-quick-overlay').hidden=true;quickId=null;
     $('#room-areas-panel').open=false;$('#room-score-panel').open=false;
     $('#room-detail-overlay').hidden=false;document.body.classList.add('room-dialog-open');renderDetail();$('#room-detail-close').focus();
   }
   function showQuick(floorId,id){
     const room=roomById(floorId,id);if(!room)return;
-    quickId={floorId,id};$('#room-quick-title').textContent=room.name;
+    quickId={floorId,id};dialogOpenedAt=Date.now();$('#room-quick-title').textContent=room.name;
     $('#room-quick-overlay').hidden=false;document.body.classList.add('room-dialog-open');$('#room-quick-detail').focus();
   }
   function attachRoomEvents(node, floorId,roomId){
@@ -286,10 +286,14 @@
       press=data;
     });
     node.addEventListener('pointermove',e=>{if(press && press.pointerId===e.pointerId && Math.hypot(e.clientX-press.startX,e.clientY-press.startY)>12){clearTimeout(press.timer);press=null;}});
-    const release=e=>{if(!press||press.pointerId!==e.pointerId)return;clearTimeout(press.timer);const long=press.long;press=null;if(!long && e.type==='pointerup'){blockClickUntil=Date.now()+500;showDetail(floorId,roomId);}};
+    // Auf Touch-Geräten wird das synthetische click-Ereignis erst NACH pointerup erzeugt.
+    // Öffnet man hier schon die Raumdetails, trifft derselbe Klick oben auf den Dialog-Backdrop
+    // und schließt ihn sofort wieder (besonders bei Schlaf- und Kinderzimmer).
+    // Deshalb normale Taps ausschließlich im click-Handler behandeln.
+    const release=e=>{if(!press||press.pointerId!==e.pointerId)return;clearTimeout(press.timer);press=null;};
     node.addEventListener('pointerup',release);node.addEventListener('pointercancel',release);
     node.addEventListener('contextmenu',e=>{e.preventDefault();clearTimeout(press?.timer);press=null;blockClickUntil=Date.now()+700;showQuick(floorId,roomId);});
-    node.addEventListener('click',e=>{if(Date.now()<blockClickUntil)return;if(e.detail===0)showDetail(floorId,roomId);});
+    node.addEventListener('click',e=>{if(Date.now()<blockClickUntil)return;showDetail(floorId,roomId);});
     node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showDetail(floorId,roomId);}else if(e.key==='F10'&&e.shiftKey){e.preventDefault();showQuick(floorId,roomId);}});
   }
   function renderHome(){
@@ -334,8 +338,11 @@
   }
   $('#room-detail-close').addEventListener('click',closeClean);
   $('#room-quick-close').addEventListener('click',closeClean);
-  $('#room-detail-overlay').addEventListener('click',e=>{if(e.target===$('#room-detail-overlay'))closeClean();});
-  $('#room-quick-overlay').addEventListener('click',e=>{if(e.target===$('#room-quick-overlay'))closeClean();});
+  // Ghost-Clicks nach langer Berührung dürfen das soeben geöffnete Blatt nicht schließen.
+  // Ein bewusstes Tippen außerhalb nach 650 ms schließt es weiterhin wie gewohnt.
+  const dismissBackdrop=e=>{if(e.target===e.currentTarget&&Date.now()-dialogOpenedAt>=650)closeClean();};
+  $('#room-detail-overlay').addEventListener('click',dismissBackdrop);
+  $('#room-quick-overlay').addEventListener('click',dismissBackdrop);
   $('#room-score-input').addEventListener('input',e=>{$('#room-score-display').textContent=e.target.value+' %';});
   $('#room-base-input').addEventListener('input',e=>{$('#room-base-display').textContent=e.target.value+' %';});
   $('#room-score-save').addEventListener('click',()=>{persistClean(detailFloor,detailId,clean=>{clean.override=Number($('#room-score-input').value);});renderDetail();});

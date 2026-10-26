@@ -1,3 +1,13 @@
+## V1.4.0.16 – Raum-Tap Hotfix (26.10.2026)
+
+Bei echten Fingertipps auf die oberen Räume (insbesondere **Schlafzimmer** und **Kinderzimmer**) öffnete sich das Detailfenster sofort beim `pointerup`. Der Browser erzeugte danach noch ein `click`-Ereignis, das auf den neu eingeblendeten Dialog-Hintergrund traf und die Ansicht unbeabsichtigt direkt wieder schloss. Im Browser-Test reproduzierbar.
+
+**Korrektur:** Ein normaler Tap öffnet die Raumdetails jetzt im `click`-Ereignis. Gegen verspätete Touch-/Long-Press-Ghost-Klicks gibt es eine kurze Schutzzeit am Backdrop. Long-Press-Schnellaktionen, Tastaturbedienung und Raumdetails bleiben erhalten. Keine Änderung an Wohnung, Grundriss, Sauberkeitswerten, gespeicherten Fotos oder Backup-Format.
+
+**Qualitätsprüfung:** 122 Node-Tests erfolgreich; mobiler Chromium-Test bei 320/390/430 px mit echten Fingertipps auf alle sieben Räume, Tastatur, Long-Press und Dialogschließen ohne JavaScript-Fehler. GitHub Actions/Pages-Status siehe RELEASE_PRUEFUNG_V1.4.0.16.txt; echter Vivo-Praxistest offen.
+
+---
+
 ## V1.4.0.15 – Wohnungszentrale nach Referenzbild (25.10.2026)
 
 Die Startseite wurde referenznah im dunklen Smaragd-Design überarbeitet: prominente Tageskarte, Haus-Karte, kompakte Kennzahlen und Grundriss in materialbetonter Draufsicht. Die 2D-Geometrie bleibt echt und editierbar; Möblierung, Holz/Fliesen, Fensterrahmen, Türschwenkbögen und Status-Badges werden aus den gespeicherten Polygonen dynamisch erzeugt. Möbel sind **Beispielillustrationen**, keine echte Einrichtung und keine fotografische 1:1-Darstellung. Raumtippen, Lange-Drücken, 360°-Drehung und bestehende Reinigungs-/Backup-Logik bleiben erhalten.

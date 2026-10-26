@@ -1,0 +1,6 @@
+Mein Putzmanager V1.4.0.16 – Raum-Tap Hotfix, 26.10.2026
+Ursache: Bei Touch wurde die Raumansicht schon in pointerup geöffnet. Der folgende synthetische Klick traf bei oberen Räumen auf den Modal-Hintergrund und schloss sie sofort wieder.
+Korrektur: Normale Taps öffnen die Raumdetails erst im click-Ereignis; die Long-Press-Funktion bleibt vorhanden. Junge Dialoge (<650 ms) werden vor späten Ghost-Klicks geschützt.
+Die Raumgeometrie, Wohnungsdaten, Reinigungshistorie und IndexedDB/Backup-Datenformate bleiben unverändert.
+Tests: 122 Node-Tests, mobile Chromium-Taps für 7 Räume bei 320/390/430px plus Long-Press & Tastatur, keine JavaScript-Fehler.
+Echter Android-Praxistest: offen.
