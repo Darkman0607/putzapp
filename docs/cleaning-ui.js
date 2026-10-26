@@ -123,7 +123,7 @@
   }
   content.append(wrapper);
  }
- function addTimer(content){stopwatch?.dispose();stopwatch=window.PutzmanagerRoomTimer.create(selectedFloor,selectedRoom);content.append(stopwatch.element);}
+ function addTimer(content){stopwatch?.dispose();stopwatch=window.PutzmanagerRoomTimer.create(selectedFloor,selectedRoom,mode,TASKS.sanitizeJournal(snapshot().history));content.append(stopwatch.element);}
  async function finishCleaning(data){
   if(stagedPhotos.processing){alert('Die Fotos werden noch verarbeitet. Bitte danach erneut speichern.');return null;}
   const inv=window.PutzmanagerInventory,before=inv.get(),id=uid();let photoSaved=false;

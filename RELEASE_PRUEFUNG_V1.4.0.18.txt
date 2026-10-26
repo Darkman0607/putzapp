@@ -1,0 +1,2 @@
+Mein Putzmanager – V1.4.0.18 / 26.10.2026
+Lernende Zeitprognosen und Hintergrund-Stoppuhr; Node- und mobile Browsertests lokal bestanden. Android-Praxistest und echter Google-Drive-Restore offen.

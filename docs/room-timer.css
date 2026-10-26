@@ -5,3 +5,9 @@
 .room-stopwatch-actions button{min-height:49px;min-width:0}
 .room-stopwatch-actions button:disabled{opacity:.48}
 @media(max-width:350px){.room-stopwatch-actions{grid-template-columns:1fr}}
+
+/* V1.4.0.18: learning forecast and mobile controls */
+.room-timer-forecast{font-size:13px;line-height:1.5;color:#d4f7e8;background:#1b4c49;border-radius:10px;padding:10px 12px;margin:10px 0}
+.room-stopwatch-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+.room-stopwatch-actions button{padding:10px 6px;font-size:13px}
+@media(max-width:460px){.room-stopwatch-actions{grid-template-columns:1fr 1fr}.room-stopwatch-actions button:first-child{grid-column:1/-1}}

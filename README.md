@@ -1,3 +1,11 @@
+## V1.4.0.18 – Lernende Raumzeiten & Hintergrund-Stoppuhr (26.10.2026)
+
+- Hintergrund-Stoppuhr: Kein automatischer Stopp bei App-Wechsel, Sperrbildschirm, Raumwechsel oder erneutem Öffnen; Zeitstempel rekonstruiert die Laufzeit.
+- Manuelle Zeitkorrektur (0–1440 Minuten) und Warnung ab vier Stunden.
+- Je Raum, Etage und Reinigungsart eine Prognose: ab zwei Messungen vorläufig, ab drei gelernt; maximal zehn gültige Werte von 15 Sekunden bis sechs Stunden.
+- Datenerhalt: Bestehende Schlüssel und vorhandene pausierte Entwürfe kompatibel; keine neue Datenbank.
+- Prüfung: automatisierte Tests und mobiler Chromium-Test; echter Android-Sperrbildschirmtest und Drive-Restore noch offen.
+
 ## V1.4.0.17 – Mehrere Reinigungsfotos (26.10.2026)
 
 - **Schnellreinigung und Detailreinigung:** Mehrere Vorher- und Nachher-Fotos je Sitzung über Mehrfachauswahl oder wiederholtes Hinzufügen. Vorschau, Anzahl und Entfernen einzelner Fotos vor dem Speichern.

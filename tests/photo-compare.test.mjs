@@ -23,7 +23,7 @@ test('comparison only on records with both images, with no deletion or AI decisi
 });
 test('version and backups do not change photo schema or local data keys',()=>{
  const html=read('index.html'),manifest=JSON.parse(read('manifest.webmanifest'));
- assert(html.includes('1.4.0.17'));assert(manifest.description.includes('1.4.0.17'));
+ assert(html.includes('1.4.0.18'));assert(manifest.description.includes('1.4.0.18'));
  assert(read('photos.js').includes("DB='mein-putzmanager-photos-v2'"));
  assert(read('app.js').includes("KEY = 'mein-putzmanager-beta-v1'"));
  assert(read('backup-model.js').includes('schema:')); // existing backup tests validate supported schemas
