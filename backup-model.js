@@ -1,4 +1,4 @@
-/* Mein Putzmanager V1.4.0.10: localStorage + IndexedDB photos, legacy schema 1 compatible. */
+/* Mein Putzmanager V1.4.0.17: localStorage + IndexedDB photos, legacy schema 1 compatible. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.PutzmanagerBackupModel=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const FORMAT='mein-putzmanager-full-backup';const SCHEMA=2;
@@ -26,7 +26,11 @@ function assertPhotos(entries){
  const ids=new Set();for(const e of entries){
   if(!e||typeof e!=='object'||typeof e.id!=='string'||!e.id||ids.has(e.id)||typeof e.at!=='string'||!Number.isFinite(Date.parse(e.at))||typeof e.roomName!=='string'||e.roomName.length>80)throw Error('Ungültige Reinigungsfotos in der Sicherung.');
   ids.add(e.id);
-  for(const kind of ['before','after'])if(e[kind]!==null&&e[kind]!==undefined&&(typeof e[kind]!=='string'||e[kind].length>180000||!/^data:image\/jpeg;base64,[A-Za-z0-9+/]*={0,2}$/.test(e[kind])))throw Error('Beschädigtes Reinigungsfoto in der Sicherung.');
+  for(const kind of ['before','after']){
+   const valid=s=>typeof s==='string'&&s.length<=180000&&/^data:image\/jpeg;base64,[A-Za-z0-9+/]*={0,2}$/.test(s);
+   if(e[kind]!==null&&e[kind]!==undefined&&!valid(e[kind]))throw Error('Beschädigtes Reinigungsfoto in der Sicherung.');
+   const key=kind+'Photos';if(e[key]!==undefined&&(!Array.isArray(e[key])||e[key].some(s=>!valid(s))))throw Error('Beschädigte Mehrfachfotos in der Sicherung.');
+  }
  }
  return entries;
 }

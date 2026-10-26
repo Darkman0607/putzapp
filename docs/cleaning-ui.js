@@ -6,7 +6,7 @@
  const el=(tag,klass,text)=>{const n=document.createElement(tag);if(klass)n.className=klass;if(text!==undefined)n.textContent=text;return n;};
  const makeButton=(text,fn,klass='room-btn')=>{const b=el('button',klass,text);b.type='button';b.addEventListener('click',fn);return b;};
  const uid=()=>globalThis.crypto?.randomUUID?.()||('task-'+Date.now()+'-'+Math.random().toString(36).slice(2));
- let mode=null,selectedFloor=null,selectedRoom=null,materials=null,stopwatch=null,stagedPhotos={before:null,after:null};
+ let mode=null,selectedFloor=null,selectedRoom=null,materials=null,stopwatch=null,stagedPhotos={before:[],after:[]};
  function snapshot(){return APP.get();}
  function find(floorId,roomId){const state=snapshot();const floor=state.floors.find(f=>f.id===floorId),room=floor?.rooms.find(r=>r.id===roomId);return {state,floor,room};}
  function values(){return snapshot().floors.flatMap(f=>f.rooms.map(r=>({floorId:f.id,id:r.id,text:f.name+' · '+r.name})));}
@@ -39,7 +39,7 @@
  function open(nextMode,floorId,roomId){
   if(!['tasks','quick','detail'].includes(nextMode))return;
   const {room}=find(floorId,roomId);if(!room){$('#cleaning-room-status').textContent='Bitte zuerst einen Raum anlegen oder auswählen.';return;}
-  stopwatch?.dispose();stopwatch=null;stagedPhotos={before:null,after:null};mode=nextMode;selectedFloor=floorId;selectedRoom=roomId;materials=null;
+  stopwatch?.dispose();stopwatch=null;stagedPhotos={before:[],after:[]};mode=nextMode;selectedFloor=floorId;selectedRoom=roomId;materials=null;
   $('#cleaning-title').textContent=room.name;
   $('#cleaning-subtitle').textContent=nextMode==='tasks'?'✏️ AUFGABEN & INTERVALLE':nextMode==='quick'?'⚡ SCHNELLREINIGUNG':'☑ DETAILREINIGUNG';
   $('#cleaning-overlay').hidden=false;render();$('#cleaning-close').focus();
@@ -91,19 +91,46 @@
  }
  function addPhotos(content){
   if(!window.PutzmanagerPhotos)return;
+  const sessionPhotos=stagedPhotos;
   const wrapper=el('section','cleaning-photos');wrapper.append(el('h4','', '📸 Vorher / Nachher (optional)'));
-  for(const kind of ['before','after']){const label=el('label','cleaning-photo-input');label.append(el('span','',kind==='before'?'Vorher-Foto':'Nachher-Foto'));const input=el('input');input.type='file';input.accept='image/*';input.setAttribute('aria-label',kind==='before'?'Vorher-Foto auswählen':'Nachher-Foto auswählen');const preview=el('div','photo-preview');
-   input.addEventListener('change',async()=>{try{const result=await window.PutzmanagerPhotos.encode(input.files?.[0]);stagedPhotos[kind]=result;preview.replaceChildren();if(result){const image=el('img');image.src=result;image.alt=kind==='before'?'Vorschau vorher':'Vorschau nachher';preview.append(image);}}catch(e){stagedPhotos[kind]=null;input.value='';alert('Foto konnte nicht ausgewählt werden: '+e.message);}});
-   label.append(input,preview);wrapper.append(label);
-  }content.append(wrapper);
+  wrapper.append(el('p','room-note','Du kannst mehrere Fotos auf einmal auswählen oder weitere hinzufügen. Bilder vor dem Speichern einzeln entfernen.'));
+  for(const kind of ['before','after']){
+   const section=el('div','cleaning-photo-group'),name=kind==='before'?'Vorher':'Nachher';
+   const head=el('div','cleaning-photo-head'),title=el('strong','',name+'-Fotos'),count=el('span','cleaning-photo-count');head.append(title,count);
+   const input=el('input','cleaning-photo-file');input.type='file';input.accept='image/*';input.multiple=true;
+   input.setAttribute('aria-label',name+'-Fotos hinzufügen');
+   const preview=el('div','photo-preview cleaning-photo-previews'),status=el('p','room-note cleaning-photo-status');status.setAttribute('aria-live','polite');
+   function show(){
+    count.textContent=sessionPhotos[kind].length+' ausgewählt';preview.replaceChildren();
+    sessionPhotos[kind].forEach((src,index)=>{
+     const tile=el('figure','cleaning-photo-tile'),image=el('img');image.src=src;image.alt=name+'-Foto '+(index+1);
+     const del=makeButton('✕ Entfernen',()=>{sessionPhotos[kind].splice(index,1);show();},'room-btn cleaning-photo-remove');
+     del.setAttribute('aria-label',name+'-Foto '+(index+1)+' entfernen');tile.append(image,del);preview.append(tile);
+    });
+   }
+   input.addEventListener('change',async()=>{
+    const files=Array.from(input.files||[]);input.value='';if(!files.length)return;
+    sessionPhotos.processing=(sessionPhotos.processing||0)+1;input.disabled=true;status.textContent=files.length+' Foto(s) werden verarbeitet …';let added=0;const errors=[];
+    try{
+     for(const file of files){
+      try{const result=await window.PutzmanagerPhotos.encode(file);if(result&&stagedPhotos===sessionPhotos){sessionPhotos[kind].push(result);added++;}}
+      catch(e){errors.push(file.name+': '+e.message);}
+     }
+     if(stagedPhotos===sessionPhotos){show();status.textContent=added+' Foto(s) hinzugefügt.'+(errors.length?' Fehler: '+errors.join(' | '):'');}
+    }finally{sessionPhotos.processing--;input.disabled=false;}
+   });
+   section.append(head,input,preview,status);wrapper.append(section);show();
+  }
+  content.append(wrapper);
  }
  function addTimer(content){stopwatch?.dispose();stopwatch=window.PutzmanagerRoomTimer.create(selectedFloor,selectedRoom);content.append(stopwatch.element);}
  async function finishCleaning(data){
+  if(stagedPhotos.processing){alert('Die Fotos werden noch verarbeitet. Bitte danach erneut speichern.');return null;}
   const inv=window.PutzmanagerInventory,before=inv.get(),id=uid();let photoSaved=false;
   try{
    // Photo storage is durable IndexedDB; await it, never silently lose a photo.
-   if((stagedPhotos.before||stagedPhotos.after)&&window.PutzmanagerPhotos){
-    await window.PutzmanagerPhotos.put({id,at:new Date().toISOString(),roomName:selectedData().room.name,...stagedPhotos});photoSaved=true;
+   if((stagedPhotos.before.length||stagedPhotos.after.length)&&window.PutzmanagerPhotos){
+    await window.PutzmanagerPhotos.put({id,at:new Date().toISOString(),roomName:selectedData().room.name,beforePhotos:[...stagedPhotos.before],afterPhotos:[...stagedPhotos.after]});photoSaved=true;
    }
    const added=inv.commit(id,selectedRoom,materials.assignmentsForSave());
    const entry=APP.recordCleaning({...data,id,at:new Date().toISOString(),floorId:selectedFloor,roomId:selectedRoom,durationSeconds:stopwatch?.seconds()||0});

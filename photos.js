@@ -1,4 +1,4 @@
-/* V1.4.0.10: IndexedDB photo gallery. No fixed number of cleaning records.
+/* V1.4.0.17: IndexedDB photo gallery with per-cleaning multiple before/after photos. No fixed number of cleaning records.
    Existing V1.4.0.8 localStorage photos migrate without deleting before commit. */
 (function(root){'use strict';
 const LEGACY='mein-putzmanager-clean-photos-v1', DB='mein-putzmanager-photos-v2', STORE='records';
@@ -21,10 +21,16 @@ function transaction(mode,action){return database().then(db=>new Promise((resolv
  tx.onerror=()=>{};
  }));}
 function normalized(entry){if(!entry||typeof entry.id!=='string'||!entry.id||typeof entry.at!=='string'||!Number.isFinite(Date.parse(entry.at)))throw Error('Ungültiger Foto-Eintrag.');
- const out={id:entry.id,at:entry.at,roomName:String(entry.roomName||'Raum').slice(0,80),before:entry.before||null,after:entry.after||null};
- for(const k of ['before','after'])if(out[k]!==null&&(typeof out[k]!=='string'||out[k].length>MAX_DATA_LENGTH||!/^data:image\/jpeg;base64,[A-Za-z0-9+/]*={0,2}$/.test(out[k])))throw Error('Ein Foto ist beschädigt oder zu groß.');
+ const out={id:entry.id,at:entry.at,roomName:String(entry.roomName||'Raum').slice(0,80)};
+ for(const kind of ['before','after']){
+  const key=kind+'Photos',old=entry[kind]||null;
+  const photos=Array.isArray(entry[key])?entry[key].slice():old?[old]:[];
+  if(photos.some(photo=>typeof photo!=='string'||photo.length>MAX_DATA_LENGTH||!/^data:image\/jpeg;base64,[A-Za-z0-9+/]*={0,2}$/.test(photo)))throw Error('Ein Foto ist beschädigt oder zu groß.');
+  out[key]=photos;out[kind]=photos[0]||null; // Legacy viewer and old photo records stay compatible.
+ }
  return out;
 }
+function images(record,kind){const list=record?.[kind+'Photos'];return Array.isArray(list)?list:record?.[kind]?[record[kind]]:[];}
 async function migrate(){if(migrating)return migrating;
  migrating=(async()=>{
   const raw=root.localStorage.getItem(LEGACY);if(raw===null)return;
@@ -38,10 +44,24 @@ async function migrate(){if(migrating)return migrating;
  })();try{await migrating;}finally{migrating=null;}
 }
 async function all(){await migrate();const records=await transaction('readonly',s=>request(s.getAll()));return (await records).sort((a,b)=>String(a.at).localeCompare(String(b.at)));}
-async function put(entry){await migrate();const record=normalized(entry);if(!record.before&&!record.after)return true;
+async function put(entry){await migrate();const record=normalized(entry);if(!record.beforePhotos.length&&!record.afterPhotos.length)return true;
  await transaction('readwrite',s=>s.put(record));await render();return true;
 }
 async function remove(id){await migrate();await transaction('readwrite',s=>s.delete(id));await render();}
+async function removePhoto(id,kind,index){
+ if(!['before','after'].includes(kind)||!Number.isInteger(index)||index<0)throw Error('Ungültige Fotoauswahl.');
+ await migrate();
+ await transaction('readwrite',store=>{
+  const req=store.get(id);
+  req.onsuccess=()=>{
+   if(!req.result)return;
+   const record=normalized(req.result),photos=record[kind+'Photos'];
+   if(index>=photos.length)return;
+   photos.splice(index,1);const updated=normalized(record);
+   if(!updated.beforePhotos.length&&!updated.afterPhotos.length)store.delete(id);else store.put(updated);
+  };
+ });await render();
+}
 async function replace(entries){if(!Array.isArray(entries))throw Error('Ungültige Fotoliste.');const safe=entries.map(normalized);
  // Single transaction: either ALL photos replace or NONE; no partial loss on quota failure.
  await transaction('readwrite',s=>{s.clear();for(const e of safe)s.put(e);});
@@ -56,14 +76,28 @@ async function render(){const box=root.document?.querySelector('#photo-gallery')
   if(!records.length){box.append(mk('p','room-note','Noch keine Vorher-/Nachher-Fotos gespeichert.'));return;}
   let shown=0;const size=24;
   function appendPage(){const end=Math.min(shown+size,records.length);
-   for(;shown<end;shown++){const record=records[shown],card=mk('article','photo-entry');card.append(mk('strong','',record.roomName),mk('small','',new Date(record.at).toLocaleString('de-AT')));
-    const grid=mk('div','photo-grid');for(const kind of ['before','after'])if(record[kind]){const figure=mk('figure',''),img=mk('img','');img.src=record[kind];img.alt=(kind==='before'?'Vorher':'Nachher')+' · '+record.roomName;img.loading='lazy';figure.append(img,mk('figcaption','',kind==='before'?'Vorher':'Nachher'));grid.append(figure);}card.append(grid);
+   for(;shown<end;shown++){
+    const record=records[shown],card=mk('article','photo-entry');card.append(mk('strong','',record.roomName),mk('small','',new Date(record.at).toLocaleString('de-AT')));
+    for(const [kind,name] of [['before','Vorher'],['after','Nachher']]){
+     const photos=images(record,kind);if(!photos.length)continue;
+     card.append(mk('h4','photo-section-heading',name+' · '+photos.length+' Foto(s)'));
+     const grid=mk('div','photo-grid');photos.forEach((src,index)=>{
+      const figure=mk('figure',''),img=mk('img','');img.src=src;img.alt=name+'-Foto '+(index+1)+' · '+record.roomName;img.loading='lazy';
+      const del=mk('button','photo-remove-one','✕');del.type='button';del.setAttribute('aria-label',name+'-Foto '+(index+1)+' löschen');
+      del.addEventListener('click',()=>{if(root.confirm(name+'-Foto '+(index+1)+' wirklich löschen?'))removePhoto(record.id,kind,index).catch(e=>root.alert(e.message));});
+      figure.append(img,mk('figcaption','',name+' '+(index+1)),del);grid.append(figure);
+     });card.append(grid);
+    }
     if(record.before&&record.after){
+     const controls=mk('div','photo-compare-pick'),before=mk('select','cleaning-select'),after=mk('select','cleaning-select');
+     before.setAttribute('aria-label','Vorher-Foto für Vergleich wählen');after.setAttribute('aria-label','Nachher-Foto für Vergleich wählen');
+     for(const [input,kind,name] of [[before,'before','Vorher'],[after,'after','Nachher']])images(record,kind).forEach((_,idx)=>{const opt=mk('option','',name+' '+(idx+1));opt.value=String(idx);input.append(opt);});
      const compare=mk('button','photo-compare-open-btn','🔎 Vorher / Nachher vergleichen');compare.type='button';
      compare.setAttribute('aria-label','Fotos für '+record.roomName+' vergleichen');
-     compare.addEventListener('click',()=>root.PutzmanagerPhotoCompare?.open(record));card.append(compare);
+     compare.addEventListener('click',()=>root.PutzmanagerPhotoCompare?.open({...record,before:images(record,'before')[Number(before.value)],after:images(record,'after')[Number(after.value)]}));
+     controls.append(before,after,compare);card.append(controls);
     }
-    const del=mk('button','room-btn','Fotos dieser Reinigung löschen');del.type='button';del.addEventListener('click',()=>{if(root.confirm('Fotos dieser Reinigung wirklich endgültig löschen?'))remove(record.id).catch(err=>root.alert(err.message));});card.append(del);box.append(card);
+    const del=mk('button','room-btn','Alle Fotos dieser Reinigung löschen');del.type='button';del.addEventListener('click',()=>{if(root.confirm('Alle Fotos dieser Reinigung wirklich endgültig löschen?'))remove(record.id).catch(err=>root.alert(err.message));});card.append(del);box.append(card);
    }
    if(shown<records.length){const button=mk('button','outline-button',`Ältere Fotos laden (${records.length-shown} weitere)`);button.type='button';button.addEventListener('click',()=>{button.remove();appendPage();});box.append(button);}
   }
@@ -78,6 +112,6 @@ function encode(file){return new Promise((resolve,reject)=>{if(!file){resolve(nu
  picture.onload=()=>{try{const ratio=Math.min(1,720/Math.max(picture.width,picture.height)),canvas=root.document.createElement('canvas');canvas.width=Math.max(1,Math.round(picture.width*ratio));canvas.height=Math.max(1,Math.round(picture.height*ratio));canvas.getContext('2d').drawImage(picture,0,0,canvas.width,canvas.height);const data=canvas.toDataURL('image/jpeg',.55);if(data.length>MAX_DATA_LENGTH)throw Error('Komprimiertes Foto ist noch zu groß.');resolve(data);}catch(e){reject(e);}};
  picture.src=reader.result;};reader.readAsDataURL(file);
  });}
-root.PutzmanagerPhotos={all,snapshot,replace,put,remove,encode,render,migrate};
+root.PutzmanagerPhotos={all,snapshot,replace,put,remove,removePhoto,images,encode,render,migrate};
 if(root.document){if(root.document.readyState==='loading')root.document.addEventListener('DOMContentLoaded',()=>render());else render();}
 })(typeof window!=='undefined'?window:globalThis);
