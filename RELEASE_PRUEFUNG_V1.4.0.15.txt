@@ -1,0 +1,4 @@
+V1.4.0.15 – Vier manuelle Füllstände je Lagerartikel
+Wählbare Methode je Artikel: exakt oder einfach (Voll/Halb/Fast leer/Leer).
+Bei der einfachen Methode keine automatische Stück- oder Flaschenbuchung nach Reinigungen; geöffnetes Gebinde separat von ungeöffneten Ersatzpackungen. Neue Packung öffnet bei leerer offener Packung und reduziert Ersatzpackungen um 1. Packungsgröße nur als Beschreibung (z. B. 80 Stück). Alte exakte Mengen bleiben gespeichert.
+Tests: 120 Node-Tests lokal; Chromium 320/390/430px; Android-Praxistest offen.

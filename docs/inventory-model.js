@@ -59,7 +59,12 @@
   if(family==='mittel')return 'liquid';
   return raw.reusable===false?'consume':'durable';
  }
- const available=item=>item.handling==='wash'?Math.max(0,item.quantity-item.dirtyQuantity):item.quantity;
+ const stockLevels=Object.freeze({full:'Voll',half:'Halb',low:'Fast leer',empty:'Leer'});
+ // Bei manueller Füllstandsmethode wird die Stückmenge NICHT bei Reinigungen geschätzt oder abgezogen.
+ // sparePacks zählt ausschließlich ungeöffnete Ersatzpackungen; stockLevel beschreibt die offene Packung.
+ const isLevel=item=>item.stockMode==='level';
+ const available=item=>isLevel(item)?(item.stockLevel==='empty'?0:1):item.handling==='wash'?Math.max(0,item.quantity-item.dirtyQuantity):item.quantity;
+ const packCount=item=>isLevel(item)?(item.stockLevel==='empty'?0:1)+item.sparePacks:0;
  const modes=['list','grid'],sorts=['name','newest','oldest','category','location','stock'],statuses=['all','favorite','low','missing','incomplete'];
  const safeText=(v,max=100)=>typeof v==='string'?v.trim().slice(0,max):'';
  const numeric=n=>Number.isFinite(Number(n))&&n!==''&&n!==null?Math.max(0,Math.min(999999,Math.round(Number(n)*100)/100)):0;
@@ -70,12 +75,22 @@
   const family=categoryType(categoryDefs,raw.category);
   const name=safeText(raw.name,90);if(!name)return null;const handling=handlingFor(raw,family),quantity=numeric(raw.quantity);const dirtyQuantity=handling==='wash'?Math.min(Math.floor(quantity),Math.floor(numeric(raw.dirtyQuantity))):0;
   const washTemperature=[30,40,60,90].includes(Number(raw.washTemperature))?Number(raw.washTemperature):null;
+  const stockMode=raw.stockMode==='level'?'level':'exact';
+  const stockLevel=Object.hasOwn(stockLevels,raw.stockLevel)?raw.stockLevel:'full';
+  const sparePacks=Math.floor(numeric(raw.sparePacks));
+  const packSize=Math.floor(numeric(raw.packSize));
   const photos=Array.isArray(raw.photos)?raw.photos.slice(0,3).filter(p=>typeof p==='string'&&/^data:image\/(jpeg|png|webp);base64,/.test(p)&&p.length<140000):[];
-  return {id:safeText(raw.id,100)||cryptoId(),name,category:raw.category,location:safeText(raw.location,70),quantity,dirtyQuantity,handling,washTemperature,unit:safeText(raw.unit,25)||'Stück',minimum:numeric(raw.minimum),favorite:raw.favorite===true,icon:icons[raw.icon]?raw.icon:(family==='mittel'?'bottle':family==='geraete'?'device':'sponge'),brand:safeText(raw.brand,80),model:safeText(raw.model,80),notes:safeText(raw.notes,500),photos,reusable:raw.reusable===true||(raw.reusable===undefined&&family==='zubehoer'&&raw.icon!=='paper'),usageCount:Math.floor(numeric(raw.usageCount)),usageWeighted:numeric(raw.usageWeighted),activeBottleId:safeText(raw.activeBottleId,120),bottleUses:Math.floor(numeric(raw.bottleUses)),bottleWeighted:numeric(raw.bottleWeighted),samples:Array.isArray(raw.samples)?raw.samples.slice(-40).filter(v=>v&&numeric(v.weighted)>0).map(v=>({weighted:numeric(v.weighted),uses:Math.floor(numeric(v.uses)),at:validDate(v.at)})):[],createdAt:validDate(raw.createdAt),updatedAt:validDate(raw.updatedAt||raw.createdAt)};
+  return {id:safeText(raw.id,100)||cryptoId(),name,category:raw.category,location:safeText(raw.location,70),quantity,dirtyQuantity,handling,washTemperature,stockMode,stockLevel,sparePacks,packSize,unit:safeText(raw.unit,25)||'Stück',minimum:numeric(raw.minimum),favorite:raw.favorite===true,icon:icons[raw.icon]?raw.icon:(family==='mittel'?'bottle':family==='geraete'?'device':'sponge'),brand:safeText(raw.brand,80),model:safeText(raw.model,80),notes:safeText(raw.notes,500),photos,reusable:raw.reusable===true||(raw.reusable===undefined&&family==='zubehoer'&&raw.icon!=='paper'),usageCount:Math.floor(numeric(raw.usageCount)),usageWeighted:numeric(raw.usageWeighted),activeBottleId:safeText(raw.activeBottleId,120),bottleUses:Math.floor(numeric(raw.bottleUses)),bottleWeighted:numeric(raw.bottleWeighted),samples:Array.isArray(raw.samples)?raw.samples.slice(-40).filter(v=>v&&numeric(v.weighted)>0).map(v=>({weighted:numeric(v.weighted),uses:Math.floor(numeric(v.uses)),at:validDate(v.at)})):[],createdAt:validDate(raw.createdAt),updatedAt:validDate(raw.updatedAt||raw.createdAt)};
  }
  function sanitize(raw){const categoryDefs=normalizeCategories(raw?.categories),items=Array.isArray(raw?.items)?raw.items:[],seen=new Set();const presets={};for(const [key,v] of Object.entries(raw?.presets&&typeof raw.presets==='object'?raw.presets:{}).slice(-500)){if(key.length>240)continue;presets[key]=Array.isArray(v)?v.filter(x=>typeof x==='string').slice(0,50):[];}
   return {categories:categoryDefs,items:items.slice(-3000).map(x=>normalize(x,categoryDefs)).filter(x=>x&&!seen.has(x.id)&&seen.add(x.id)),view:modes.includes(raw?.view)?raw.view:'list',sort:sorts.includes(raw?.sort)?raw.sort:'name',search:safeText(raw?.search,120),category:categoryType(categoryDefs,raw?.category)?raw.category:'all',status:statuses.includes(raw?.status)?raw.status:'all',location:safeText(raw?.location,70),presets,uses:Array.isArray(raw?.uses)?raw.uses.slice(-3000).filter(x=>x&&typeof x.sessionId==='string'&&typeof x.itemId==='string').map(x=>({...x,weight:[0.5,1,2].includes(x.weight)?x.weight:1})):[]};}
- function status(item){if(available(item)===0)return 'missing';if(item.minimum>0&&available(item)<=item.minimum)return 'low';return 'ok';}
+ function status(item){
+  if(isLevel(item)){
+   if(item.stockLevel==='empty')return item.sparePacks?'low':'missing';
+   return item.stockLevel==='low'&&item.sparePacks===0?'low':'ok';
+  }
+  if(available(item)===0)return 'missing';if(item.minimum>0&&available(item)<=item.minimum)return 'low';return 'ok';
+ }
  const incomplete=item=>!item.location;
  const collator=new Intl.Collator('de',{numeric:true,sensitivity:'base'});
  function filter(raw,options={}){
@@ -87,6 +102,17 @@
  function add(raw,details,now=new Date().toISOString()){const s=sanitize(raw),item=normalize({...details,id:cryptoId(),createdAt:now,updatedAt:now},s.categories);if(!item)throw Error('Name und gültige Kategorie erforderlich');s.items.push(item);return {state:s,item};}
  function update(raw,id,changes,now=new Date().toISOString()){const s=sanitize(raw),i=s.items.findIndex(x=>x.id===id);if(i<0)throw Error('Artikel nicht vorhanden');const old=s.items[i],item=normalize({...old,...changes,id,createdAt:old.createdAt,updatedAt:now,usageCount:old.usageCount,usageWeighted:old.usageWeighted,bottleUses:old.bottleUses,bottleWeighted:old.bottleWeighted,activeBottleId:old.activeBottleId,samples:old.samples},s.categories);if(!item)throw Error('Ungültiger Artikel');s.items[i]=item;return {state:s,item};}
  function setFavorite(raw,id,flag){return update(raw,id,{favorite:Boolean(flag)}).state;}
+ function setStockLevel(raw,id,level,now=new Date().toISOString()){
+  const s=sanitize(raw),item=s.items.find(x=>x.id===id);
+  if(!item||!isLevel(item))throw Error('Für diesen Artikel ist keine einfache Füllstandsanzeige aktiviert.');
+  if(!Object.hasOwn(stockLevels,level))throw Error('Unbekannter Füllstand.');
+  item.stockLevel=level;item.updatedAt=now;return {state:s,item};
+ }
+ function openSparePack(raw,id,now=new Date().toISOString()){
+  const s=sanitize(raw),item=s.items.find(x=>x.id===id);
+  if(!item||!isLevel(item)||item.stockLevel!=='empty'||item.sparePacks<1)throw Error('Keine geschlossene Ersatzpackung verfügbar oder offene Packung noch nicht leer.');
+  item.sparePacks--;item.stockLevel='full';item.updatedAt=now;return {state:s,item};
+ }
  const presetKey=(roomId,taskId='')=>`${String(roomId).slice(0,120)}|${String(taskId).slice(0,120)||'room'}`;
  function suggestions(raw,roomId,taskId=''){const s=sanitize(raw);const exact=s.presets[presetKey(roomId,taskId)],fallback=s.presets[presetKey(roomId)];return (exact||fallback||[]).filter(id=>s.items.some(x=>x.id===id));}
  function registerUse(raw,input,now=new Date().toISOString()){
@@ -96,8 +122,9 @@
   for(const a of assignments){const taskId=safeText(a.taskId,120),key=presetKey(roomId,taskId);presets[key]=[...new Set((Array.isArray(a.ids)?a.ids:[]).filter(id=>s.items.some(x=>x.id===id)))];for(const id of presets[key]){const weight=[0.5,1,2].includes(Number(a.weights?.[id]))?Number(a.weights[id]):1;if(!unique.has(id)||unique.get(id).weight<weight)unique.set(id,{weight,taskId});}}
   // Validate the entire booking first: never partly debit stock when a later article is empty.
   for(const [id] of unique){const item=s.items.find(x=>x.id===id);if(!item||s.uses.some(x=>x.sessionId===sessionId&&x.itemId===id))continue;
-   if(['consume','wash'].includes(item.handling)&&available(item)<1)throw Error(`„${item.name}“: kein sauberer/verfügbarer Bestand. Im Lager auffüllen oder Wäsche abschließen.`);
-   if(item.handling==='liquid'&&item.quantity<1)throw Error(`„${item.name}“: keine Flasche auf Lager.`);
+   if(isLevel(item)&&item.stockLevel==='empty')throw Error(`„${item.name}“: offene Packung leer. Bitte zuerst eine Ersatzpackung öffnen oder den Füllstand korrigieren.`);
+   if(!isLevel(item)&&['consume','wash'].includes(item.handling)&&available(item)<1)throw Error(`„${item.name}“: kein sauberer/verfügbarer Bestand. Im Lager auffüllen oder Wäsche abschließen.`);
+   if(!isLevel(item)&&item.handling==='liquid'&&item.quantity<1)throw Error(`„${item.name}“: keine Flasche auf Lager.`);
   }
   // Presets are only saved with a successful, validated cleaning.
   for(const [key,ids] of Object.entries(presets))s.presets[key]=ids;
@@ -105,7 +132,8 @@
   const added=[];
   for(const [id,{weight,taskId}] of unique){const item=s.items.find(x=>x.id===id);if(!item||s.uses.some(x=>x.sessionId===sessionId&&x.itemId===id))continue;
    const event={sessionId,itemId:id,roomId,taskId,at:now,weight,handling:item.handling};
-   if(item.handling==='liquid'){if(!item.activeBottleId)item.activeBottleId=cryptoId();event.bottleId=item.activeBottleId;item.usageCount++;item.usageWeighted+=weight;item.bottleUses++;item.bottleWeighted+=weight;}
+   if(isLevel(item)){event.manualStockLevel=true;}
+   else if(item.handling==='liquid'){if(!item.activeBottleId)item.activeBottleId=cryptoId();event.bottleId=item.activeBottleId;item.usageCount++;item.usageWeighted+=weight;item.bottleUses++;item.bottleWeighted+=weight;}
    else if(item.handling==='consume'){item.quantity=Math.max(0,item.quantity-1);event.quantityDebited=1;}
    else if(item.handling==='wash'){item.dirtyQuantity++;event.movedToLaundry=1;}
    item.updatedAt=now;s.uses.push(event);added.push(event);
@@ -125,9 +153,9 @@
   item.dirtyQuantity-=n;item.updatedAt=now;return {state:s,item};
  }
  function markBottleEmpty(raw,id,now=new Date().toISOString()){
-  const s=sanitize(raw),item=s.items.find(x=>x.id===id);if(!item||item.handling!=='liquid'||!item.activeBottleId||item.bottleWeighted<=0)throw Error('Keine benutzte offene Flasche vorhanden');
+  const s=sanitize(raw),item=s.items.find(x=>x.id===id);if(!item||isLevel(item)||item.handling!=='liquid'||!item.activeBottleId||item.bottleWeighted<=0)throw Error('Keine benutzte offene Flasche vorhanden');
   item.samples.push({weighted:item.bottleWeighted,uses:item.bottleUses,at:now});item.samples=item.samples.slice(-40);item.quantity=Math.max(0,item.quantity-1);item.activeBottleId='';item.bottleUses=0;item.bottleWeighted=0;item.updatedAt=now;return {state:s,item};
  }
  function estimate(item){if(!item.samples?.length)return null;return {sampleCount:item.samples.length,mean:Math.round(item.samples.reduce((sum,x)=>sum+x.weighted,0)/item.samples.length*10)/10};}
- return {categories,defaultCategories,normalizeCategories,categoryType,categoryName,createCategory,renameCategory,deleteCategory,handlingModes,handlingFor,available,markForLaundry,markWashed,icons,iconColors,normalize,sanitize,status,incomplete,filter,summary,add,update,setFavorite,presetKey,suggestions,registerUse,markBottleEmpty,estimate};
+ return {categories,defaultCategories,normalizeCategories,categoryType,categoryName,createCategory,renameCategory,deleteCategory,handlingModes,handlingFor,stockLevels,isLevel,packCount,available,setStockLevel,openSparePack,markForLaundry,markWashed,icons,iconColors,normalize,sanitize,status,incomplete,filter,summary,add,update,setFavorite,presetKey,suggestions,registerUse,markBottleEmpty,estimate};
 });

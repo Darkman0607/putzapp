@@ -28,3 +28,15 @@
 .inventory-category-form select:disabled{opacity:.7}
 .inventory-category-form .inventory-form-buttons{margin-top:0}
 @media(max-width:390px){.inventory-toolbar-actions{width:100%}.inventory-toolbar-actions button{flex:1}.inventory-category-manager{padding:11px}}
+
+/* V1.4.0.15 – Manuelle Füllstandsmethode pro Artikel */
+.inventory-level-settings[hidden],.inventory-exact-setting[hidden]{display:none!important}
+.inventory-level-settings:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;border:1px solid rgba(30,215,180,.32);border-radius:13px;padding:12px;background:rgba(9,69,62,.20)}
+.inventory-level-settings>label{display:grid;gap:5px;min-width:0;font-size:13px}
+.inventory-level-settings>label:first-child{grid-column:1/-1}
+.inventory-level-settings>small{grid-column:1/-1;color:#adcac5;line-height:1.45}
+.inventory-level-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
+.inventory-level-button{min-height:43px;padding:8px 4px;border:1px solid rgba(79,149,139,.55);border-radius:10px;background:#14383b;color:#e1f7f2;font:inherit;font-size:12px}
+.inventory-level-button.is-active{border-color:#1ee0b9;background:#0b6155;box-shadow:inset 0 0 0 1px #15d9b0;color:#fff;font-weight:800}
+.inventory-card-actions:has(.inventory-level-actions){display:grid;grid-template-columns:1fr}
+.inventory-level-actions button{touch-action:manipulation}
